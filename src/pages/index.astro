@@ -1,17 +1,28 @@
 ---
-
+import HeroSection from '../components/hero/HeroSection.astro';
+import ResultExperience from '../components/result/ResultExperience.astro';
+import CalendarSection from '../components/calendar/CalendarSection.astro';
+import '../styles/global.css';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chinese Gender Predictor 2026 | Free Lunar Gender Calendar</title>
+    <meta name="description" content="Plan your pregnancy using the traditional Chinese Gender Prediction Calendar. Calculate Chinese Lunar Age and optimal conception windows instantly." />
+    <meta name="keywords" content="chinese gender predictor, chinese gender chart, gender prediction calendar, qing gong biao, lunar age calculator" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body class="min-h-screen bg-[#0b0f19] text-slate-100 antialiased">
+    <main id="main-content">
+      <HeroSection />
+      <ResultExperience />
+      <CalendarSection />
+    </main>
+  </body>
 </html>

@@ -1,0 +1,27 @@
+---
+// ResultHeader.astro
+---
+
+<div class="text-center max-w-3xl mx-auto space-y-4">
+  <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 backdrop-blur-md">
+    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+    <span>Prediction Complete</span>
+  </div>
+
+  <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+    Your Gender Prediction Results
+  </h2>
+
+  <!-- Target Year & Mother Lunar Age Badges -->
+  <div class="flex flex-wrap items-center justify-center gap-3 pt-2 text-sm">
+    <div class="px-4 py-2 rounded-xl bg-slate-800/80 border border-white/10 text-slate-200 font-medium">
+      Target Year: <span id="res-target-year" class="font-bold text-white">2026</span>
+    </div>
+    <div class="px-4 py-2 rounded-xl bg-slate-800/80 border border-white/10 text-slate-200 font-medium">
+      Mother DOB: <span id="res-mother-dob" class="font-bold text-white">--</span>
+    </div>
+    <div class="px-4 py-2 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 font-medium">
+      Chinese Lunar Age: <span id="res-lunar-age" class="font-bold text-white">--</span> (虚岁)
+    </div>
+  </div>
+</div>

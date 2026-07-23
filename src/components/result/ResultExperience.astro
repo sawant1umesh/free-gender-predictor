@@ -1,0 +1,104 @@
+---
+import ResultHeader from './ResultHeader.astro';
+import SummaryCards from './SummaryCards.astro';
+import QuickStats from './QuickStats.astro';
+import DisclaimerNotice from './DisclaimerNotice.astro';
+---
+
+<section
+  id="prediction-result-section"
+  aria-live="polite"
+  class="hidden opacity-0 translate-y-6 transition-all duration-700 ease-out py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-12"
+>
+  <!-- Section 1: Header -->
+  <ResultHeader />
+
+  <!-- Section 2: Best Girl & Best Boy Summary Cards -->
+  <SummaryCards />
+
+  <!-- Section 3: Quick Statistics -->
+  <QuickStats />
+
+  <!-- Section 4: Information Notice -->
+  <DisclaimerNotice />
+</section>
+
+<script>
+  import type { PredictionApiResponse } from '../../lib/api';
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const resultSection = document.getElementById('prediction-result-section');
+
+    // Header elements
+    const resTargetYear = document.getElementById('res-target-year');
+    const resMotherDob = document.getElementById('res-mother-dob');
+    const resLunarAge = document.getElementById('res-lunar-age');
+
+    // Girl Card elements
+    const girlScoreBadge = document.getElementById('girl-score-badge');
+    const girlMonthName = document.getElementById('girl-month-name');
+    const girlDateRange = document.getElementById('girl-date-range');
+    const girlRecommendation = document.getElementById('girl-recommendation');
+
+    // Boy Card elements
+    const boyScoreBadge = document.getElementById('boy-score-badge');
+    const boyMonthName = document.getElementById('boy-month-name');
+    const boyDateRange = document.getElementById('boy-date-range');
+    const boyRecommendation = document.getElementById('boy-recommendation');
+
+    // Stats elements
+    const statTotalMonths = document.getElementById('stat-total-months');
+    const statTrend = document.getElementById('stat-trend');
+    const statGirlMonth = document.getElementById('stat-girl-month');
+    const statBoyMonth = document.getElementById('stat-boy-month');
+
+    window.addEventListener('gender-prediction-updated', (event: Event) => {
+      const customEvent = event as CustomEvent<PredictionApiResponse>;
+      const response = customEvent.detail;
+
+      if (!response || !response.success || !resultSection) return;
+
+      const { hero, bestGirl, bestBoy } = response.viewModels;
+      const raw = response.raw;
+
+      // 1. Update Header
+      if (resTargetYear) resTargetYear.textContent = String(hero.targetYear);
+      if (resMotherDob) resMotherDob.textContent = hero.motherBirthDateFormatted;
+      if (resLunarAge) resLunarAge.textContent = String(hero.motherLunarAge);
+
+      // 2. Update Girl Card
+      if (bestGirl) {
+        if (girlScoreBadge) girlScoreBadge.textContent = `${bestGirl.scorePercentage}% Match`;
+        if (girlMonthName) girlMonthName.textContent = bestGirl.monthNameChinese;
+        if (girlDateRange) girlDateRange.textContent = bestGirl.gregorianDateRange;
+        if (girlRecommendation) girlRecommendation.textContent = bestGirl.recommendationDescription;
+      }
+
+      // 3. Update Boy Card
+      if (bestBoy) {
+        if (boyScoreBadge) boyScoreBadge.textContent = `${bestBoy.scorePercentage}% Match`;
+        if (boyMonthName) boyMonthName.textContent = bestBoy.monthNameChinese;
+        if (boyDateRange) boyDateRange.textContent = bestBoy.gregorianDateRange;
+        if (boyRecommendation) boyRecommendation.textContent = bestBoy.recommendationDescription;
+      }
+
+      // 4. Update Quick Stats
+      if (statTotalMonths) statTotalMonths.textContent = String(raw.months.length);
+      if (statTrend) statTrend.textContent = hero.dominantGenderBadgeText;
+      if (statGirlMonth && bestGirl) statGirlMonth.textContent = bestGirl.monthNameChinese;
+      if (statBoyMonth && bestBoy) statBoyMonth.textContent = bestBoy.monthNameChinese;
+
+      // 5. Reveal result section with smooth CSS transition
+      resultSection.classList.remove('hidden');
+
+      // Request animation frame for smooth opacity & transform transition
+      requestAnimationFrame(() => {
+        resultSection.classList.remove('opacity-0', 'translate-y-6');
+        resultSection.classList.add('opacity-100', 'translate-y-0');
+
+        // Smooth scroll to top of result section
+        resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  });
+</script>

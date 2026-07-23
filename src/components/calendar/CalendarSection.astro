@@ -1,0 +1,101 @@
+---
+// CalendarSection.astro
+---
+
+<section
+  id="calendar-section"
+  aria-label="12-Month Prediction Calendar"
+  class="hidden opacity-0 translate-y-6 transition-all duration-700 ease-out py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-10"
+>
+  <div class="text-center max-w-3xl mx-auto space-y-3">
+    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 backdrop-blur-md">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      </svg>
+      <span>Full Lunar Calendar Breakdown</span>
+    </div>
+
+    <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+      12-Month Prediction Calendar
+    </h2>
+
+    <p class="text-sm text-slate-400 max-w-xl mx-auto">
+      Monthly gender predictions based on the traditional Qing Gong Biao lunar calendar algorithm
+    </p>
+  </div>
+
+  <div id="calendar-grid" role="list" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-5">
+  </div>
+</section>
+
+<script>
+  import type { PredictionApiResponse } from '../../lib/api';
+
+  const MONTH_LABELS = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const section = document.getElementById('calendar-section') as HTMLElement | null;
+    const grid = document.getElementById('calendar-grid') as HTMLElement | null;
+
+    if (!section || !grid) return;
+
+    window.addEventListener('gender-prediction-updated', (event: Event) => {
+      const customEvent = event as CustomEvent<PredictionApiResponse>;
+      const response = customEvent.detail;
+      if (!response?.success) return;
+
+      const months = response.viewModels.calendarMonths;
+
+      grid.innerHTML = months
+        .map((m) => {
+          const monthLabel = MONTH_LABELS[m.monthIndex - 1] ?? '';
+          const isGirl = m.predictedGender === 'girl';
+          const genderEmoji = isGirl ? '👧' : '👦';
+
+          return `
+            <div role="listitem" class="relative overflow-hidden rounded-2xl glass-panel p-5 sm:p-6 border transition-all duration-300 ${isGirl ? 'border-pink-500/20 hover:border-pink-500/40 bg-gradient-to-b from-pink-950/20' : 'border-indigo-500/20 hover:border-indigo-500/40 bg-gradient-to-b from-indigo-950/20'} to-slate-900/60">
+              <div class="flex items-center justify-between mb-3 gap-2">
+                <h3 class="text-lg font-bold text-white tracking-tight">${monthLabel}</h3>
+                <span class="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold ${isGirl ? 'bg-pink-500/20 text-pink-300 border border-pink-500/30' : 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30'}">
+                  <span aria-hidden="true">${genderEmoji}</span>
+                  ${m.predictedGenderLabel}
+                </span>
+              </div>
+
+              <div class="space-y-2">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="text-slate-400 font-medium">${m.lunarMonthNameChinese}</span>
+                  <span class="text-slate-500">Lunar Month ${m.lunarMonthNumber}</span>
+                </div>
+
+                <div class="text-sm font-semibold text-slate-200 bg-slate-800/50 rounded-lg px-3 py-2 border border-white/5">
+                  ${m.gregorianDisplayRange}
+                </div>
+
+                <div class="flex items-center gap-2 pt-1">
+                  <div class="flex-1 h-2 rounded-full bg-slate-700/50 overflow-hidden" role="progressbar" aria-valuenow="${m.scorePercentage}" aria-valuemin="0" aria-valuemax="100" aria-label="${m.scorePercentage}% suitability">
+                    <div class="h-full rounded-full transition-all duration-500 ${isGirl ? 'bg-pink-500' : 'bg-indigo-500'}" style="width: ${m.scorePercentage}%"></div>
+                  </div>
+                  <span class="text-xs font-bold text-slate-300 shrink-0 w-10 text-right">${m.scorePercentage}%</span>
+                </div>
+
+                <p class="text-xs text-slate-400 leading-relaxed pt-1 border-t border-white/5">
+                  ${m.recommendationText}
+                </p>
+              </div>
+            </div>
+          `;
+        })
+        .join('');
+
+      section.classList.remove('hidden');
+      requestAnimationFrame(() => {
+        section.classList.remove('opacity-0', 'translate-y-6');
+        section.classList.add('opacity-100', 'translate-y-0');
+      });
+    });
+  });
+</script>

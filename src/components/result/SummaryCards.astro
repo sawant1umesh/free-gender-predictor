@@ -1,0 +1,73 @@
+---
+// SummaryCards.astro
+---
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+  <!-- Card 1: Best Girl Prediction -->
+  <div class="relative overflow-hidden rounded-2xl glass-panel p-6 sm:p-8 border border-pink-500/20 bg-gradient-to-b from-pink-950/20 to-slate-900/60 transition-all duration-300 hover:border-pink-500/40">
+    <div class="flex items-center justify-between mb-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-xl text-pink-400">
+          👧
+        </div>
+        <div>
+          <h3 class="text-lg font-bold text-white tracking-tight">Best Girl Window</h3>
+          <p class="text-xs text-pink-300/80 font-medium">Optimal Conception Period</p>
+        </div>
+      </div>
+      <span id="girl-score-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-pink-500/20 text-pink-300 border border-pink-500/30">
+        -- Match
+      </span>
+    </div>
+
+    <div class="space-y-3 pt-2">
+      <div>
+        <div class="text-xs text-slate-400 font-medium">Chinese Lunar Month</div>
+        <div id="girl-month-name" class="text-xl font-bold text-pink-200 mt-0.5">--</div>
+      </div>
+
+      <div>
+        <div class="text-xs text-slate-400 font-medium">Gregorian Date Window</div>
+        <div id="girl-date-range" class="text-sm font-semibold text-slate-200 mt-0.5">--</div>
+      </div>
+
+      <div class="pt-2 text-xs text-pink-300/90 leading-relaxed border-t border-pink-500/10" id="girl-recommendation">
+        Highest suitability window for conceiving a baby girl.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: Best Boy Prediction -->
+  <div class="relative overflow-hidden rounded-2xl glass-panel p-6 sm:p-8 border border-indigo-500/20 bg-gradient-to-b from-indigo-950/20 to-slate-900/60 transition-all duration-300 hover:border-indigo-500/40">
+    <div class="flex items-center justify-between mb-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-xl text-indigo-400">
+          👦
+        </div>
+        <div>
+          <h3 class="text-lg font-bold text-white tracking-tight">Best Boy Window</h3>
+          <p class="text-xs text-indigo-300/80 font-medium">Optimal Conception Period</p>
+        </div>
+      </div>
+      <span id="boy-score-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+        -- Match
+      </span>
+    </div>
+
+    <div class="space-y-3 pt-2">
+      <div>
+        <div class="text-xs text-slate-400 font-medium">Chinese Lunar Month</div>
+        <div id="boy-month-name" class="text-xl font-bold text-indigo-200 mt-0.5">--</div>
+      </div>
+
+      <div>
+        <div class="text-xs text-slate-400 font-medium">Gregorian Date Window</div>
+        <div id="boy-date-range" class="text-sm font-semibold text-slate-200 mt-0.5">--</div>
+      </div>
+
+      <div class="pt-2 text-xs text-indigo-300/90 leading-relaxed border-t border-indigo-500/10" id="boy-recommendation">
+        Highest suitability window for conceiving a baby boy.
+      </div>
+    </div>
+  </div>
+</div>

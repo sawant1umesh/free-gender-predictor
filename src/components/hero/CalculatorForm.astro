@@ -1,0 +1,213 @@
+---
+// CalculatorForm.astro
+---
+
+<div class="glass-panel glass-panel-glow rounded-2xl p-6 sm:p-8 w-full max-w-md mx-auto">
+  <div class="flex items-center justify-between mb-6 border-b border-white/10 pb-4">
+    <div>
+      <h2 class="text-xl font-semibold text-white tracking-tight">Gender Predictor</h2>
+      <p class="text-xs text-slate-400 mt-0.5">Calculate using Chinese Lunar Calendar</p>
+    </div>
+    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+      <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
+      2026 Ready
+    </span>
+  </div>
+
+  <form id="calculator-form" novalidate class="space-y-5">
+    <div>
+      <label for="mother-dob" class="block text-sm font-medium text-slate-200 mb-2">
+        Mother's Date of Birth <span class="text-indigo-400" aria-hidden="true">*</span>
+      </label>
+      <div class="relative rounded-xl shadow-sm">
+        <input
+          type="date"
+          id="mother-dob"
+          name="motherDob"
+          required
+          aria-required="true"
+          aria-invalid="false"
+          aria-describedby="dob-error-msg"
+          class="w-full bg-slate-900/80 border border-slate-700/70 text-white text-base rounded-xl px-4 py-3.5 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200"
+        />
+      </div>
+      <p id="dob-error-msg" aria-live="polite" class="hidden mt-2 text-xs font-medium text-rose-400 flex items-center gap-1.5">
+        <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+        <span id="dob-error-text">Please enter a valid birth date.</span>
+      </p>
+    </div>
+
+    <button
+      type="submit"
+      id="submit-btn"
+      class="w-full relative group overflow-hidden rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-px font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all duration-300 hover:shadow-indigo-500/40 active:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900"
+    >
+      <span class="flex items-center justify-center gap-2 rounded-[11px] bg-slate-950 px-6 py-3.5 text-base font-semibold transition-all duration-300 group-hover:bg-opacity-80">
+        <span id="btn-spinner" class="hidden animate-spin h-5 w-5 text-white">
+          <svg class="w-full h-full" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </span>
+        <span id="btn-text">Show My Prediction</span>
+        <svg id="btn-arrow" class="w-5 h-5 text-indigo-300 group-hover:translate-x-0.5 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        </svg>
+      </span>
+    </button>
+
+    <div class="flex items-center justify-center gap-2 pt-2 text-xs text-slate-400">
+      <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+      </svg>
+      <span>No personal data is stored. 100% private.</span>
+    </div>
+  </form>
+
+  <div id="result-feedback-container" class="hidden mt-6 pt-5 border-t border-white/10">
+    <div id="success-banner" class="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-4">
+      <div class="flex items-start gap-3">
+        <div class="p-1 rounded-full bg-emerald-500/20 text-emerald-400 shrink-0 mt-0.5">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-sm font-semibold text-emerald-300" id="result-headline">Prediction Generated</h3>
+          <p class="text-xs text-slate-300 mt-1" id="result-detail"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { generatePrediction } from '../../lib/api';
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('calculator-form') as HTMLFormElement | null;
+    const input = document.getElementById('mother-dob') as HTMLInputElement | null;
+    const errorMsg = document.getElementById('dob-error-msg');
+    const errorText = document.getElementById('dob-error-text');
+    const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement | null;
+    const btnSpinner = document.getElementById('btn-spinner');
+    const btnArrow = document.getElementById('btn-arrow');
+    const btnText = document.getElementById('btn-text');
+    const feedbackContainer = document.getElementById('result-feedback-container');
+    const resultHeadline = document.getElementById('result-headline');
+    const resultDetail = document.getElementById('result-detail');
+
+    if (!form || !input || !submitBtn) return;
+
+    // Set maximum date picker value to today so future dates are restricted
+    const todayStr = new Date().toISOString().split('T')[0];
+    input.setAttribute('max', todayStr);
+
+    function showError(message: string) {
+      if (errorMsg && errorText && input) {
+        errorText.textContent = message;
+        errorMsg.classList.remove('hidden');
+        input.setAttribute('aria-invalid', 'true');
+        input.classList.add('border-rose-500', 'focus:ring-rose-500');
+      }
+    }
+
+    function clearError() {
+      if (errorMsg && input) {
+        errorMsg.classList.add('hidden');
+        input.setAttribute('aria-invalid', 'false');
+        input.classList.remove('border-rose-500', 'focus:ring-rose-500');
+      }
+    }
+
+    function setLoading(isLoading: boolean) {
+      if (submitBtn && btnSpinner && btnText && btnArrow && input) {
+        submitBtn.disabled = isLoading;
+        input.disabled = isLoading;
+        if (isLoading) {
+          btnSpinner.classList.remove('hidden');
+          btnArrow.classList.add('hidden');
+          btnText.textContent = 'Calculating...';
+          submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
+        } else {
+          btnSpinner.classList.add('hidden');
+          btnArrow.classList.remove('hidden');
+          btnText.textContent = 'Show My Prediction';
+          submitBtn.classList.remove('opacity-80', 'cursor-not-allowed');
+        }
+      }
+    }
+
+    input.addEventListener('input', clearError);
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      clearError();
+
+      const value = input.value.trim();
+
+      // 1. Empty check
+      if (!value) {
+        showError("Please enter Mother's Date of Birth.");
+        input.focus();
+        return;
+      }
+
+      // 2. Format / parse check
+      const dateParts = value.split('-');
+      if (dateParts.length !== 3) {
+        showError("Please enter a valid birth date (YYYY-MM-DD).");
+        input.focus();
+        return;
+      }
+
+      const inputDate = new Date(value);
+      if (isNaN(inputDate.getTime())) {
+        showError("The entered date is invalid. Please check the month and day.");
+        input.focus();
+        return;
+      }
+
+      // 3. Future date check
+      const today = new Date();
+      today.setHours(23, 59, 59, 999);
+      if (inputDate > today) {
+        showError("Birth date cannot be in the future.");
+        input.focus();
+        return;
+      }
+
+      // Trigger API call using Sprint 3 API
+      setLoading(true);
+
+      setTimeout(() => {
+        try {
+          const response = generatePrediction({
+            motherBirthDate: value,
+            targetYear: 2026,
+          });
+
+          setLoading(false);
+
+          if (feedbackContainer && resultHeadline && resultDetail) {
+            resultHeadline.textContent = `2026 Analysis for Mother (Lunar Age ${response.viewModels.hero.motherLunarAge})`;
+            resultDetail.textContent = `Dominant trend: ${response.viewModels.hero.headlineSummary}.`;
+            feedbackContainer.classList.remove('hidden');
+          }
+
+          // Dispatch custom event for Sprint 4B UI components
+          window.dispatchEvent(
+            new CustomEvent('gender-prediction-updated', {
+              detail: response,
+            })
+          );
+        } catch (err: any) {
+          setLoading(false);
+          showError(err.message || 'Failed to generate prediction. Please try again.');
+        }
+      }, 300);
+    });
+  });
+</script>

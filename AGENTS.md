@@ -1,22 +1,42 @@
+# AGENT.md
+
+## Skills
+
+Always use:
+
+- astro
+- tailwind-4-docs
+- web-design-guidelines
+- vercel
+
+## Design
+
+Always follow DESIGN.md.
+
 ## Development
 
-When starting the dev server, use background mode:
+- Use official Astro best practices.
+- Use Tailwind CSS v4 best practices.
+- Prefer official documentation over assumptions.
+- Keep components reusable.
+- Ask before making major architectural changes.
 
-```
+Start the development server:
+
+```bash
 astro dev --background
 ```
 
-Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
+Manage the server:
 
-## Documentation
+```bash
+astro dev status
+astro dev logs
+astro dev stop
+```
 
-Full documentation: https://docs.astro.build
+## Deployment
 
-Consult these guides before working on related tasks:
+Target platform: Vercel.
 
-- [Adding pages, dynamic routes, or middleware](https://docs.astro.build/en/guides/routing/)
-- [Working with Astro components](https://docs.astro.build/en/basics/astro-components/)
-- [Using React, Vue, Svelte, or other framework components](https://docs.astro.build/en/guides/framework-components/)
-- [Adding or managing content](https://docs.astro.build/en/guides/content-collections/)
-- [Adding styles or using Tailwind](https://docs.astro.build/en/guides/styling/)
-- [Supporting multiple languages](https://docs.astro.build/en/guides/internationalization/)
+Always ensure production builds succeed before considering any task complete.
