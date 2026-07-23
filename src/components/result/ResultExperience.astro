@@ -19,12 +19,40 @@ import DisclaimerNotice from './DisclaimerNotice.astro';
   <!-- Section 3: Quick Statistics -->
   <QuickStats />
 
-  <!-- Section 4: Information Notice -->
+  <!-- Section 4: Next Year CTA -->
+  <div class="flex justify-center pt-4">
+    <button
+      type="button"
+      id="next-year-btn"
+      disabled
+      aria-label="Check prediction for the next year"
+      class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-px font-semibold text-white shadow-lg shadow-indigo-500/20 transition-all duration-300 hover:shadow-indigo-500/30 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
+    >
+      <span class="flex items-center justify-center gap-2 rounded-[11px] bg-slate-950 px-6 py-3 text-sm transition-all duration-300">
+        <span id="next-year-spinner" class="hidden animate-spin h-4 w-4 text-white">
+          <svg class="w-full h-full" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </span>
+        <span id="next-year-text">Check Prediction for Next Year</span>
+        <svg class="w-4 h-4 text-indigo-300 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+        </svg>
+      </span>
+    </button>
+  </div>
+
+  <!-- Section 5: Information Notice -->
   <DisclaimerNotice />
 </section>
 
 <script>
   import type { PredictionApiResponse } from '../../lib/api';
+  import { generatePrediction } from '../../lib/api';
+
+  let lastBirthDate: string | null = null;
+  let currentYear: number = 2026;
 
   document.addEventListener('DOMContentLoaded', () => {
     const resultSection = document.getElementById('prediction-result-section');
@@ -52,6 +80,23 @@ import DisclaimerNotice from './DisclaimerNotice.astro';
     const statGirlMonth = document.getElementById('stat-girl-month');
     const statBoyMonth = document.getElementById('stat-boy-month');
 
+    // Next Year button elements
+    const nextYearBtn = document.getElementById('next-year-btn') as HTMLButtonElement | null;
+    const nextYearSpinner = document.getElementById('next-year-spinner');
+    const nextYearText = document.getElementById('next-year-text');
+
+    function setNextYearLoading(isLoading: boolean) {
+      if (!nextYearBtn || !nextYearSpinner || !nextYearText) return;
+      nextYearBtn.disabled = isLoading;
+      if (isLoading) {
+        nextYearSpinner.classList.remove('hidden');
+        nextYearText.textContent = 'Calculating...';
+      } else {
+        nextYearSpinner.classList.add('hidden');
+        nextYearText.textContent = 'Check Prediction for Next Year';
+      }
+    }
+
     window.addEventListener('gender-prediction-updated', (event: Event) => {
       const customEvent = event as CustomEvent<PredictionApiResponse>;
       const response = customEvent.detail;
@@ -60,6 +105,10 @@ import DisclaimerNotice from './DisclaimerNotice.astro';
 
       const { hero, bestGirl, bestBoy } = response.viewModels;
       const raw = response.raw;
+
+      // Store state for Next Year feature
+      lastBirthDate = raw.motherInfo.gregorianBirthDate;
+      currentYear = hero.targetYear;
 
       // 1. Update Header
       if (resTargetYear) resTargetYear.textContent = String(hero.targetYear);
@@ -88,7 +137,10 @@ import DisclaimerNotice from './DisclaimerNotice.astro';
       if (statGirlMonth && bestGirl) statGirlMonth.textContent = bestGirl.monthNameChinese;
       if (statBoyMonth && bestBoy) statBoyMonth.textContent = bestBoy.monthNameChinese;
 
-      // 5. Reveal result section with smooth CSS transition
+      // 5. Enable Next Year button
+      setNextYearLoading(false);
+
+      // 6. Reveal result section with smooth CSS transition
       resultSection.classList.remove('hidden');
 
       // Request animation frame for smooth opacity & transform transition
@@ -99,6 +151,32 @@ import DisclaimerNotice from './DisclaimerNotice.astro';
         // Smooth scroll to top of result section
         resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
+    });
+
+    // Next Year button click handler
+    nextYearBtn?.addEventListener('click', () => {
+      if (!lastBirthDate || nextYearBtn?.disabled) return;
+
+      const nextYear = currentYear + 1;
+      setNextYearLoading(true);
+
+      setTimeout(() => {
+        try {
+          const response = generatePrediction({
+            motherBirthDate: lastBirthDate!,
+            targetYear: nextYear,
+          });
+
+          window.dispatchEvent(
+            new CustomEvent('gender-prediction-updated', {
+              detail: response,
+            })
+          );
+        } catch (err: any) {
+          setNextYearLoading(false);
+          console.error('Next year prediction failed:', err);
+        }
+      }, 300);
     });
   });
 </script>
