@@ -1,0 +1,101 @@
+---
+
+const quickLinks = [
+  { href: '/', label: 'Home - Chinese Gender Predictor' },
+  { href: '/faq', label: 'Chinese Gender Predictor FAQ' },
+  { href: '/about', label: 'About This Chinese Gender Chart' },
+  { href: '/contact', label: 'Contact the Predictor Team' },
+];
+
+const legalLinks = [
+  { href: '/privacy-policy', label: 'Privacy Policy' },
+  { href: '/terms-and-conditions', label: 'Terms & Conditions' },
+  { href: '/medical-disclaimer', label: 'Medical Disclaimer' },
+];
+
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-gray-200 bg-white" role="contentinfo">
+  <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
+      <!-- Brand -->
+      <div class="space-y-4 sm:col-span-2 lg:col-span-1">
+        <a href="/" class="flex items-center gap-2.5 shrink-0" aria-label="Free Gender Predictor home">
+        <img
+          src="/logo-footer.webp"
+          alt="Free Gender Predictor Logo"
+          width={64}
+          height={64}
+          class="h-8 w-auto"
+          loading="eager"
+          decoding="async"
+        />
+      </a>
+        <p class="text-sm leading-relaxed text-gray-500 max-w-xs">
+          A traditional Chinese Gender Prediction Chart tool for entertainment and educational purposes.
+        </p>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="space-y-4">
+        <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-400">Quick Links</h3>
+        <ul class="space-y-2.5" role="list">
+          {quickLinks.map((link) => (
+            <li>
+              <a href={link.href} class="text-sm text-gray-500 transition-colors hover:text-pink-600 duration-200">
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Legal -->
+      <div class="space-y-4">
+        <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-400">Legal</h3>
+        <ul class="space-y-2.5" role="list">
+          {legalLinks.map((link) => (
+            <li>
+              <a href={link.href} class="text-sm text-gray-500 transition-colors hover:text-pink-600 duration-200">
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Disclaimer -->
+      <div class="space-y-4">
+        <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-400">Disclaimer</h3>
+        <p class="text-xs leading-relaxed text-gray-500">
+          This tool is for entertainment purposes only and should not be considered medically accurate.
+        </p>
+      </div>
+    </div>
+
+    <!-- Cross-Site Health Tools -->
+    <div class="mt-12 border-t border-gray-200 pt-8">
+      <div class="text-center space-y-2">
+        <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-400">Our Other Health Tools</h3>
+        <p class="text-xs text-gray-500 max-w-xl mx-auto leading-relaxed">
+          Plan your family with confidence using our
+          <a
+            href="https://accurateovulationcalculator.com"
+            rel="noopener noreferrer"
+            class="text-pink-600 hover:text-pink-500 underline underline-offset-2 transition-colors font-medium"
+          >Accurate Ovulation Calculator</a>.
+          Track your ovulation dates, identify your fertile window, estimate your due date,
+          and calculate when to take a pregnancy test.
+        </p>
+      </div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="mt-10 border-t border-gray-200 pt-6">
+      <p class="text-center text-xs text-gray-400">
+        &copy; {year} Free Gender Predictor. All Rights Reserved.
+      </p>
+    </div>
+  </div>
+</footer>

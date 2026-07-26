@@ -1,25 +1,21 @@
----
-// CalendarSection.astro
----
-
 <section
   id="calendar-section"
   aria-label="12-Month Prediction Calendar"
   class="hidden opacity-0 translate-y-6 transition-all duration-700 ease-out py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-10"
 >
-  <div class="text-center max-w-3xl mx-auto space-y-3">
-    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 backdrop-blur-md">
-      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+  <div class="text-center max-w-3xl mx-auto space-y-4">
+    <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full text-xs font-semibold tracking-wide bg-blue-50 border border-blue-200 text-blue-700">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
       </svg>
       <span>Full Lunar Calendar Breakdown</span>
     </div>
 
-    <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+    <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
       12-Month Prediction Calendar
     </h2>
 
-    <p class="text-sm text-slate-400 max-w-xl mx-auto">
+    <p class="text-sm text-gray-500 max-w-xl mx-auto leading-relaxed">
       Monthly gender predictions based on the traditional Qing Gong Biao lunar calendar algorithm
     </p>
   </div>
@@ -35,6 +31,20 @@
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
+
+  const MONTH_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  function formatDateStr(dateStr: string): string {
+    const [y, m, d] = dateStr.split('-');
+    return `${MONTH_SHORT[parseInt(m, 10) - 1]} ${d}, ${y}`;
+  }
+
+  function formatDateRange(range: string): string {
+    const parts = range.split(/ ~ | to /);
+    if (parts.length !== 2) return range;
+
+    return `${formatDateStr(parts[0])} \u2013 ${formatDateStr(parts[1])}`;
+  }
 
   document.addEventListener('DOMContentLoaded', () => {
     const section = document.getElementById('calendar-section') as HTMLElement | null;
@@ -53,38 +63,42 @@
         .map((m) => {
           const monthLabel = MONTH_LABELS[m.monthIndex - 1] ?? '';
           const isGirl = m.predictedGender === 'girl';
-          const genderEmoji = isGirl ? '👧' : '👦';
+          const genderIcon = isGirl
+            ? `<svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>`
+            : `<svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>`;
 
           return `
-            <div role="listitem" class="relative overflow-hidden rounded-2xl glass-panel p-5 sm:p-6 border transition-all duration-300 ${isGirl ? 'border-pink-500/20 hover:border-pink-500/40 bg-gradient-to-b from-pink-950/20' : 'border-indigo-500/20 hover:border-indigo-500/40 bg-gradient-to-b from-indigo-950/20'} to-slate-900/60">
-              <div class="flex items-center justify-between mb-3 gap-2">
-                <h3 class="text-lg font-bold text-white tracking-tight">${monthLabel}</h3>
-                <span class="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold ${isGirl ? 'bg-pink-500/20 text-pink-300 border border-pink-500/30' : 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30'}">
-                  <span aria-hidden="true">${genderEmoji}</span>
-                  ${m.predictedGenderLabel}
-                </span>
-              </div>
-
-              <div class="space-y-2">
-                <div class="flex items-center justify-between text-xs">
-                  <span class="text-slate-400 font-medium">${m.lunarMonthNameChinese}</span>
-                  <span class="text-slate-500">Lunar Month ${m.lunarMonthNumber}</span>
+            <div role="listitem" class="relative overflow-hidden rounded-2xl bg-white border transition-all duration-300 card-hover ${isGirl ? 'border-pink-200 hover:border-pink-300 border-l-4 border-l-pink-400' : 'border-blue-200 hover:border-blue-300 border-l-4 border-l-blue-400'}" style="box-shadow: 0 1px 3px 0 rgba(0,0,0,0.06), 0 1px 2px -1px rgba(0,0,0,0.04);">
+              <div class="p-5 sm:p-6">
+                <div class="flex items-center justify-between mb-4 gap-2">
+                  <h3 class="text-base font-bold text-gray-900 tracking-tight">${monthLabel}</h3>
+                  <span class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold ${isGirl ? 'bg-pink-50 text-pink-700 border border-pink-200' : 'bg-blue-50 text-blue-700 border border-blue-200'}">
+                    ${genderIcon}
+                    ${m.predictedGenderLabel}
+                  </span>
                 </div>
 
-                <div class="text-sm font-semibold text-slate-200 bg-slate-800/50 rounded-lg px-3 py-2 border border-white/5">
-                  ${m.gregorianDisplayRange}
-                </div>
-
-                <div class="flex items-center gap-2 pt-1">
-                  <div class="flex-1 h-2 rounded-full bg-slate-700/50 overflow-hidden" role="progressbar" aria-valuenow="${m.scorePercentage}" aria-valuemin="0" aria-valuemax="100" aria-label="${m.scorePercentage}% suitability">
-                    <div class="h-full rounded-full transition-all duration-500 ${isGirl ? 'bg-pink-500' : 'bg-indigo-500'}" style="width: ${m.scorePercentage}%"></div>
+                <div class="space-y-2.5">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="text-gray-500 font-medium">Lunar Month ${m.lunarMonthNumber}</span>
+                    <span class="text-gray-400">${m.isLeapMonth ? 'Leap Month' : ''}</span>
                   </div>
-                  <span class="text-xs font-bold text-slate-300 shrink-0 w-10 text-right">${m.scorePercentage}%</span>
-                </div>
 
-                <p class="text-xs text-slate-400 leading-relaxed pt-1 border-t border-white/5">
-                  ${m.recommendationText}
-                </p>
+                  <div class="text-sm font-semibold text-gray-700 bg-gray-50 rounded-lg px-3.5 py-2.5 border border-gray-200">
+                    ${formatDateRange(m.gregorianDisplayRange)}
+                  </div>
+
+                  <div class="flex items-center gap-2.5 pt-1">
+                    <div class="flex-1 h-2 rounded-full bg-gray-100 overflow-hidden" role="progressbar" aria-valuenow="${m.scorePercentage}" aria-valuemin="0" aria-valuemax="100" aria-label="${m.scorePercentage}% suitability">
+                      <div class="h-full rounded-full transition-all duration-500 ${isGirl ? 'bg-gradient-to-r from-pink-400 to-pink-300' : 'bg-gradient-to-r from-blue-400 to-blue-300'}" style="width: ${m.scorePercentage}%"></div>
+                    </div>
+                    <span class="text-xs font-bold text-gray-600 shrink-0 w-10 text-right">${m.scorePercentage}%</span>
+                  </div>
+
+                  <p class="text-xs text-gray-500 leading-relaxed pt-2 border-t border-gray-100">
+                    ${m.recommendationText}
+                  </p>
+                </div>
               </div>
             </div>
           `;

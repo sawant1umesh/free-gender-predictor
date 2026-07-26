@@ -1,27 +1,25 @@
----
-// ResultHeader.astro
----
-
-<div class="text-center max-w-3xl mx-auto space-y-4">
-  <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 backdrop-blur-md">
-    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+<div class="text-center max-w-3xl mx-auto space-y-5">
+  <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full text-xs font-semibold tracking-wide bg-emerald-50 border border-emerald-200 text-emerald-700">
+    <span class="relative flex h-2 w-2">
+      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+      <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+    </span>
     <span>Prediction Complete</span>
   </div>
 
-  <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+  <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight leading-tight">
     Your Gender Prediction Results
   </h2>
 
-  <!-- Target Year & Mother Lunar Age Badges -->
-  <div class="flex flex-wrap items-center justify-center gap-3 pt-2 text-sm">
-    <div class="px-4 py-2 rounded-xl bg-slate-800/80 border border-white/10 text-slate-200 font-medium">
-      Target Year: <span id="res-target-year" class="font-bold text-white">2026</span>
+  <div class="flex flex-wrap items-center justify-center gap-3 pt-3 text-sm">
+    <div class="px-4 py-2.5 rounded-xl bg-white border border-gray-200 text-gray-600 font-medium shadow-sm">
+      Target Year: <span id="res-target-year" class="font-bold text-gray-900">2026</span>
     </div>
-    <div class="px-4 py-2 rounded-xl bg-slate-800/80 border border-white/10 text-slate-200 font-medium">
-      Mother DOB: <span id="res-mother-dob" class="font-bold text-white">--</span>
+    <div class="px-4 py-2.5 rounded-xl bg-white border border-gray-200 text-gray-600 font-medium shadow-sm">
+      Mother DOB: <span id="res-mother-dob" class="font-bold text-gray-900">--</span>
     </div>
-    <div class="px-4 py-2 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 font-medium">
-      Chinese Lunar Age: <span id="res-lunar-age" class="font-bold text-white">--</span> (虚岁)
+    <div class="px-4 py-2.5 rounded-xl bg-pink-50 border border-pink-200 text-pink-700 font-medium">
+      Chinese Lunar Age: <span id="res-lunar-age" class="font-bold text-pink-800">--</span>
     </div>
   </div>
 </div>

@@ -1,0 +1,395 @@
+---
+// ConceptionPredictor.astro
+// Reuses existing prediction engine helpers without duplicating business logic
+---
+
+<section
+  id="conception-predictor-section"
+  aria-label="Chinese Gender Predictor by Conception Date"
+  class="py-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto"
+>
+  <div class="space-y-10">
+    <!-- Section Header -->
+    <div class="text-center max-w-2xl mx-auto space-y-4">
+      <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full text-xs font-semibold tracking-wide bg-pink-50 border border-pink-200 text-pink-700">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        </svg>
+        <span>Quick Single Month Prediction</span>
+      </div>
+
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
+        Chinese Gender Predictor
+      </h2>
+
+      <p class="text-sm text-gray-500 max-w-xl mx-auto leading-relaxed">
+        Enter the mother's date of birth and the estimated conception date for an instant prediction based on the traditional Qing Gong Biao chart.
+      </p>
+    </div>
+
+    <!-- Calculator Form Card -->
+    <div class="card-light-elevated rounded-2xl p-6 sm:p-8 w-full max-w-lg mx-auto">
+      <form id="conception-form" novalidate class="space-y-5">
+        <!-- Mother's DOB -->
+        <div>
+          <label for="conception-mother-dob" class="block text-sm font-semibold text-gray-700 mb-2.5">
+            Mother's Date of Birth <span class="text-pink-500" aria-hidden="true">*</span>
+          </label>
+          <div class="relative rounded-xl">
+            <input
+              type="date"
+              id="conception-mother-dob"
+              name="motherDob"
+              required
+              aria-required="true"
+              aria-invalid="false"
+              aria-describedby="conception-dob-error-msg"
+              class="w-full bg-white border border-gray-200 text-gray-900 text-base rounded-xl px-4 py-3.5 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500/40 focus:border-pink-400 transition-all duration-200 hover:border-gray-300"
+            />
+          </div>
+          <p id="conception-dob-error-msg" aria-live="polite" class="hidden mt-2 text-xs font-medium text-red-500 flex items-center gap-1.5">
+            <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <span id="conception-dob-error-text">Please enter a valid birth date.</span>
+          </p>
+          <div id="conception-age-error-msg" aria-live="polite" class="hidden mt-3 rounded-xl bg-amber-50 border border-amber-200 p-4">
+            <div class="flex items-start gap-3">
+              <div class="p-1.5 rounded-full bg-amber-100 text-amber-600 shrink-0 mt-0.5">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-sm font-semibold text-amber-800">You must be at least 18 years old.</h3>
+                <p class="text-xs text-amber-700 mt-1 leading-relaxed">This calculator is intended for adults aged 18 years and older. Please enter a valid date of birth.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Conception Date -->
+        <div>
+          <label for="conception-date" class="block text-sm font-semibold text-gray-700 mb-2.5">
+            Estimated Conception Date <span class="text-pink-500" aria-hidden="true">*</span>
+          </label>
+          <div class="relative rounded-xl">
+            <input
+              type="date"
+              id="conception-date"
+              name="conceptionDate"
+              required
+              aria-required="true"
+              aria-invalid="false"
+              aria-describedby="conception-date-error-msg"
+              class="w-full bg-white border border-gray-200 text-gray-900 text-base rounded-xl px-4 py-3.5 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500/40 focus:border-pink-400 transition-all duration-200 hover:border-gray-300"
+            />
+          </div>
+          <p id="conception-date-error-msg" aria-live="polite" class="hidden mt-2 text-xs font-medium text-red-500 flex items-center gap-1.5">
+            <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <span id="conception-date-error-text">Please enter a valid conception date.</span>
+          </p>
+        </div>
+
+        <button
+          type="submit"
+          id="conception-submit-btn"
+          class="w-full relative group overflow-hidden rounded-xl font-semibold text-white shadow-lg shadow-pink-500/20 transition-all duration-300 hover:shadow-pink-500/35 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 focus:ring-offset-white btn-primary"
+        >
+          <span class="relative z-10 flex items-center justify-center gap-2.5 rounded-[11px] px-6 py-3.5 text-base font-semibold transition-all duration-300">
+            <span id="conception-btn-spinner" class="hidden animate-spin h-5 w-5 text-white">
+              <svg class="w-full h-full" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </span>
+            <span id="conception-btn-text">Predict Gender</span>
+            <svg id="conception-btn-arrow" class="w-5 h-5 text-white/80 group-hover:translate-x-0.5 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </span>
+        </button>
+
+        <div class="flex items-center justify-center gap-2 pt-2 text-xs text-gray-400 font-medium">
+          <svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+          <span>No personal data is stored. 100% private.</span>
+        </div>
+      </form>
+    </div>
+
+    <!-- Result Card -->
+    <div
+      id="conception-result"
+      class="hidden opacity-0 translate-y-6 transition-all duration-700 ease-out w-full max-w-lg mx-auto"
+    >
+      <div class="card-light-elevated rounded-2xl p-6 sm:p-8">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-6 pb-5 border-b border-gray-100">
+          <div class="flex items-center gap-3.5">
+            <div id="result-gender-icon" class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl bg-blue-100 border border-blue-200">
+              👦
+            </div>
+            <div>
+              <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">Predicted Gender</p>
+              <h3 id="result-gender-label" class="text-2xl font-extrabold text-gray-900 tracking-tight">Boy</h3>
+            </div>
+          </div>
+          <span id="result-confidence" class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-pink-50 text-pink-700 border border-pink-200">
+            Chart Based
+          </span>
+        </div>
+
+        <!-- Details Grid -->
+        <div class="grid grid-cols-2 gap-4 mb-6">
+          <div class="rounded-xl bg-gray-50 border border-gray-200 p-4 space-y-1.5">
+            <p class="text-[10px] text-gray-500 font-semibold uppercase tracking-wider">Lunar Age</p>
+            <p id="result-lunar-age" class="text-lg font-bold text-gray-900">--</p>
+          </div>
+          <div class="rounded-xl bg-gray-50 border border-gray-200 p-4 space-y-1.5">
+            <p class="text-[10px] text-gray-500 font-semibold uppercase tracking-wider">Lunar Month</p>
+            <p id="result-lunar-month" class="text-lg font-bold text-gray-900">--</p>
+          </div>
+          <div class="rounded-xl bg-gray-50 border border-gray-200 p-4 space-y-1.5 col-span-2">
+            <p class="text-[10px] text-gray-500 font-semibold uppercase tracking-wider">Gregorian Conception Date</p>
+            <p id="result-gregorian-date" class="text-lg font-bold text-gray-900">--</p>
+          </div>
+        </div>
+
+        <!-- Explanation -->
+        <div class="rounded-xl bg-gray-50 border border-gray-200 p-4 mb-4">
+          <p id="result-explanation" class="text-xs text-gray-600 leading-relaxed">
+            Based on the mother's lunar age and the lunar month of conception, the traditional chart predicts a Boy.
+          </p>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="rounded-xl bg-amber-50 border border-amber-200 p-3.5 flex items-start gap-2.5">
+          <svg class="w-4 h-4 shrink-0 mt-0.5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <p class="text-xs text-amber-700 leading-relaxed">
+            This prediction is for entertainment purposes only. Based on the traditional Qing Gong Biao chart with no scientific validation. Always consult a healthcare provider for medical advice.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { formatLunarMonth } from '../../lib/calendar/utils';
+  import { isEligibleMotherAge } from '../../lib/calendar/validation';
+
+  const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+  let preloaded = false;
+
+  function preloadEngine() {
+    if (preloaded) return;
+    preloaded = true;
+    Promise.all([
+      import('../../lib/calendar/age'),
+      import('../../lib/calendar/lunar'),
+      import('../../lib/predictor/helpers'),
+    ]).catch(() => { preloaded = false; });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('conception-form') as HTMLFormElement | null;
+    const dobInput = document.getElementById('conception-mother-dob') as HTMLInputElement | null;
+    const conceptionInput = document.getElementById('conception-date') as HTMLInputElement | null;
+    const submitBtn = document.getElementById('conception-submit-btn') as HTMLButtonElement | null;
+    const btnSpinner = document.getElementById('conception-btn-spinner');
+    const btnArrow = document.getElementById('conception-btn-arrow');
+    const btnText = document.getElementById('conception-btn-text');
+    const dobErrorMsg = document.getElementById('conception-dob-error-msg');
+    const dobErrorText = document.getElementById('conception-dob-error-text');
+    const dateErrorMsg = document.getElementById('conception-date-error-msg');
+    const dateErrorText = document.getElementById('conception-date-error-text');
+    const ageErrorMsg = document.getElementById('conception-age-error-msg');
+    const resultSection = document.getElementById('conception-result');
+    const genderIcon = document.getElementById('result-gender-icon');
+    const genderLabel = document.getElementById('result-gender-label');
+    const lunarAgeEl = document.getElementById('result-lunar-age');
+    const lunarMonthEl = document.getElementById('result-lunar-month');
+    const gregorianDateEl = document.getElementById('result-gregorian-date');
+    const explanationEl = document.getElementById('result-explanation');
+    const confidenceBadge = document.getElementById('result-confidence');
+
+    if (!form || !dobInput || !conceptionInput || !submitBtn) return;
+
+    const now = new Date();
+    const todayStr = now.toISOString().split('T')[0];
+
+    // Preload during idle time instead of on first interaction
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => preloadEngine(), { timeout: 3000 });
+    } else {
+      setTimeout(() => preloadEngine(), 1500);
+    }
+    dobInput.setAttribute('max', todayStr);
+    conceptionInput.setAttribute('max', todayStr);
+
+    function clearAllErrors() {
+      if (dobErrorMsg && dobInput) {
+        dobErrorMsg.classList.add('hidden');
+        dobInput.setAttribute('aria-invalid', 'false');
+        dobInput.classList.remove('border-red-400', 'focus:ring-red-400/50');
+      }
+      if (dateErrorMsg && conceptionInput) {
+        dateErrorMsg.classList.add('hidden');
+        conceptionInput.setAttribute('aria-invalid', 'false');
+        conceptionInput.classList.remove('border-red-400', 'focus:ring-red-400/50');
+      }
+      if (ageErrorMsg) {
+        ageErrorMsg.classList.add('hidden');
+      }
+    }
+
+    function showError(input: HTMLInputElement, errorMsgEl: HTMLElement | null, textEl: HTMLElement | null, message: string) {
+      if (textEl) textEl.textContent = message;
+      if (errorMsgEl) errorMsgEl.classList.remove('hidden');
+      input.setAttribute('aria-invalid', 'true');
+      input.classList.add('border-red-400', 'focus:ring-red-400/50');
+    }
+
+    function validateDate(value: string): Date | null {
+      if (!value) return null;
+      const dateParts = value.split('-');
+      if (dateParts.length !== 3) return null;
+      const date = new Date(value);
+      if (isNaN(date.getTime())) return null;
+      return date;
+    }
+
+    function setLoading(isLoading: boolean) {
+      if (!submitBtn || !btnSpinner || !btnText || !btnArrow || !dobInput || !conceptionInput) return;
+      submitBtn.disabled = isLoading;
+      dobInput.disabled = isLoading;
+      conceptionInput.disabled = isLoading;
+      if (isLoading) {
+        btnSpinner.classList.remove('hidden');
+        btnArrow.classList.add('hidden');
+        btnText.textContent = 'Predicting...';
+        submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
+      } else {
+        btnSpinner.classList.add('hidden');
+        btnArrow.classList.remove('hidden');
+        btnText.textContent = 'Predict Gender';
+        submitBtn.classList.remove('opacity-80', 'cursor-not-allowed');
+      }
+    }
+
+    dobInput.addEventListener('input', clearAllErrors);
+    conceptionInput.addEventListener('input', clearAllErrors);
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearAllErrors();
+
+      const dobValue = dobInput.value.trim();
+      const conceptionValue = conceptionInput.value.trim();
+      let hasError = false;
+
+      if (!dobValue) {
+        showError(dobInput, dobErrorMsg, dobErrorText, "Please enter Mother's Date of Birth.");
+        dobInput.focus();
+        hasError = true;
+      } else {
+        const dobDate = validateDate(dobValue);
+        if (!dobDate) {
+          showError(dobInput, dobErrorMsg, dobErrorText, "The entered birth date is invalid.");
+          dobInput.focus();
+          hasError = true;
+        }
+      }
+      if (hasError) return;
+
+      if (!conceptionValue) {
+        showError(conceptionInput, dateErrorMsg, dateErrorText, "Please enter the estimated conception date.");
+        conceptionInput.focus();
+        return;
+      }
+      const conceptionDate = validateDate(conceptionValue);
+      if (!conceptionDate) {
+        showError(conceptionInput, dateErrorMsg, dateErrorText, "The entered conception date is invalid.");
+        conceptionInput.focus();
+        return;
+      }
+
+      const dobDate = validateDate(dobValue)!;
+      if (conceptionDate <= dobDate) {
+        showError(conceptionInput, dateErrorMsg, dateErrorText, "Conception date must be after the mother's date of birth.");
+        conceptionInput.focus();
+        return;
+      }
+
+      if (!isEligibleMotherAge(dobValue, conceptionValue)) {
+        if (resultSection) resultSection.classList.add('hidden');
+        if (ageErrorMsg) ageErrorMsg.classList.remove('hidden');
+        dobInput.focus();
+        return;
+      }
+
+      setLoading(true);
+
+      try {
+        const { calculateLunarAge } = await import('../../lib/calendar/age');
+        const { getLunarMonth } = await import('../../lib/calendar/lunar');
+        const { lookupGenderChart } = await import('../../lib/predictor/helpers');
+        const lunarAgeResult = calculateLunarAge(dobValue, conceptionValue);
+        const lunarMonth = getLunarMonth(conceptionValue);
+        const predictedGender = lookupGenderChart(lunarAgeResult.lunarAge, lunarMonth);
+
+        setLoading(false);
+
+        const formattedConceptionDate = `${MONTH_NAMES[conceptionDate.getMonth()]} ${conceptionDate.getDate()}, ${conceptionDate.getFullYear()}`;
+
+        const isBoy = predictedGender === 'boy';
+        const genderDisplay = isBoy ? 'Boy' : 'Girl';
+        const emoji = isBoy ? '👦' : '👧';
+        const accentColor = isBoy ? 'blue' : 'pink';
+
+        if (genderIcon) {
+          genderIcon.textContent = emoji;
+          genderIcon.className = `w-14 h-14 rounded-2xl flex items-center justify-center text-3xl bg-${accentColor}-100 border border-${accentColor}-200`;
+        }
+        if (genderLabel) {
+          genderLabel.textContent = genderDisplay;
+        }
+        if (confidenceBadge) {
+          confidenceBadge.textContent = 'Chart Based';
+          confidenceBadge.className = `px-3.5 py-1.5 rounded-full text-xs font-bold bg-${accentColor}-50 text-${accentColor}-700 border border-${accentColor}-200`;
+        }
+        if (lunarAgeEl) {
+          lunarAgeEl.textContent = String(lunarAgeResult.lunarAge);
+        }
+        if (lunarMonthEl) {
+          lunarMonthEl.textContent = formatLunarMonth(lunarMonth);
+        }
+        if (gregorianDateEl) {
+          gregorianDateEl.textContent = formattedConceptionDate;
+        }
+        if (explanationEl) {
+          explanationEl.textContent = `Based on the mother's lunar age (${lunarAgeResult.lunarAge}) and the lunar month of conception (${formatLunarMonth(lunarMonth)}), the traditional chart predicts a ${genderDisplay}.`;
+        }
+
+        if (resultSection) {
+          resultSection.classList.remove('hidden');
+          requestAnimationFrame(() => {
+            resultSection.classList.remove('opacity-0', 'translate-y-6');
+            resultSection.classList.add('opacity-100', 'translate-y-0');
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          });
+        }
+      } catch (err: any) {
+        setLoading(false);
+        showError(conceptionInput, dateErrorMsg, dateErrorText, err.message || 'Failed to calculate prediction. Please try again.');
+      }
+    });
+  });
+</script>

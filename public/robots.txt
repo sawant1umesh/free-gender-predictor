@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://freegenderpredictor.com/sitemap-index.xml

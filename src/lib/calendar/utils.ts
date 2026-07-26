@@ -1,12 +1,20 @@
 import type { DateInput, GregorianDate } from './types';
 
+const parsedDateCache = new Map<string, GregorianDate | null>();
+
+/**
+ * Returns the current Gregorian year.
+ */
+export function formatLunarMonth(lunarMonth: number): string {
+  return `Lunar Month ${lunarMonth}`;
+}
+
 /**
  * Returns the current Gregorian year.
  */
 export function getCurrentYear(): number {
   return new Date().getFullYear();
 }
-
 /**
  * Checks whether a given Gregorian year is a leap year.
  * Standard Gregorian leap year rule: divisible by 4, not 100 unless also divisible by 400.
@@ -34,10 +42,23 @@ export function getDaysInMonth(year: number, month: number): number {
 /**
  * Normalizes various date inputs (Date instance, YYYY-MM-DD string, or GregorianDate object)
  * into a structured GregorianDate object. Returns null if input cannot be parsed.
+ * Results are cached by string key to avoid redundant regex and object construction.
  */
 export function parseGregorianDate(input: DateInput): GregorianDate | null {
   if (!input) {
     return null;
+  }
+
+  // Cache string inputs by their literal value (most common case)
+  if (typeof input === 'string') {
+    const key = input.trim();
+    if (parsedDateCache.has(key)) {
+      return parsedDateCache.get(key)!;
+    }
+    const match = key.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})$/);
+    const result: GregorianDate | null = match ? { year: parseInt(match[1], 10), month: parseInt(match[2], 10), day: parseInt(match[3], 10) } : null;
+    parsedDateCache.set(key, result);
+    return result;
   }
 
   if (input instanceof Date) {
@@ -49,19 +70,6 @@ export function parseGregorianDate(input: DateInput): GregorianDate | null {
       month: input.getMonth() + 1,
       day: input.getDate(),
     };
-  }
-
-  if (typeof input === 'string') {
-    const trimmed = input.trim();
-    // Match YYYY-MM-DD or YYYY/MM/DD
-    const match = trimmed.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})$/);
-    if (!match) {
-      return null;
-    }
-    const year = parseInt(match[1], 10);
-    const month = parseInt(match[2], 10);
-    const day = parseInt(match[3], 10);
-    return { year, month, day };
   }
 
   if (typeof input === 'object' && input !== null) {

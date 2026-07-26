@@ -39,7 +39,8 @@ export function generateGenderPrediction(
   }
 
   // Calculate Mother's Chinese Lunar Age and Lunar Birth Year using Sprint 1 module
-  const lunarAgeResult = calculateLunarAge(motherBirthDate, referenceTargetDate);
+  // skipValidation=true because validateBirthDate was already called above
+  const lunarAgeResult = calculateLunarAge(motherBirthDate, referenceTargetDate, true);
   const formattedBirthDate = formatGregorianDate(motherBirthDate);
   const lunarBirthYear = lunarAgeResult.birthLunarYear;
   const lunarAge = lunarAgeResult.lunarAge;
@@ -68,7 +69,7 @@ export function generateGenderPrediction(
 
     // Calculate score & recommendation
     const score = calculateWindowScore(predictedGender, absMonth, isLeap);
-    const recommendation = getRecommendation(predictedGender, range.monthNameChinese);
+    const recommendation = getRecommendation(predictedGender, absMonth);
 
     // Build lunar month name display (e.g. "正月初一 - 正月廿九")
     const lunarMonthName = `${range.monthNameChinese}初一 - ${range.monthNameChinese}${range.dayCount === 30 ? '三十' : '廿九'}`;

@@ -1,29 +1,45 @@
----
-// QuickStats.astro
----
-
-<div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-  <div class="rounded-xl glass-panel p-4 text-center border border-white/5">
-    <div class="text-xs text-slate-400 font-medium">Months Analysed</div>
-    <div id="stat-total-months" class="text-2xl font-extrabold text-white mt-1">12</div>
-    <div class="text-[10px] text-slate-500 mt-0.5">Lunar Months</div>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4 lg:gap-5">
+  <div class="card-light rounded-xl p-5 text-center border border-gray-200 card-hover">
+    <div class="flex items-center justify-center w-9 h-9 rounded-lg bg-gray-100 border border-gray-200 mx-auto mb-3">
+      <svg class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      </svg>
+    </div>
+    <div class="text-xs text-gray-400 font-semibold tracking-wide uppercase">Months Analysed</div>
+    <div id="stat-total-months" class="text-2xl font-extrabold text-gray-900 mt-1.5">12</div>
+    <div class="text-[10px] text-gray-500 mt-0.5 font-medium">Lunar Months</div>
   </div>
 
-  <div class="rounded-xl glass-panel p-4 text-center border border-white/5">
-    <div class="text-xs text-slate-400 font-medium">Dominant Trend</div>
-    <div id="stat-trend" class="text-base sm:text-lg font-bold text-indigo-300 mt-1 truncate">--</div>
-    <div class="text-[10px] text-slate-500 mt-0.5">Year Overview</div>
+  <div class="card-light rounded-xl p-5 text-center border border-gray-200 card-hover">
+    <div class="flex items-center justify-center w-9 h-9 rounded-lg bg-blue-100 border border-blue-200 mx-auto mb-3">
+      <svg class="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+      </svg>
+    </div>
+    <div class="text-xs text-gray-400 font-semibold tracking-wide uppercase">Dominant Trend</div>
+    <div id="stat-trend" class="text-base sm:text-lg font-bold text-blue-700 mt-1.5 truncate">--</div>
+    <div class="text-[10px] text-gray-500 mt-0.5 font-medium">Year Overview</div>
   </div>
 
-  <div class="rounded-xl glass-panel p-4 text-center border border-white/5">
-    <div class="text-xs text-slate-400 font-medium">Best Girl Month</div>
-    <div id="stat-girl-month" class="text-lg font-bold text-pink-300 mt-1">--</div>
-    <div class="text-[10px] text-slate-500 mt-0.5">Optimal Window</div>
+  <div class="card-light rounded-xl p-5 text-center border border-gray-200 card-hover">
+    <div class="flex items-center justify-center w-9 h-9 rounded-lg bg-pink-100 border border-pink-200 mx-auto mb-3">
+      <svg class="w-4 h-4 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+      </svg>
+    </div>
+    <div class="text-xs text-gray-400 font-semibold tracking-wide uppercase">Best Girl Month</div>
+    <div id="stat-girl-month" class="text-sm sm:text-base font-bold text-pink-700 mt-1.5">--</div>
+    <div class="text-[10px] text-gray-500 mt-0.5 font-medium">Optimal Window</div>
   </div>
 
-  <div class="rounded-xl glass-panel p-4 text-center border border-white/5">
-    <div class="text-xs text-slate-400 font-medium">Best Boy Month</div>
-    <div id="stat-boy-month" class="text-lg font-bold text-indigo-300 mt-1">--</div>
-    <div class="text-[10px] text-slate-500 mt-0.5">Optimal Window</div>
+  <div class="card-light rounded-xl p-5 text-center border border-gray-200 card-hover">
+    <div class="flex items-center justify-center w-9 h-9 rounded-lg bg-blue-100 border border-blue-200 mx-auto mb-3">
+      <svg class="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+      </svg>
+    </div>
+    <div class="text-xs text-gray-400 font-semibold tracking-wide uppercase">Best Boy Month</div>
+    <div id="stat-boy-month" class="text-sm sm:text-base font-bold text-blue-700 mt-1.5">--</div>
+    <div class="text-[10px] text-gray-500 mt-0.5 font-medium">Optimal Window</div>
   </div>
 </div>

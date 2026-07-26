@@ -54,6 +54,26 @@ export function validateGregorianDate(input: DateInput): DateValidationResult {
 }
 
 /**
+ * Checks whether the mother meets the minimum age requirement (18 years).
+ * Returns true if age >= 18 at the reference date, false otherwise.
+ *
+ * @param dob Mother's date of birth
+ * @param referenceDate Date to calculate age against (e.g. target year start, conception date)
+ */
+export function isEligibleMotherAge(dob: DateInput, referenceDate: DateInput): boolean {
+  const dobParsed = parseGregorianDate(dob);
+  const refParsed = parseGregorianDate(referenceDate);
+  if (!dobParsed || !refParsed) return false;
+
+  let age = refParsed.year - dobParsed.year;
+  const monthDiff = refParsed.month - dobParsed.month;
+  if (monthDiff < 0 || (monthDiff === 0 && refParsed.day < dobParsed.day)) {
+    age--;
+  }
+  return age >= 18;
+}
+
+/**
  * Validates a birth date, ensuring it is a valid Gregorian date and not in the future.
  *
  * @param birthInput Date input for birth date

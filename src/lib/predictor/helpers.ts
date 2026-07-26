@@ -1,5 +1,6 @@
 import { Lunar, LunarYear } from 'lunar-javascript';
 import type { LunarMonth } from 'lunar-javascript';
+import { formatLunarMonth } from '../calendar/utils';
 import { CHINESE_MONTH_NAMES, MAX_LUNAR_AGE, MIN_LUNAR_AGE, QING_GONG_BIAO_MATRIX } from './constants';
 import type { PredictedGender } from './types';
 
@@ -77,7 +78,7 @@ export function calculateWindowScore(gender: PredictedGender, lunarMonth: number
 /**
  * Formats a recommendation sentence for a predicted gender.
  */
-export function getRecommendation(gender: PredictedGender, monthNameChinese: string): string {
+export function getRecommendation(gender: PredictedGender, lunarMonth: number): string {
   const genderTitle = gender === 'boy' ? 'Boy' : 'Girl';
-  return `Optimal conception window for conceiving a ${genderTitle} during ${monthNameChinese}.`;
+  return `Optimal conception window for conceiving a ${genderTitle} during ${formatLunarMonth(lunarMonth)}.`;
 }

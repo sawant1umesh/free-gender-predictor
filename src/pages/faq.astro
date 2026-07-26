@@ -1,0 +1,145 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const faqs = [
+  {
+    question: "What is the Chinese Gender Predictor?",
+    answer: "The Chinese Gender Predictor is a traditional chart believed to have originated over 700 years ago in China. It uses the mother's lunar age and the lunar month of conception to estimate whether a baby will be a boy or a girl. The chart is based on ancient Chinese philosophy involving Yin and Yang and the five elements. Today, it is used as a fun cultural tradition rather than a medical tool.",
+  },
+  {
+    question: "How does the Chinese Gender Predictor work?",
+    answer: "The predictor uses two inputs: the mother's Chinese lunar age and the lunar month of conception. These values are cross-referenced on a grid to produce a prediction. The Chinese lunar age is typically one year higher than the Western age because it counts time in the womb. Our calculator converts your Gregorian dates to lunar dates automatically and maps them to the traditional chart.",
+  },
+  {
+    question: "Is the Chinese Gender Predictor accurate?",
+    answer: "Anecdotal reports suggest the chart is correct roughly 50% of the time, which is essentially the same probability as a random guess. There is no scientific evidence supporting its accuracy. Many families enjoy comparing results after birth, but the predictions should be treated as entertainment, not a reliable indicator of baby gender.",
+  },
+  {
+    question: "Is the Chinese Gender Predictor scientifically proven?",
+    answer: "No, the Chinese Gender Predictor is not scientifically proven. Biological sex is determined by chromosomes at conception, and no calendar-based method can influence or predict this. Scientific studies have shown that external factors like the mother's age or lunar month do not affect which sperm fertilizes the egg.",
+  },
+  {
+    question: "Can the Chinese Gender Predictor predict twins?",
+    answer: "The Chinese Gender Predictor is designed for single pregnancies and does not account for multiple births. Twins result from separate fertilization events, which the chart cannot predict. If you are expecting twins or multiples, rely on medical imaging and your healthcare provider for accurate information.",
+  },
+  {
+    question: "Can I use the predictor before I am pregnant?",
+    answer: "Yes, you can use the predictor before pregnancy as a planning tool. Many parents use it during family planning to explore the chart's predictions for different conception months. Keep in mind that the results are purely for entertainment and cultural curiosity, not a guarantee of outcome.",
+  },
+  {
+    question: "Does the lunar calendar affect the prediction?",
+    answer: "Yes, the lunar calendar is central to the prediction. The chart maps the mother's lunar age against the lunar month of conception, not the Gregorian calendar month. Each lunar month begins on a new moon and lasts about 29.5 days. Our calculator handles the date conversion automatically so you can enter your regular Gregorian dates.",
+  },
+  {
+    question: "Is it safe to use the Chinese Gender Predictor?",
+    answer: "The predictor is completely safe to use. It is a digital tool that makes no medical claims and performs no physical measurements. It simply applies a traditional chart to provide an entertaining guess. Always consult your healthcare provider for medical advice about pregnancy and gender determination.",
+  },
+  {
+    question: "Is this calculator just for fun?",
+    answer: "Yes, this calculator is intended for entertainment and educational purposes only. It is based on a traditional cultural chart and should not be used to make medical decisions. Enjoy exploring the tradition, but rely on your doctor and medical tests for accurate gender information.",
+  },
+  {
+    question: "When can an ultrasound confirm my baby's gender?",
+    answer: "A mid-pregnancy anatomy scan, typically performed between 18 and 22 weeks, is the most common way to determine gender via ultrasound. A cell-free DNA blood test can detect the presence of a Y chromosome as early as 10 weeks. For the most reliable results, consult your healthcare provider about available testing options.",
+  },
+  {
+    question: "Why do different sources give different predictions?",
+    answer: "Different calculators may produce different results because of how they convert Gregorian dates to lunar dates and calculate the Chinese lunar age. Some tools use slightly different chart versions or rounding methods. This calculator uses the authentic Qing Gong Biao chart and precise lunar calendar calculations for consistency.",
+  },
+  {
+    question: "Does the mother's age affect the prediction?",
+    answer: "Yes, the mother's Chinese lunar age is one of the two key inputs in the chart. The prediction changes depending on which lunar age row you reference. However, this does not mean age scientifically affects gender — it is simply how the traditional chart is structured.",
+  },
+  {
+    question: "Can I use this for future pregnancies?",
+    answer: "Yes, you can use the calculator for any pregnancy. Simply enter the mother's date of birth and the target year you are planning to conceive. The tool will calculate the correct lunar age and month for that time period. You can also check predictions for multiple years in advance.",
+  },
+  {
+    question: "Should I rely on this prediction for family planning?",
+    answer: "No, you should not rely on this prediction for family planning or medical decisions. The chart is a cultural tradition with no scientific backing. For reliable gender information, use medical methods such as ultrasound or genetic testing, and always consult your healthcare provider.",
+  },
+  {
+    question: "Is this calculator free to use?",
+    answer: "Yes, this Chinese Gender Predictor calculator is completely free. There are no hidden fees, sign-ups, or premium tiers. You can use it unlimited times, check predictions for any year, and explore the 12-month calendar without any cost.",
+  },
+];
+
+const faqSchema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.answer,
+    },
+  })),
+});
+---
+
+<BaseLayout
+  title="Chinese Gender Predictor FAQ - 15 Common Questions Answered"
+  description="Find answers to 15 common questions about the Chinese Gender Predictor, how the Chinese Gender Chart works, its accuracy, lunar age calculation, and more."
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={faqSchema} />
+  </Fragment>
+
+  <section class="py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-12">
+    <div class="text-center space-y-4">
+      <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">Frequently Asked Questions</h1>
+      <p class="text-gray-500 text-lg max-w-2xl mx-auto">
+        Quick answers about the <strong>Chinese Gender Predictor</strong> chart and how our <a href="/" class="text-pink-600 hover:text-pink-500 underline underline-offset-2 transition-colors">free gender predictor calculator</a> works.
+      </p>
+    </div>
+
+    <div class="space-y-3" id="faq-list">
+      {faqs.map((faq, i) => (
+        <div class="card-light rounded-xl border border-gray-200 overflow-hidden card-hover">
+          <h2 class="text-base sm:text-lg font-semibold text-gray-900 m-0">
+            <button
+              type="button"
+              class="faq-toggle flex w-full items-center justify-between p-5 sm:p-6 text-left gap-4"
+              aria-expanded="false"
+              aria-controls={`faq-answer-${i}`}
+            >
+              <span>{faq.question}</span>
+              <svg
+                class="h-5 w-5 shrink-0 text-gray-400 transition-transform duration-200 faq-chevron"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+                aria-hidden="true"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+          </h2>
+          <div
+            id={`faq-answer-${i}`}
+            class="faq-answer hidden px-5 sm:px-6 pb-5 sm:pb-6"
+            role="region"
+          >
+            <p class="text-gray-600 leading-relaxed text-sm">{faq.answer}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  document.querySelectorAll('.faq-toggle').forEach((button) => {
+    button.addEventListener('click', () => {
+      const expanded = button.getAttribute('aria-expanded') === 'true';
+      const answer = button.nextElementSibling as HTMLElement | null;
+      const chevron = button.querySelector('.faq-chevron') as SVGElement | null;
+
+      button.setAttribute('aria-expanded', String(!expanded));
+      answer?.classList.toggle('hidden');
+      chevron?.style.setProperty('transform', expanded ? '' : 'rotate(180deg)');
+    });
+  });
+</script>

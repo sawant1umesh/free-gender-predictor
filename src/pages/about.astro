@@ -1,0 +1,94 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="About the Chinese Gender Predictor | How Our Free Tool Works"
+  description="Learn how our free Chinese Gender Predictor uses the traditional Qing Gong Biao chart to estimate baby gender. Discover the history and science behind this ancient Chinese Gender Chart."
+>
+  <section class="py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-16">
+    <!-- Hero -->
+    <div class="text-center space-y-4">
+      <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">About Free Gender Predictor</h1>
+      <p class="text-gray-500 text-lg max-w-2xl mx-auto">
+        Exploring a centuries-old tradition with modern technology
+      </p>
+    </div>
+
+    <!-- Mission -->
+    <article class="space-y-5">
+      <h2 class="text-2xl font-bold text-gray-900">Our Mission</h2>
+      <p class="text-gray-600 leading-relaxed">
+        Our mission is to provide a free, accessible, and entertaining tool that connects expecting parents with the rich cultural history of the Chinese Gender Prediction Chart. We believe that pregnancy is a joyful journey, and exploring traditions from around the world can be a fun part of that experience.
+      </p>
+      <p class="text-gray-600 leading-relaxed">
+        We are committed to making this tool available to everyone, completely free of charge, with no sign-ups, no hidden fees, and no data collection. Your privacy and enjoyment are our top priorities.
+      </p>
+    </article>
+
+    <!-- How It Works -->
+    <article class="space-y-5">
+      <h2 class="text-2xl font-bold text-gray-900">How the Chinese Gender Predictor Works</h2>
+      <p class="text-gray-600 leading-relaxed">
+        The Chinese Gender Prediction Chart is a traditional tool believed to have originated over 700 years ago in China. It uses two key inputs to make a prediction:
+      </p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
+        <div class="card-light rounded-xl border border-gray-200 p-6 space-y-3 card-hover">
+          <div class="w-10 h-10 rounded-lg bg-pink-100 border border-pink-200 flex items-center justify-center text-pink-500">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900">Mother's Lunar Age</h3>
+          <p class="text-sm text-gray-500 leading-relaxed">
+            The mother's Chinese lunar age, which is typically one year higher than the Western age because it counts time spent in the womb as the first year of life.
+          </p>
+        </div>
+        <div class="card-light rounded-xl border border-gray-200 p-6 space-y-3 card-hover">
+          <div class="w-10 h-10 rounded-lg bg-blue-100 border border-blue-200 flex items-center justify-center text-blue-500">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900">Lunar Month of Conception</h3>
+          <p class="text-sm text-gray-500 leading-relaxed">
+            The lunar month in which conception takes place. The Chinese lunar calendar differs from the Gregorian calendar, with each month beginning on a new moon.
+          </p>
+        </div>
+      </div>
+      <p class="text-gray-600 leading-relaxed">
+        These values are cross-referenced on the traditional Qing Gong Biao chart to produce a prediction. Our calculator automates the Gregorian-to-lunar date conversion so you can simply enter your regular dates.
+      </p>
+    </article>
+
+    <!-- Educational Purpose -->
+    <article class="space-y-5">
+      <h2 class="text-2xl font-bold text-gray-900">Educational Purpose</h2>
+      <p class="text-gray-600 leading-relaxed">
+        This Chinese Gender Predictor is designed for educational and entertainment purposes. It provides insight into Chinese cultural traditions and the historical significance of the lunar calendar in family planning. Understanding how different cultures approach pregnancy and family can be a fascinating learning experience.
+      </p>
+      <p class="text-gray-600 leading-relaxed">
+        We encourage users to explore the rich history behind the Chinese Gender Chart while relying on modern medical science for actual gender determination. The chart is a window into cultural heritage, not a diagnostic tool. For more context, please read our <a href="/medical-disclaimer" class="text-pink-600 hover:text-pink-500 underline underline-offset-2 transition-colors">medical disclaimer</a>.
+      </p>
+    </article>
+
+    <!-- Our Commitment to Accuracy -->
+    <article class="space-y-5">
+      <h2 class="text-2xl font-bold text-gray-900">Our Commitment to Quality</h2>
+      <p class="text-gray-600 leading-relaxed">
+        We are committed to providing the most accurate Chinese Gender Predictor available online. Our tool uses the authentic Qing Gong Biao matrix with precise lunar calendar calculations powered by the lunar-javascript library. Every prediction is calculated using verified algorithms that faithfully reproduce the traditional Chinese baby gender prediction chart.
+      </p>
+      <p class="text-gray-600 leading-relaxed">
+        Unlike many other gender predictor calculators, we clearly communicate the entertainment nature of this tool. We believe in transparent, honest information so you can enjoy the tradition with full awareness of its limitations.
+      </p>
+    </article>
+
+    <!-- Disclaimer -->
+    <section class="card-light-elevated rounded-2xl p-6 sm:p-8 space-y-4 border-l-4 border-l-pink-400">
+      <h2 class="text-xl font-bold text-gray-900">Important Disclaimer</h2>
+      <p class="text-gray-600 leading-relaxed text-sm">
+        The Chinese Gender Predictor is <strong class="text-gray-900">not scientifically proven</strong> and should never be used as a substitute for medical advice. Biological sex is determined by chromosomes at conception, and no calendar-based method can influence or predict this. Always consult your healthcare provider for accurate information about your pregnancy.
+      </p>
+    </section>
+  </section>
+</BaseLayout>

@@ -13,19 +13,23 @@ import { validateBirthDate } from './validation';
  *
  * @param birthInput Gregorian birth date
  * @param targetInput Target reference date (defaults to current date)
+ * @param skipValidation If true, skips redundant validation (caller must guarantee valid inputs)
  * @returns LunarAgeResult containing birthLunarYear, targetLunarYear, and lunarAge
  */
 export function calculateLunarAge(
   birthInput: DateInput,
-  targetInput: DateInput = new Date()
+  targetInput: DateInput = new Date(),
+  skipValidation: boolean = false
 ): LunarAgeResult {
-  const validation = validateBirthDate(birthInput, targetInput);
-  if (!validation.isValid) {
-    throw new Error(`Invalid input for Lunar Age calculation: ${validation.errors.join('; ')}`);
+  if (!skipValidation) {
+    const validation = validateBirthDate(birthInput, targetInput);
+    if (!validation.isValid) {
+      throw new Error(`Invalid input for Lunar Age calculation: ${validation.errors.join('; ')}`);
+    }
   }
 
-  const birthLunarYear = getLunarYear(birthInput);
-  const targetLunarYear = getLunarYear(targetInput);
+  const birthLunarYear = getLunarYear(birthInput, skipValidation);
+  const targetLunarYear = getLunarYear(targetInput, skipValidation);
 
   const lunarAge = targetLunarYear - birthLunarYear + 1;
 

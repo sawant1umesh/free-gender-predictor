@@ -1,451 +1,323 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
 import HeroSection from '../components/hero/HeroSection.astro';
 import ResultExperience from '../components/result/ResultExperience.astro';
 import CalendarSection from '../components/calendar/CalendarSection.astro';
-import '../styles/global.css';
+import ConceptionPredictor from '../components/conception/ConceptionPredictor.astro';
+
+const faqItems = [
+  {
+    question: "What is the Chinese Gender Predictor?",
+    answer: "The Chinese Gender Predictor is a traditional chart believed to have originated over 700 years ago in China. It uses the mother's lunar age and the lunar month of conception to estimate whether a baby will be a boy or a girl. The chart is based on ancient Chinese philosophy involving Yin and Yang and the five elements. Today, it is used as a fun cultural tradition rather than a medical tool.",
+  },
+  {
+    question: "How does the Chinese Gender Predictor work?",
+    answer: "The predictor uses two inputs: the mother's Chinese lunar age and the lunar month of conception. These values are cross-referenced on a grid to produce a prediction. The Chinese lunar age is typically one year higher than the Western age because it counts time in the womb. Our calculator converts your Gregorian dates to lunar dates automatically and maps them to the traditional chart.",
+  },
+  {
+    question: "Is the Chinese Gender Predictor accurate?",
+    answer: "Anecdotal reports suggest the chart is correct roughly 50% of the time, which is essentially the same probability as a random guess. There is no scientific evidence supporting its accuracy. Many families enjoy comparing results after birth, but the predictions should be treated as entertainment, not a reliable indicator of baby gender.",
+  },
+  {
+    question: "Is the Chinese Gender Predictor scientifically proven?",
+    answer: "No, the Chinese Gender Predictor is not scientifically proven. Biological sex is determined by chromosomes at conception, and no calendar-based method can influence or predict this. Scientific studies have shown that external factors like the mother's age or lunar month do not affect which sperm fertilizes the egg.",
+  },
+  {
+    question: "Can the Chinese Gender Predictor predict twins?",
+    answer: "The Chinese Gender Predictor is designed for single pregnancies and does not account for multiple births. Twins result from separate fertilization events, which the chart cannot predict. If you are expecting twins or multiples, rely on medical imaging and your healthcare provider for accurate information.",
+  },
+  {
+    question: "Can I use the predictor before I am pregnant?",
+    answer: "Yes, you can use the predictor before pregnancy as a planning tool. Many parents use it during family planning to explore the chart's predictions for different conception months. Keep in mind that the results are purely for entertainment and cultural curiosity, not a guarantee of outcome.",
+  },
+  {
+    question: "Does the lunar calendar affect the prediction?",
+    answer: "Yes, the lunar calendar is central to the prediction. The chart maps the mother's lunar age against the lunar month of conception, not the Gregorian calendar month. Each lunar month begins on a new moon and lasts about 29.5 days. Our calculator handles the date conversion automatically so you can enter your regular Gregorian dates.",
+  },
+  {
+    question: "Is it safe to use the Chinese Gender Predictor?",
+    answer: "The predictor is completely safe to use. It is a digital tool that makes no medical claims and performs no physical measurements. It simply applies a traditional chart to provide an entertaining guess. Always consult your healthcare provider for medical advice about pregnancy and gender determination.",
+  },
+  {
+    question: "Is this calculator just for fun?",
+    answer: "Yes, this calculator is intended for entertainment and educational purposes only. It is based on a traditional cultural chart and should not be used to make medical decisions. Enjoy exploring the tradition, but rely on your doctor and medical tests for accurate gender information.",
+  },
+  {
+    question: "When can an ultrasound confirm my baby's gender?",
+    answer: "A mid-pregnancy anatomy scan, typically performed between 18 and 22 weeks, is the most common way to determine gender via ultrasound. A cell-free DNA blood test can detect the presence of a Y chromosome as early as 10 weeks. For the most reliable results, consult your healthcare provider about available testing options.",
+  },
+  {
+    question: "Why do different sources give different predictions?",
+    answer: "Different calculators may produce different results because of how they convert Gregorian dates to lunar dates and calculate the Chinese lunar age. Some tools use slightly different chart versions or rounding methods. This calculator uses the authentic Qing Gong Biao chart and precise lunar calendar calculations for consistency.",
+  },
+  {
+    question: "Does the mother's age affect the prediction?",
+    answer: "Yes, the mother's Chinese lunar age is one of the two key inputs in the chart. The prediction changes depending on which lunar age row you reference. However, this does not mean age scientifically affects gender — it is simply how the traditional chart is structured.",
+  },
+  {
+    question: "Can I use this for future pregnancies?",
+    answer: "Yes, you can use the calculator for any pregnancy. Simply enter the mother's date of birth and the target year you are planning to conceive. The tool will calculate the correct lunar age and month for that time period. You can also check predictions for multiple years in advance.",
+  },
+  {
+    question: "Should I rely on this prediction for family planning?",
+    answer: "No, you should not rely on this prediction for family planning or medical decisions. The chart is a cultural tradition with no scientific backing. For reliable gender information, use medical methods such as ultrasound or genetic testing, and always consult your healthcare provider.",
+  },
+  {
+    question: "Is this calculator free to use?",
+    answer: "Yes, this Chinese Gender Predictor calculator is completely free. There are no hidden fees, sign-ups, or premium tiers. You can use it unlimited times, check predictions for any year, and explore the 12-month calendar without any cost.",
+  },
+];
+
+const visibleFaqItems = faqItems.slice(0, 5);
+
+const faqSchema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: visibleFaqItems.map((item) => ({
+    "@type": "Question",
+    name: item.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.answer,
+    },
+  })),
+});
 ---
 
-<!DOCTYPE html>
-<html lang="en" class="dark">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chinese Gender Predictor 2026 | Free Lunar Gender Calendar</title>
-    <meta name="description" content="Plan your pregnancy using the traditional Chinese Gender Prediction Calendar. Calculate Chinese Lunar Age and optimal conception windows instantly." />
+<BaseLayout
+  title="Chinese Gender Predictor - Free Lunar Gender Chart & Calendar 2026"
+  description="Use the free Chinese Gender Predictor to estimate your baby's gender based on the traditional Qing Gong Biao chart. Enter your lunar age and conception month for an instant prediction."
+  includeOrg={true}
+>
+  <Fragment slot="head">
     <meta name="keywords" content="chinese gender predictor, chinese gender chart, gender prediction calendar, qing gong biao, lunar age calculator" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "What is the Chinese Gender Predictor?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "The Chinese Gender Predictor is a traditional chart believed to have originated over 700 years ago in China. It uses the mother's lunar age and the lunar month of conception to estimate whether a baby will be a boy or a girl. The chart is based on ancient Chinese philosophy involving Yin and Yang and the five elements. Today, it is used as a fun cultural tradition rather than a medical tool."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "How does the Chinese Gender Predictor work?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "The predictor uses two inputs: the mother's Chinese lunar age and the lunar month of conception. These values are cross-referenced on a grid to produce a prediction. The Chinese lunar age is typically one year higher than the Western age because it counts time in the womb. Our calculator converts your Gregorian dates to lunar dates automatically and maps them to the traditional chart."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Is the Chinese Gender Predictor accurate?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Anecdotal reports suggest the chart is correct roughly 50% of the time, which is essentially the same probability as a random guess. There is no scientific evidence supporting its accuracy. Many families enjoy comparing results after birth, but the predictions should be treated as entertainment, not a reliable indicator of baby gender."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Is the Chinese Gender Predictor scientifically proven?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "No, the Chinese Gender Predictor is not scientifically proven. Biological sex is determined by chromosomes at conception, and no calendar-based method can influence or predict this. Scientific studies have shown that external factors like the mother's age or lunar month do not affect which sperm fertilizes the egg."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Can the Chinese Gender Predictor predict twins?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "The Chinese Gender Predictor is designed for single pregnancies and does not account for multiple births. Twins result from separate fertilization events, which the chart cannot predict. If you are expecting twins or multiples, rely on medical imaging and your healthcare provider for accurate information."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Can I use the predictor before I am pregnant?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes, you can use the predictor before pregnancy as a planning tool. Many parents use it during family planning to explore the chart's predictions for different conception months. Keep in mind that the results are purely for entertainment and cultural curiosity, not a guarantee of outcome."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Does the lunar calendar affect the prediction?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes, the lunar calendar is central to the prediction. The chart maps the mother's lunar age against the lunar month of conception, not the Gregorian calendar month. Each lunar month begins on a new moon and lasts about 29.5 days. Our calculator handles the date conversion automatically so you can enter your regular Gregorian dates."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Is it safe to use the Chinese Gender Predictor?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "The predictor is completely safe to use. It is a digital tool that makes no medical claims and performs no physical measurements. It simply applies a traditional chart to provide an entertaining guess. Always consult your healthcare provider for medical advice about pregnancy and gender determination."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Is this calculator just for fun?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes, this calculator is intended for entertainment and educational purposes only. It is based on a traditional cultural chart and should not be used to make medical decisions. Enjoy exploring the tradition, but rely on your doctor and medical tests for accurate gender information."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "When can an ultrasound confirm my baby's gender?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "A mid-pregnancy anatomy scan, typically performed between 18 and 22 weeks, is the most common way to determine gender via ultrasound. A cell-free DNA blood test can detect the presence of a Y chromosome as early as 10 weeks. For the most reliable results, consult your healthcare provider about available testing options."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Why do different sources give different predictions?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Different calculators may produce different results because of how they convert Gregorian dates to lunar dates and calculate the Chinese lunar age. Some tools use slightly different chart versions or rounding methods. This calculator uses the authentic Qing Gong Biao chart and precise lunar calendar calculations for consistency."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Does the mother's age affect the prediction?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes, the mother's Chinese lunar age is one of the two key inputs in the chart. The prediction changes depending on which lunar age row you reference. However, this does not mean age scientifically affects gender — it is simply how the traditional chart is structured."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Can I use this for future pregnancies?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes, you can use the calculator for any pregnancy. Simply enter the mother's date of birth and the target year you are planning to conceive. The tool will calculate the correct lunar age and month for that time period. You can also check predictions for multiple years in advance."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Should I rely on this prediction for family planning?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "No, you should not rely on this prediction for family planning or medical decisions. The chart is a cultural tradition with no scientific backing. For reliable gender information, use medical methods such as ultrasound or genetic testing, and always consult your healthcare provider."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Is this calculator free to use?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes, this Chinese Gender Predictor calculator is completely free. There are no hidden fees, sign-ups, or premium tiers. You can use it unlimited times, check predictions for any year, and explore the 12-month calendar without any cost."
-            }
-          }
-        ]
-      }
-    </script>
-  </head>
-  <body class="min-h-screen bg-[#0b0f19] text-slate-100 antialiased">
-    <main id="main-content">
-      <HeroSection />
-      <ResultExperience />
-      <CalendarSection />
+    <script type="application/ld+json" set:html={faqSchema} />
+  </Fragment>
 
-      <!-- Educational SEO Content Sections -->
-      <section class="py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-20">
-        <!-- About the Chinese Gender Predictor -->
-        <article class="space-y-5">
-          <h2 class="text-2xl sm:text-3xl font-bold text-white">About the Chinese Gender Predictor</h2>
-          <p class="text-slate-300 leading-relaxed">
-            The Chinese Gender Predictor is a traditional tool used for centuries in Chinese culture to estimate the likelihood of conceiving a baby boy or girl. Rooted in ancient Chinese philosophy, it draws from the principles of Yin and Yang, the five elements, and the lunar calendar to make its predictions.
-          </p>
-          <p class="text-slate-300 leading-relaxed">
-            Historically, the chart is believed to have been discovered in a royal tomb near Beijing, dating back over 700 years. For generations, families across China and East Asia have referenced this chart as part of family planning traditions, passing it down through families as a cultural keepsake rather than a medical instrument.
-          </p>
-          <p class="text-slate-300 leading-relaxed">
-            Today, the Chinese Gender Predictor continues to attract interest from expecting parents worldwide who enjoy exploring the ancient method alongside modern medical knowledge. Whether viewed as a fun tradition or a cultural curiosity, it remains one of the most recognized gender prediction tools in history. Learn more about <a href="#how-it-works" class="text-indigo-400 hover:text-indigo-300 underline underline-offset-2">how the chart works</a> below.
-          </p>
-        </article>
+  <HeroSection />
+  <ResultExperience />
+  <CalendarSection />
+  <ConceptionPredictor />
 
-        <!-- How the Chinese Gender Chart Works -->
-        <article id="how-it-works" class="space-y-5">
-          <h2 class="text-2xl sm:text-3xl font-bold text-white">How the Chinese Gender Chart Works</h2>
-          <p class="text-slate-300 leading-relaxed">
-            The Chinese Gender Chart operates on two primary inputs: the mother's age at the time of conception and the lunar month in which conception takes place. Both values are mapped onto a grid to reveal whether the chart predicts a boy or a girl.
-          </p>
-          <div class="space-y-3">
-            <h3 class="text-lg font-semibold text-white">Mother's Age</h3>
-            <p class="text-slate-300 leading-relaxed">
-              In the traditional system, the mother's age refers to her Chinese lunar age (虚岁), which is calculated differently from the Western age. The Chinese lunar age is typically one year higher than the Western age because it counts time spent in the womb as the first year of life.
-            </p>
-          </div>
-          <div class="space-y-3">
-            <h3 class="text-lg font-semibold text-white">Target Year and Lunar Calendar</h3>
-            <p class="text-slate-300 leading-relaxed">
-              The Chinese lunar calendar differs from the Gregorian calendar used in most of the world. Each lunar month begins on a new moon and lasts approximately 29.5 days. The chart considers which lunar month the conception falls within, not the corresponding Gregorian month.
-            </p>
-          </div>
-          <div class="space-y-3">
-            <h3 class="text-lg font-semibold text-white">The Prediction Process</h3>
-            <p class="text-slate-300 leading-relaxed">
-              To use the chart, find the mother's lunar age on one axis and the target lunar month on the other. The intersection point indicates the predicted gender. Our calculator automates this process by converting Gregorian dates to lunar dates and cross-referencing the chart accurately.
-            </p>
-          </div>
-        </article>
+  <!-- Educational SEO Content Sections -->
+  <section class="py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-20">
+    <!-- About the Chinese Gender Predictor -->
+    <article class="space-y-5">
+      <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">About the Chinese Gender Predictor</h2>
+      <p class="text-gray-600 leading-relaxed">
+        The Chinese Gender Predictor is a traditional tool used for centuries in Chinese culture to estimate the likelihood of conceiving a baby boy or girl. Rooted in ancient Chinese philosophy, it draws from the principles of Yin and Yang, the five elements, and the lunar calendar to make its predictions.
+      </p>
+      <p class="text-gray-600 leading-relaxed">
+        Also known as the Chinese Gender Chart or Qing Gong Biao (清宫表), this gender predictor calculator has been passed down through generations. Historically, the chart is believed to have been discovered in a royal tomb near Beijing, dating back over 700 years. For generations, families across China and East Asia have referenced this Chinese pregnancy calendar as part of family planning traditions.
+      </p>
+      <p class="text-gray-600 leading-relaxed">
+        Today, the Chinese Gender Predictor continues to attract interest from expecting parents worldwide who enjoy exploring the ancient method alongside modern medical knowledge. Whether viewed as a fun tradition or a cultural curiosity, it remains one of the most recognized baby gender predictor tools in history. Learn more about <a href="#how-it-works" class="text-pink-600 hover:text-pink-500 underline underline-offset-2 transition-colors">how the Chinese gender chart works</a> below.
+      </p>
+    </article>
 
-        <!-- Is the Chinese Gender Predictor Accurate? -->
-        <article class="space-y-5">
-          <h2 class="text-2xl sm:text-3xl font-bold text-white">Is the Chinese Gender Predictor Accurate?</h2>
-          <p class="text-slate-300 leading-relaxed">
-            The accuracy of the Chinese Gender Predictor is a subject of ongoing debate. Anecdotal reports suggest the chart is correct roughly 50% of the time — which is essentially the same probability as any other random guess. There is no scientific evidence to support its reliability as a predictor of baby gender.
-          </p>
-          <p class="text-slate-300 leading-relaxed">
-            Many families report satisfying results when using the chart, but this is often attributed to confirmation bias — remembering correct predictions while forgetting incorrect ones. With a binary outcome (boy or girl), even random chance produces correct results half the time.
-          </p>
-          <p class="text-slate-300 leading-relaxed">
-            Despite the lack of scientific backing, the chart remains popular as a cultural tradition and entertainment tool. Many parents enjoy comparing the chart's prediction against their actual results, treating it as a fun part of the pregnancy journey rather than a serious medical tool.
-          </p>
-        </article>
-
-        <!-- Scientific Perspective -->
-        <article class="space-y-5">
-          <h2 class="text-2xl sm:text-3xl font-bold text-white">Scientific Perspective</h2>
-          <p class="text-slate-300 leading-relaxed">
-            From a scientific standpoint, there is no evidence that the Chinese Gender Predictor can reliably determine baby gender. Biological sex is determined at the moment of conception by the sperm cell carrying either an X chromosome (resulting in a girl) or a Y chromosome (resulting in a boy). No calendar-based method can influence or predict this genetic event.
-          </p>
-          <p class="text-slate-300 leading-relaxed">
-            The probability of conceiving a boy or girl is approximately 50/50, and factors such as the mother's age, lunar month, diet, or timing do not significantly alter this ratio. Scientific studies have consistently shown that external variables have minimal to no impact on which sperm fertilizes the egg.
-          </p>
-          <p class="text-slate-300 leading-relaxed">
-            This calculator is designed purely for entertainment and educational purposes. It should not be used to make medical decisions or to determine actual pregnancy outcomes. Always consult a healthcare provider for accurate information about fetal development and gender determination. Have more questions? Check our <a href="#faq" class="text-indigo-400 hover:text-indigo-300 underline underline-offset-2">FAQ section</a> below.
-          </p>
-        </article>
-
-        <!-- Just for Fun Disclaimer -->
-        <section class="rounded-2xl bg-gradient-to-br from-indigo-950/40 via-purple-950/30 to-pink-950/40 border border-indigo-500/20 p-6 sm:p-8 space-y-4">
-          <h2 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-3">
-            <span class="text-2xl" aria-hidden="true">🎉</span>
-            Just for Fun Disclaimer
-          </h2>
-          <ul class="space-y-3 text-slate-300 leading-relaxed">
-            <li class="flex items-start gap-3">
-              <span class="text-indigo-400 mt-1 shrink-0" aria-hidden="true">•</span>
-              <span>This tool is <strong class="text-white">not medical advice</strong> and should never replace professional healthcare guidance.</span>
-            </li>
-            <li class="flex items-start gap-3">
-              <span class="text-purple-400 mt-1 shrink-0" aria-hidden="true">•</span>
-              <span>Results are <strong class="text-white">not scientifically proven</strong> and are based on a traditional cultural chart.</span>
-            </li>
-            <li class="flex items-start gap-3">
-              <span class="text-pink-400 mt-1 shrink-0" aria-hidden="true">•</span>
-              <span>All predictions should be treated as <strong class="text-white">entertainment only</strong> — enjoy the tradition, but rely on your doctor for real answers.</span>
-            </li>
-          </ul>
-        </section>
-
-        <!-- When Will You Know Your Baby's Gender? -->
-        <article class="space-y-5">
-          <h2 class="text-2xl sm:text-3xl font-bold text-white">When Will You Know Your Baby's Gender?</h2>
-          <p class="text-slate-300 leading-relaxed">
-            While the Chinese Gender Predictor offers a fun early guess, the most reliable way to determine your baby's gender is through medical methods. Here are the standard approaches healthcare providers use:
-          </p>
-          <ul class="space-y-3 text-slate-300 leading-relaxed">
-            <li class="flex items-start gap-3">
-              <span class="text-indigo-400 mt-1 shrink-0" aria-hidden="true">•</span>
-              <div>
-                <strong class="text-white">Ultrasound (18–22 weeks):</strong> A mid-pregnancy anatomy scan is the most common way to visually determine gender. Trained sonographers can identify physical differences with high accuracy.
-              </div>
-            </li>
-            <li class="flex items-start gap-3">
-              <span class="text-purple-400 mt-1 shrink-0" aria-hidden="true">•</span>
-              <div>
-                <strong class="text-white">Cell-Free DNA Test (10+ weeks):</strong> A blood test that analyzes fetal DNA in the mother's bloodstream can detect the presence of a Y chromosome as early as 10 weeks into pregnancy.
-              </div>
-            </li>
-            <li class="flex items-start gap-3">
-              <span class="text-pink-400 mt-1 shrink-0" aria-hidden="true">•</span>
-              <div>
-                <strong class="text-white">CVS or Amniocentesis:</strong> These diagnostic tests, typically performed for medical reasons, can also determine chromosomal sex with near certainty.
-              </div>
-            </li>
-          </ul>
-          <p class="text-slate-300 leading-relaxed">
-            Always discuss your options with your healthcare provider to choose the approach that is safe and appropriate for your situation.
-          </p>
-        </article>
-      </section>
-
-      <!-- FAQ Section -->
-      <section id="faq" class="py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-10">
-        <div class="text-center space-y-3">
-          <h2 class="text-2xl sm:text-3xl font-bold text-white">Frequently Asked Questions</h2>
-          <p class="text-slate-400 text-sm">Quick answers about the Chinese Gender Predictor chart</p>
-        </div>
-
-        <div class="space-y-4">
-          <article class="rounded-xl bg-slate-900/60 border border-slate-800 p-5 sm:p-6 space-y-2">
-            <h3 class="text-lg font-semibold text-white">What is the Chinese Gender Predictor?</h3>
-            <p class="text-slate-300 leading-relaxed text-sm">
-              The Chinese Gender Predictor is a traditional chart believed to have originated over 700 years ago in China. It uses the mother's lunar age and the lunar month of conception to estimate whether a baby will be a boy or a girl. The chart is based on ancient Chinese philosophy involving Yin and Yang and the five elements. Today, it is used as a fun cultural tradition rather than a medical tool.
-            </p>
-          </article>
-
-          <article class="rounded-xl bg-slate-900/60 border border-slate-800 p-5 sm:p-6 space-y-2">
-            <h3 class="text-lg font-semibold text-white">How does the Chinese Gender Predictor work?</h3>
-            <p class="text-slate-300 leading-relaxed text-sm">
-              The predictor uses two inputs: the mother's <a href="#how-it-works" class="text-indigo-400 hover:text-indigo-300 underline underline-offset-2">Chinese lunar age</a> and the lunar month of conception. These values are cross-referenced on a grid to produce a prediction. The Chinese lunar age is typically one year higher than the Western age because it counts time in the womb. Our calculator converts your Gregorian dates to lunar dates automatically and maps them to the traditional chart.
-            </p>
-          </article>
-
-          <article class="rounded-xl bg-slate-900/60 border border-slate-800 p-5 sm:p-6 space-y-2">
-            <h3 class="text-lg font-semibold text-white">Is the Chinese Gender Predictor accurate?</h3>
-            <p class="text-slate-300 leading-relaxed text-sm">
-              Anecdotal reports suggest the chart is correct roughly 50% of the time, which is essentially the same probability as a random guess. There is no scientific evidence supporting its accuracy. Many families enjoy comparing results after birth, but the predictions should be treated as entertainment, not a reliable indicator of baby gender.
-            </p>
-          </article>
-
-          <article class="rounded-xl bg-slate-900/60 border border-slate-800 p-5 sm:p-6 space-y-2">
-            <h3 class="text-lg font-semibold text-white">Is the Chinese Gender Predictor scientifically proven?</h3>
-            <p class="text-slate-300 leading-relaxed text-sm">
-              No, the Chinese Gender Predictor is not scientifically proven. Biological sex is determined by chromosomes at conception, and no calendar-based method can influence or predict this. Scientific studies have shown that external factors like the mother's age or lunar month do not affect which sperm fertilizes the egg.
-            </p>
-          </article>
-
-          <article class="rounded-xl bg-slate-900/60 border border-slate-800 p-5 sm:p-6 space-y-2">
-            <h3 class="text-lg font-semibold text-white">Can the Chinese Gender Predictor predict twins?</h3>
-            <p class="text-slate-300 leading-relaxed text-sm">
-              The Chinese Gender Predictor is designed for single pregnancies and does not account for multiple births. Twins result from separate fertilization events, which the chart cannot predict. If you are expecting twins or multiples, rely on medical imaging and your healthcare provider for accurate information.
-            </p>
-          </article>
-
-          <article class="rounded-xl bg-slate-900/60 border border-slate-800 p-5 sm:p-6 space-y-2">
-            <h3 class="text-lg font-semibold text-white">Can I use the predictor before I am pregnant?</h3>
-            <p class="text-slate-300 leading-relaxed text-sm">
-              Yes, you can use the predictor before pregnancy as a planning tool. Many parents use it during family planning to explore the chart's predictions for different conception months. Keep in mind that the results are purely for entertainment and cultural curiosity, not a guarantee of outcome.
-            </p>
-          </article>
-
-          <article class="rounded-xl bg-slate-900/60 border border-slate-800 p-5 sm:p-6 space-y-2">
-            <h3 class="text-lg font-semibold text-white">Does the lunar calendar affect the prediction?</h3>
-            <p class="text-slate-300 leading-relaxed text-sm">
-              Yes, the lunar calendar is central to the prediction. The chart maps the mother's lunar age against the lunar month of conception, not the Gregorian calendar month. Each lunar month begins on a new moon and lasts about 29.5 days. Our calculator handles the date conversion automatically so you can enter your regular Gregorian dates.
-            </p>
-          </article>
-
-          <article class="rounded-xl bg-slate-900/60 border border-slate-800 p-5 sm:p-6 space-y-2">
-            <h3 class="text-lg font-semibold text-white">Is it safe to use the Chinese Gender Predictor?</h3>
-            <p class="text-slate-300 leading-relaxed text-sm">
-              The predictor is completely safe to use. It is a digital tool that makes no medical claims and performs no physical measurements. It simply applies a traditional chart to provide an entertaining guess. Always consult your healthcare provider for medical advice about pregnancy and gender determination.
-            </p>
-          </article>
-
-          <article class="rounded-xl bg-slate-900/60 border border-slate-800 p-5 sm:p-6 space-y-2">
-            <h3 class="text-lg font-semibold text-white">Is this calculator just for fun?</h3>
-            <p class="text-slate-300 leading-relaxed text-sm">
-              Yes, this calculator is intended for entertainment and educational purposes only. It is based on a traditional cultural chart and should not be used to make medical decisions. Enjoy exploring the tradition, but rely on your doctor and medical tests for accurate gender information.
-            </p>
-          </article>
-
-          <article class="rounded-xl bg-slate-900/60 border border-slate-800 p-5 sm:p-6 space-y-2">
-            <h3 class="text-lg font-semibold text-white">When can an ultrasound confirm my baby's gender?</h3>
-            <p class="text-slate-300 leading-relaxed text-sm">
-              A mid-pregnancy anatomy scan, typically performed between 18 and 22 weeks, is the most common way to determine gender via ultrasound. A cell-free DNA blood test can detect the presence of a Y chromosome as early as 10 weeks. For the most reliable results, consult your healthcare provider about available testing options.
-            </p>
-          </article>
-
-          <article class="rounded-xl bg-slate-900/60 border border-slate-800 p-5 sm:p-6 space-y-2">
-            <h3 class="text-lg font-semibold text-white">Why do different sources give different predictions?</h3>
-            <p class="text-slate-300 leading-relaxed text-sm">
-              Different calculators may produce different results because of how they convert Gregorian dates to lunar dates and calculate the Chinese lunar age. Some tools use slightly different chart versions or rounding methods. This calculator uses the authentic Qing Gong Biao chart and precise lunar calendar calculations for consistency.
-            </p>
-          </article>
-
-          <article class="rounded-xl bg-slate-900/60 border border-slate-800 p-5 sm:p-6 space-y-2">
-            <h3 class="text-lg font-semibold text-white">Does the mother's age affect the prediction?</h3>
-            <p class="text-slate-300 leading-relaxed text-sm">
-              Yes, the mother's Chinese lunar age is one of the two key inputs in the chart. The prediction changes depending on which lunar age row you reference. However, this does not mean age scientifically affects gender — it is simply how the traditional chart is structured.
-            </p>
-          </article>
-
-          <article class="rounded-xl bg-slate-900/60 border border-slate-800 p-5 sm:p-6 space-y-2">
-            <h3 class="text-lg font-semibold text-white">Can I use this for future pregnancies?</h3>
-            <p class="text-slate-300 leading-relaxed text-sm">
-              Yes, you can use the calculator for any pregnancy. Simply enter the mother's date of birth and the target year you are planning to conceive. The tool will calculate the correct lunar age and month for that time period. You can also check predictions for multiple years in advance using the <strong class="text-white">Next Year</strong> feature.
-            </p>
-          </article>
-
-          <article class="rounded-xl bg-slate-900/60 border border-slate-800 p-5 sm:p-6 space-y-2">
-            <h3 class="text-lg font-semibold text-white">Should I rely on this prediction for family planning?</h3>
-            <p class="text-slate-300 leading-relaxed text-sm">
-              No, you should not rely on this prediction for family planning or medical decisions. The chart is a cultural tradition with no scientific backing. For reliable gender information, use medical methods such as ultrasound or genetic testing, and always consult your healthcare provider.
-            </p>
-          </article>
-
-          <article class="rounded-xl bg-slate-900/60 border border-slate-800 p-5 sm:p-6 space-y-2">
-            <h3 class="text-lg font-semibold text-white">Is this calculator free to use?</h3>
-            <p class="text-slate-300 leading-relaxed text-sm">
-              Yes, this Chinese Gender Predictor calculator is completely free. There are no hidden fees, sign-ups, or premium tiers. You can use it unlimited times, check predictions for any year, and explore the 12-month calendar without any cost.
-            </p>
-          </article>
-        </div>
-      </section>
-
-      <!-- Related Pregnancy Tools -->
-      <section class="py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-8">
-        <div class="text-center space-y-3">
-          <h2 class="text-2xl sm:text-3xl font-bold text-white">Related Pregnancy Tools</h2>
-          <p class="text-slate-400 text-sm">Explore more helpful resources for your pregnancy journey</p>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <a href="#" class="group rounded-xl bg-slate-900/60 border border-slate-800 p-5 space-y-3 hover:border-indigo-500/40 transition-colors duration-300">
-            <div class="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-            </div>
-            <h3 class="font-semibold text-white group-hover:text-indigo-300 transition-colors">Ovulation Calculator</h3>
-            <p class="text-xs text-slate-400 leading-relaxed">Track your fertile window and optimize your chances of conception.</p>
-          </a>
-
-          <a href="#" class="group rounded-xl bg-slate-900/60 border border-slate-800 p-5 space-y-3 hover:border-purple-500/40 transition-colors duration-300">
-            <div class="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
-            </div>
-            <h3 class="font-semibold text-white group-hover:text-purple-300 transition-colors">Due Date Calculator</h3>
-            <p class="text-xs text-slate-400 leading-relaxed">Estimate your baby's arrival date based on your last menstrual period.</p>
-          </a>
-
-          <a href="#" class="group rounded-xl bg-slate-900/60 border border-slate-800 p-5 space-y-3 hover:border-pink-500/40 transition-colors duration-300">
-            <div class="w-10 h-10 rounded-lg bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400">
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
-            </div>
-            <h3 class="font-semibold text-white group-hover:text-pink-300 transition-colors">Pregnancy Calculator</h3>
-            <p class="text-xs text-slate-400 leading-relaxed">Track your pregnancy week by week with developmental milestones.</p>
-          </a>
-
-          <a href="#" class="group rounded-xl bg-slate-900/60 border border-slate-800 p-5 space-y-3 hover:border-emerald-500/40 transition-colors duration-300">
-            <div class="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-            </div>
-            <h3 class="font-semibold text-white group-hover:text-emerald-300 transition-colors">Fertility Calculator</h3>
-            <p class="text-xs text-slate-400 leading-relaxed">Understand your cycle and identify the best times to conceive.</p>
-          </a>
-        </div>
-      </section>
-    </main>
-
-    <footer class="border-t border-slate-800 py-10 px-4 sm:px-6 lg:px-8">
-      <div class="max-w-4xl mx-auto space-y-6">
-        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p class="text-sm text-slate-500">&copy; {new Date().getFullYear()} Chinese Gender Predictor. For entertainment purposes only.</p>
-          <nav class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm" aria-label="Footer navigation">
-            <a href="#how-it-works" class="text-slate-400 hover:text-white transition-colors">How It Works</a>
-            <a href="#faq" class="text-slate-400 hover:text-white transition-colors">FAQ</a>
-            <a href="#" class="text-slate-400 hover:text-white transition-colors">Ovulation Calculator</a>
-            <a href="#" class="text-slate-400 hover:text-white transition-colors">Due Date Calculator</a>
-          </nav>
-        </div>
+    <!-- How the Chinese Gender Chart Works -->
+    <article id="how-it-works" class="space-y-5">
+      <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">How the Chinese Gender Chart Works</h2>
+      <p class="text-gray-600 leading-relaxed">
+        The Chinese Gender Chart operates on two primary inputs: the mother's age at the time of conception and the lunar month in which conception takes place. Both values are mapped onto the Qing Gong Biao grid to reveal whether the Chinese baby gender predictor estimates a boy or a girl.
+      </p>
+      <div class="space-y-3">
+        <h3 class="text-lg font-semibold text-gray-900">Mother's Chinese Lunar Age</h3>
+        <p class="text-gray-600 leading-relaxed">
+          In the traditional system, the mother's age refers to her Chinese lunar age, which is calculated differently from the Western age. The Chinese lunar age is typically one year higher than the Western age because it counts time spent in the womb as the first year of life. This is a crucial distinction when using any Chinese pregnancy calendar predictor.
+        </p>
       </div>
-    </footer>
-  </body>
-</html>
+      <div class="space-y-3">
+        <h3 class="text-lg font-semibold text-gray-900">Target Year and Lunar Calendar</h3>
+        <p class="text-gray-600 leading-relaxed">
+          The Chinese lunar calendar differs from the Gregorian calendar used in most of the world. Each lunar month begins on a new moon and lasts approximately 29.5 days. The Chinese gender prediction chart considers which lunar month the conception falls within, not the corresponding Gregorian month.
+        </p>
+      </div>
+      <div class="space-y-3">
+        <h3 class="text-lg font-semibold text-gray-900">The Prediction Process</h3>
+        <p class="text-gray-600 leading-relaxed">
+          To use the chart, find the mother's lunar age on one axis and the target lunar month on the other. The intersection point indicates the predicted gender. Our gender predictor calculator automates this process by converting Gregorian dates to lunar dates and cross-referencing the chart accurately using the authentic Qing Gong Biao algorithm.
+        </p>
+      </div>
+    </article>
+
+    <!-- Is the Chinese Gender Predictor Accurate? -->
+    <article class="space-y-5">
+      <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Is the Chinese Gender Predictor Accurate?</h2>
+      <p class="text-gray-600 leading-relaxed">
+        The accuracy of the Chinese Gender Predictor is a subject of ongoing debate. Anecdotal reports suggest the chart is correct roughly 50% of the time — which is essentially the same probability as any other random guess. There is no scientific evidence to support its reliability as a predictor of baby gender.
+      </p>
+      <p class="text-gray-600 leading-relaxed">
+        Many families report satisfying results when using the chart, but this is often attributed to confirmation bias — remembering correct predictions while forgetting incorrect ones. With a binary outcome (boy or girl), even random chance produces correct results half the time.
+      </p>
+      <p class="text-gray-600 leading-relaxed">
+        Despite the lack of scientific backing, the chart remains popular as a cultural tradition and entertainment tool. Many parents enjoy comparing the chart's prediction against their actual results, treating it as a fun part of the pregnancy journey rather than a serious medical tool.
+      </p>
+    </article>
+
+    <!-- Scientific Perspective -->
+    <article class="space-y-5">
+      <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Scientific Perspective</h2>
+      <p class="text-gray-600 leading-relaxed">
+        From a scientific standpoint, there is no evidence that the Chinese Gender Predictor can reliably determine baby gender. Biological sex is determined at the moment of conception by the sperm cell carrying either an X chromosome (resulting in a girl) or a Y chromosome (resulting in a boy). No calendar-based method can influence or predict this genetic event.
+      </p>
+      <p class="text-gray-600 leading-relaxed">
+        The probability of conceiving a boy or girl is approximately 50/50, and factors such as the mother's age, lunar month, diet, or timing do not significantly alter this ratio. Scientific studies have consistently shown that external variables have minimal to no impact on which sperm fertilizes the egg.
+      </p>
+      <p class="text-gray-600 leading-relaxed">
+        This calculator is designed purely for entertainment and educational purposes. It should not be used to make medical decisions or to determine actual pregnancy outcomes. Always consult a healthcare provider for accurate information about fetal development and gender determination. Have more questions? Check our <a href="/faq" class="text-pink-600 hover:text-pink-500 underline underline-offset-2 transition-colors">Chinese Gender Predictor FAQ</a> or read our <a href="/medical-disclaimer" class="text-pink-600 hover:text-pink-500 underline underline-offset-2 transition-colors">full medical disclaimer</a> for more details. Learn <a href="/about" class="text-pink-600 hover:text-pink-500 underline underline-offset-2 transition-colors">how this Chinese Gender Chart tool works</a>.
+      </p>
+    </article>
+
+    <!-- Just for Fun Disclaimer -->
+    <section class="card-light-elevated rounded-2xl p-6 sm:p-8 space-y-4 border-l-4 border-l-pink-400">
+      <h2 class="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-3">
+        <span class="text-2xl" aria-hidden="true">&#127881;</span>
+        Just for Fun Disclaimer
+      </h2>
+      <ul class="space-y-3 text-gray-600 leading-relaxed">
+        <li class="flex items-start gap-3">
+          <span class="text-pink-500 mt-1 shrink-0" aria-hidden="true">&#8226;</span>
+          <span>This tool is <strong class="text-gray-900">not medical advice</strong> and should never replace professional healthcare guidance.</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-pink-500 mt-1 shrink-0" aria-hidden="true">&#8226;</span>
+          <span>Results are <strong class="text-gray-900">not scientifically proven</strong> and are based on a traditional cultural chart.</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-pink-500 mt-1 shrink-0" aria-hidden="true">&#8226;</span>
+          <span>All predictions should be treated as <strong class="text-gray-900">entertainment only</strong> — enjoy the tradition, but rely on your doctor for real answers.</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- When Will You Know Your Baby's Gender? -->
+    <article class="space-y-5">
+      <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">When Will You Know Your Baby's Gender?</h2>
+      <p class="text-gray-600 leading-relaxed">
+        While the Chinese Gender Predictor offers a fun early guess, the most reliable way to determine your baby's gender is through medical methods. Here are the standard approaches healthcare providers use:
+      </p>
+      <ul class="space-y-3 text-gray-600 leading-relaxed">
+        <li class="flex items-start gap-3">
+          <span class="text-pink-500 mt-1 shrink-0" aria-hidden="true">&#8226;</span>
+          <div>
+            <strong class="text-gray-900">Ultrasound (18–22 weeks):</strong> A mid-pregnancy anatomy scan is the most common way to visually determine gender. Trained sonographers can identify physical differences with high accuracy.
+          </div>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-pink-500 mt-1 shrink-0" aria-hidden="true">&#8226;</span>
+          <div>
+            <strong class="text-gray-900">Cell-Free DNA Test (10+ weeks):</strong> A blood test that analyzes fetal DNA in the mother's bloodstream can detect the presence of a Y chromosome as early as 10 weeks into pregnancy.
+          </div>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-pink-500 mt-1 shrink-0" aria-hidden="true">&#8226;</span>
+          <div>
+            <strong class="text-gray-900">CVS or Amniocentesis:</strong> These diagnostic tests, typically performed for medical reasons, can also determine chromosomal sex with near certainty.
+          </div>
+        </li>
+      </ul>
+      <p class="text-gray-600 leading-relaxed">
+        Always discuss your options with your healthcare provider to choose the approach that is safe and appropriate for your situation.
+      </p>
+    </article>
+  </section>
+
+  <!-- FAQ Section (truncated preview, link to full page) -->
+  <section class="py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-10">
+    <div class="text-center space-y-3">
+      <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Frequently Asked Questions</h2>
+      <p class="text-gray-500 text-sm">Quick answers about the Chinese Gender Predictor chart</p>
+    </div>
+
+    <div class="space-y-4">
+      {visibleFaqItems.map((faq) => (
+        <article class="card-light rounded-xl border border-gray-200 p-5 sm:p-6 space-y-2.5 card-hover">
+          <h3 class="text-lg font-semibold text-gray-900">{faq.question}</h3>
+          <p class="text-gray-600 leading-relaxed text-sm">{faq.answer}</p>
+        </article>
+      ))}
+    </div>
+
+    <div class="text-center">
+      <a
+        href="/faq"
+        class="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-6 py-3 text-sm font-medium text-gray-600 transition-all duration-200 hover:border-pink-200 hover:text-pink-700 hover:bg-pink-50 shadow-sm"
+      >
+        View All Chinese Gender Predictor FAQs
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- Explore Our Ovulation & Fertility Tools -->
+  <section class="py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-8">
+    <div class="text-center space-y-3">
+      <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Explore Our Ovulation &amp; Fertility Tools</h2>
+      <p class="text-gray-500 text-sm">Planning your pregnancy? Visit our complete fertility resource featuring accurate calculators and planning tools.</p>
+    </div>
+
+    <div class="max-w-lg mx-auto">
+      <div class="card-light-elevated rounded-2xl p-6 sm:p-8 space-y-6">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-400 to-pink-500 flex items-center justify-center shrink-0 shadow-sm">
+            <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-xl font-bold text-gray-900">Accurate Ovulation Calculator</h3>
+            <p class="text-sm text-gray-500">Use our free fertility tools to calculate:</p>
+          </div>
+        </div>
+
+        <ul class="space-y-2.5 text-sm text-gray-600" role="list">
+          <li class="flex items-center gap-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-pink-500 shrink-0" aria-hidden="true"></span>
+            <span>Ovulation Date</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-pink-500 shrink-0" aria-hidden="true"></span>
+            <span>Fertile Window</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-pink-500 shrink-0" aria-hidden="true"></span>
+            <span>Due Date</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-pink-500 shrink-0" aria-hidden="true"></span>
+            <span>Pregnancy Calculator</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-pink-500 shrink-0" aria-hidden="true"></span>
+            <span>Pregnancy Test Calculator</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-pink-500 shrink-0" aria-hidden="true"></span>
+            <span>Fertility Calendar</span>
+          </li>
+        </ul>
+
+        <form action="https://accurateovulationcalculator.com" method="GET" target="_self">
+          <button
+            type="submit"
+            class="w-full relative group overflow-hidden rounded-xl font-semibold text-white shadow-lg shadow-pink-500/20 transition-all duration-300 hover:shadow-pink-500/35 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 focus:ring-offset-white btn-primary"
+          >
+            <span class="relative z-10 flex items-center justify-center gap-2.5 rounded-[11px] px-6 py-3.5 text-base font-semibold transition-all duration-300">
+              <span>Visit Accurate Ovulation Calculator</span>
+              <svg class="w-5 h-5 text-white/80 group-hover:translate-x-0.5 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </span>
+          </button>
+        </form>
+
+        <p class="text-center text-xs text-gray-400 leading-relaxed">
+          Trusted fertility planning tools for women trying to conceive.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

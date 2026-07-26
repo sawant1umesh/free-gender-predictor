@@ -26,9 +26,9 @@ import DisclaimerNotice from './DisclaimerNotice.astro';
       id="next-year-btn"
       disabled
       aria-label="Check prediction for the next year"
-      class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-px font-semibold text-white shadow-lg shadow-indigo-500/20 transition-all duration-300 hover:shadow-indigo-500/30 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
+      class="inline-flex items-center gap-2 rounded-xl font-semibold text-white shadow-lg shadow-pink-500/20 transition-all duration-300 hover:shadow-pink-500/35 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 focus:ring-offset-white disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 btn-primary"
     >
-      <span class="flex items-center justify-center gap-2 rounded-[11px] bg-slate-950 px-6 py-3 text-sm transition-all duration-300">
+      <span class="relative z-10 flex items-center justify-center gap-2.5 px-6 py-3 text-sm font-semibold transition-all duration-300">
         <span id="next-year-spinner" class="hidden animate-spin h-4 w-4 text-white">
           <svg class="w-full h-full" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -36,8 +36,8 @@ import DisclaimerNotice from './DisclaimerNotice.astro';
           </svg>
         </span>
         <span id="next-year-text">Check Prediction for Next Year</span>
-        <svg class="w-4 h-4 text-indigo-300 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+        <svg class="w-4 h-4 text-indigo-300 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
         </svg>
       </span>
     </button>
@@ -49,10 +49,23 @@ import DisclaimerNotice from './DisclaimerNotice.astro';
 
 <script>
   import type { PredictionApiResponse } from '../../lib/api';
-  import { generatePrediction } from '../../lib/api';
+
+  const MONTH_NAMES_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
   let lastBirthDate: string | null = null;
   let currentYear: number = 2026;
+
+  function formatDateStr(dateStr: string): string {
+    const [y, m, d] = dateStr.split('-');
+    return `${MONTH_NAMES_SHORT[parseInt(m, 10) - 1]} ${d}, ${y}`;
+  }
+
+  function formatDateRange(range: string): string {
+    const parts = range.split(/ ~ | to /);
+    if (parts.length !== 2) return range;
+
+    return `${formatDateStr(parts[0])} \u2013 ${formatDateStr(parts[1])}`;
+  }
 
   document.addEventListener('DOMContentLoaded', () => {
     const resultSection = document.getElementById('prediction-result-section');
@@ -118,24 +131,24 @@ import DisclaimerNotice from './DisclaimerNotice.astro';
       // 2. Update Girl Card
       if (bestGirl) {
         if (girlScoreBadge) girlScoreBadge.textContent = `${bestGirl.scorePercentage}% Match`;
-        if (girlMonthName) girlMonthName.textContent = bestGirl.monthNameChinese;
-        if (girlDateRange) girlDateRange.textContent = bestGirl.gregorianDateRange;
+        if (girlMonthName) girlMonthName.textContent = `Lunar Month ${bestGirl.lunarMonth}`;
+        if (girlDateRange) girlDateRange.textContent = formatDateRange(bestGirl.gregorianDateRange);
         if (girlRecommendation) girlRecommendation.textContent = bestGirl.recommendationDescription;
       }
 
       // 3. Update Boy Card
       if (bestBoy) {
         if (boyScoreBadge) boyScoreBadge.textContent = `${bestBoy.scorePercentage}% Match`;
-        if (boyMonthName) boyMonthName.textContent = bestBoy.monthNameChinese;
-        if (boyDateRange) boyDateRange.textContent = bestBoy.gregorianDateRange;
+        if (boyMonthName) boyMonthName.textContent = `Lunar Month ${bestBoy.lunarMonth}`;
+        if (boyDateRange) boyDateRange.textContent = formatDateRange(bestBoy.gregorianDateRange);
         if (boyRecommendation) boyRecommendation.textContent = bestBoy.recommendationDescription;
       }
 
       // 4. Update Quick Stats
       if (statTotalMonths) statTotalMonths.textContent = String(raw.months.length);
       if (statTrend) statTrend.textContent = hero.dominantGenderBadgeText;
-      if (statGirlMonth && bestGirl) statGirlMonth.textContent = bestGirl.monthNameChinese;
-      if (statBoyMonth && bestBoy) statBoyMonth.textContent = bestBoy.monthNameChinese;
+      if (statGirlMonth && bestGirl) statGirlMonth.textContent = `Lunar Month ${bestGirl.lunarMonth}`;
+      if (statBoyMonth && bestBoy) statBoyMonth.textContent = `Lunar Month ${bestBoy.lunarMonth}`;
 
       // 5. Enable Next Year button
       setNextYearLoading(false);
@@ -160,8 +173,9 @@ import DisclaimerNotice from './DisclaimerNotice.astro';
       const nextYear = currentYear + 1;
       setNextYearLoading(true);
 
-      setTimeout(() => {
+      setTimeout(async () => {
         try {
+          const { generatePrediction } = await import('../../lib/api');
           const response = generatePrediction({
             motherBirthDate: lastBirthDate!,
             targetYear: nextYear,

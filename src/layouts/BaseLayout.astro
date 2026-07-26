@@ -1,0 +1,159 @@
+---
+import Header from '../components/site/Header.astro';
+import Footer from '../components/site/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  canonicalURL?: string;
+  ogImage?: string;
+  includeOrg?: boolean;
+}
+
+const {
+  title,
+  description,
+  canonicalURL = new URL(Astro.url.pathname, 'https://freegenderpredictor.com').href,
+  ogImage = 'https://freegenderpredictor.com/og-image.png',
+  includeOrg = false,
+} = Astro.props;
+
+const breadcrumbItems = Astro.url.pathname.split('/').filter(Boolean);
+
+const breadcrumbSchemaStr = breadcrumbItems.length > 0
+  ? JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://freegenderpredictor.com/" },
+        ...breadcrumbItems.map((item, i) => ({
+          "@type": "ListItem",
+          "position": i + 2,
+          "name": item.replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()),
+          "item": `https://freegenderpredictor.com/${breadcrumbItems.slice(0, i + 1).join('/')}`,
+        })),
+      ],
+    })
+  : '';
+
+const webpageSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": title,
+  "description": description,
+  "url": canonicalURL,
+  "inLanguage": "en",
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": "Free Gender Predictor",
+    "url": "https://freegenderpredictor.com",
+  },
+};
+
+const orgSchemaStr = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Free Gender Predictor",
+  "url": "https://freegenderpredictor.com",
+  "logo": "https://freegenderpredictor.com/apple-touch-icon.png",
+  "description": "A traditional Chinese Gender Prediction Chart tool for entertainment and educational purposes.",
+  "sameAs": [],
+});
+
+const websiteSchemaStr = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Free Gender Predictor",
+  "url": "https://freegenderpredictor.com",
+  "inLanguage": "en",
+  "description": "Use the free Chinese Gender Predictor to estimate baby gender based on the traditional Qing Gong Biao lunar calendar chart.",
+});
+
+const webpageSchemaStr = JSON.stringify(webpageSchema);
+---
+
+<!DOCTYPE html>
+<html lang="en" prefix="og: https://ogp.me/ns#">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#5E4FA2" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:site_name" content="Free Gender Predictor" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" fetchpriority="high" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin fetchpriority="high" />
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" fetchpriority="high" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    </noscript>
+
+    <!-- Preload LCP image -->
+    <link rel="preload" as="image" href="/logo-header.webp" fetchpriority="high" />
+
+    <!-- Critical inline CSS for above-the-fold content -->
+    <style is:inline>
+      body { min-height: 100vh; background: #F8FAFC; color: #111827; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; overflow-x: hidden; }
+      h1, h2, h3, h4, h5, h6 { font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; }
+      .gradient-accent-text { background: linear-gradient(135deg, #EC4899, #F472B6, #F9A8D4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+      .btn-primary { background: linear-gradient(135deg, #BE3173, #CC407E); position: relative; overflow: hidden; }
+      .card-light-elevated { background: #fff; border: 1px solid #E5E7EB; border-radius: 20px; box-shadow: 0 2px 4px rgba(0,0,0,.03), 0 8px 24px rgba(0,0,0,.05), 0 16px 48px rgba(0,0,0,.04); }
+      .card-light { background: #fff; border: 1px solid #E5E7EB; border-radius: 16px; box-shadow: 0 1px 2px rgba(0,0,0,.03), 0 4px 12px rgba(0,0,0,.04); }
+      ::selection { background: rgba(236,72,153,.2); color: #111827; }
+    </style>
+
+    <!-- Organization Schema (homepage only) -->
+    {includeOrg && (
+      <script type="application/ld+json" set:html={orgSchemaStr} />
+    )}
+
+    <!-- WebSite Schema -->
+    <script type="application/ld+json" set:html={websiteSchemaStr} />
+
+    <!-- BreadcrumbList Schema -->
+    {breadcrumbSchemaStr && (
+      <script type="application/ld+json" set:html={breadcrumbSchemaStr} />
+    )}
+
+    <!-- WebPage Schema -->
+    <script type="application/ld+json" set:html={webpageSchemaStr} />
+
+    <slot name="head" />
+  </head>
+  <body class="min-h-screen bg-[var(--color-bg-secondary)] text-[var(--color-text-primary)] antialiased">
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-lg focus:bg-pink-600 focus:px-4 focus:py-2 focus:text-white"
+    >
+      Skip to main content
+    </a>
+    <Header />
+    <main id="main-content">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
