@@ -142,6 +142,15 @@ const webpageSchemaStr = JSON.stringify(webpageSchema);
     <script type="application/ld+json" set:html={webpageSchemaStr} />
 
     <slot name="head" />
+
+    <!-- Google Analytics (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7TN9RVQ2XW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-7TN9RVQ2XW');
+    </script>
   </head>
   <body class="min-h-screen bg-[var(--color-bg-secondary)] text-[var(--color-text-primary)] antialiased">
     <a
