@@ -1,0 +1,63 @@
+---
+import CategoryBadge from './CategoryBadge.astro';
+import { calculateReadingTime, type BlogPost } from '../../lib/blog/utils';
+
+interface Props {
+  post: BlogPost;
+}
+
+const { post } = Astro.props;
+const readingTime = calculateReadingTime(post.body);
+const formattedDate = new Date(post.data.pubDate).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+});
+const articleUrl = `/blog/${post.id}`;
+---
+
+<article class="flex flex-col rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-xs hover:shadow-md transition duration-200 group">
+  <a href={articleUrl} class="relative aspect-16/9 overflow-hidden bg-gray-100 block">
+    <img
+      src={post.data.heroImage}
+      alt={post.data.heroImageAlt}
+      class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+      loading="lazy"
+      decoding="async"
+    />
+  </a>
+
+  <div class="flex flex-col flex-1 p-6 space-y-4">
+    <div class="flex items-center justify-between gap-2">
+      <CategoryBadge category={post.data.category} size="sm" />
+      <div class="flex items-center text-xs text-gray-500 gap-1.5 shrink-0">
+        <time datetime={new Date(post.data.pubDate).toISOString()}>{formattedDate}</time>
+        <span>&bull;</span>
+        <span>{readingTime} min read</span>
+      </div>
+    </div>
+
+    <div class="space-y-2 flex-1">
+      <h3 class="text-xl font-bold text-gray-900 leading-snug group-hover:text-pink-600 transition-colors">
+        <a href={articleUrl}>{post.data.title}</a>
+      </h3>
+      <p class="text-sm text-gray-600 line-clamp-3 leading-relaxed">
+        {post.data.excerpt}
+      </p>
+    </div>
+
+    <div class="pt-4 border-t border-gray-100 flex items-center justify-between">
+      <span class="text-xs font-medium text-gray-500">{post.data.author}</span>
+      <a
+        href={articleUrl}
+        class="inline-flex items-center gap-1 text-sm font-semibold text-pink-600 hover:text-pink-700 transition-colors"
+        aria-label={`Read article: ${post.data.title}`}
+      >
+        Read Article
+        <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</article>

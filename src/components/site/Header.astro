@@ -1,20 +1,17 @@
 ---
 
-const navLinks = [
-  { href: '/', label: 'Home' },
-  { href: '/faq', label: 'FAQ' },
-  { href: '/about', label: 'About' },
-  { href: '/contact', label: 'Contact' },
-];
-
 const navLinksAria = [
   { href: '/', label: 'Home', ariaLabel: 'Chinese Gender Predictor - Home' },
+  { href: '/blog', label: 'Blog', ariaLabel: 'Free Gender Predictor Blog & Educational Guides' },
   { href: '/faq', label: 'FAQ', ariaLabel: 'Chinese Gender Predictor FAQ' },
   { href: '/about', label: 'About', ariaLabel: 'About the Chinese Gender Predictor Tool' },
   { href: '/contact', label: 'Contact', ariaLabel: 'Contact Us About the Gender Predictor' },
 ];
 
 const currentPath = Astro.url.pathname;
+
+const isActive = (href: string) =>
+  href === '/' ? currentPath === '/' : currentPath === href || currentPath.startsWith(`${href}/`);
 ---
 
 <header class="sticky top-0 z-50 border-b border-gray-200 bg-white" role="banner">
@@ -39,11 +36,11 @@ const currentPath = Astro.url.pathname;
             href={link.href}
             class:list={[
               'rounded-lg px-3.5 py-2 text-sm font-medium transition-all duration-200',
-              currentPath === link.href
+              isActive(link.href)
                 ? 'bg-pink-50 text-pink-700'
                 : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700',
             ]}
-            aria-current={currentPath === link.href ? 'page' : undefined}
+            aria-current={isActive(link.href) ? 'page' : undefined}
           >
             {link.label}
           </a>
@@ -83,11 +80,11 @@ const currentPath = Astro.url.pathname;
             href={link.href}
             class:list={[
               'block rounded-lg px-3.5 py-3 text-sm font-medium transition-colors',
-              currentPath === link.href
+              isActive(link.href)
                 ? 'bg-pink-50 text-pink-700'
                 : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700',
             ]}
-            aria-current={currentPath === link.href ? 'page' : undefined}
+            aria-current={isActive(link.href) ? 'page' : undefined}
           >
             {link.label}
           </a>

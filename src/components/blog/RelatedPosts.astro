@@ -1,0 +1,30 @@
+---
+import BlogCard from './BlogCard.astro';
+import type { BlogPost } from '../../lib/blog/utils';
+
+interface Props {
+  posts: BlogPost[];
+}
+
+const { posts } = Astro.props;
+---
+
+{posts.length > 0 && (
+  <section class="mt-16 pt-12 border-t border-gray-200 space-y-8">
+    <div class="flex items-center justify-between">
+      <div>
+        <h3 class="text-2xl font-bold text-gray-900">Related Articles</h3>
+        <p class="text-sm text-gray-500 mt-1">Explore more traditional gender prediction guides and cultural insights.</p>
+      </div>
+      <a href="/blog" class="hidden sm:inline-flex items-center gap-1 text-sm font-semibold text-pink-600 hover:text-pink-700">
+        View All Articles &rarr;
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {posts.map((post) => (
+        <BlogCard post={post} />
+      ))}
+    </div>
+  </section>
+)}

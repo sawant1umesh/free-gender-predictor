@@ -1,0 +1,22 @@
+---
+interface Props {
+  author: string;
+  authorRole?: string;
+  authorAvatar?: string;
+}
+
+const { author, authorRole = 'Medical & Cultural Research Specialist', authorAvatar = '/logo-header.webp' } = Astro.props;
+---
+
+<div class="my-10 p-6 rounded-2xl bg-gray-50 border border-gray-200 flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left">
+  <div class="w-14 h-14 rounded-full bg-pink-100 border border-pink-200 flex items-center justify-center shrink-0">
+    <img src={authorAvatar} alt={author} class="w-10 h-auto" />
+  </div>
+  <div class="space-y-1">
+    <h4 class="text-base font-bold text-gray-900">{author}</h4>
+    <p class="text-xs font-semibold text-pink-600 uppercase tracking-wider">{authorRole}</p>
+    <p class="text-xs text-gray-600 leading-relaxed pt-1">
+      Specializing in evidence-based health research, cultural pregnancy traditions, and medical journalism. Committed to high EEAT standards and medical honesty.
+    </p>
+  </div>
+</div>

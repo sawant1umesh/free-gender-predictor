@@ -1,0 +1,214 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { render } from 'astro:content';
+import Breadcrumbs from '../../components/blog/Breadcrumbs.astro';
+import CategoryBadge from '../../components/blog/CategoryBadge.astro';
+import TagPill from '../../components/blog/TagPill.astro';
+import TableOfContents from '../../components/blog/TableOfContents.astro';
+import AuthorBox from '../../components/blog/AuthorBox.astro';
+import SocialShare from '../../components/blog/SocialShare.astro';
+import RelatedPosts from '../../components/blog/RelatedPosts.astro';
+import PrevNextPost from '../../components/blog/PrevNextPost.astro';
+import MedicalReviewNotice from '../../components/blog/MedicalReviewNotice.astro';
+import BlogCTA from '../../components/blog/BlogCTA.astro';
+import {
+  getAllPosts,
+  getRelatedPosts,
+  getAdjacentPosts,
+  calculateReadingTime,
+  slugify,
+  type BlogPost,
+} from '../../lib/blog/utils';
+import {
+  generateArticleSchema,
+  generateFAQSchema,
+} from '../../lib/blog/schema';
+
+export async function getStaticPaths() {
+  const posts = await getAllPosts();
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+interface Props {
+  post: BlogPost;
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+
+const siteUrl = 'https://freegenderpredictor.com';
+const currentSlug = post.id;
+const canonicalUrl = `${siteUrl}/blog/${currentSlug}`;
+const heroImageUrl = post.data.heroImage.startsWith('http')
+  ? post.data.heroImage
+  : `${siteUrl}${post.data.heroImage}`;
+const readingTime = calculateReadingTime(post.body);
+
+const formattedPubDate = new Date(post.data.pubDate).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+const formattedUpdatedDate = post.data.updatedDate
+  ? new Date(post.data.updatedDate).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  : null;
+
+const relatedPosts = await getRelatedPosts(post, 3);
+const { prevPost, nextPost } = await getAdjacentPosts(currentSlug);
+
+const breadcrumbItems = [
+  { name: 'Blog', url: '/blog' },
+  { name: post.data.category, url: `/blog/category/${slugify(post.data.category)}` },
+  { name: post.data.title, url: `/blog/${currentSlug}` },
+];
+
+const articleSchema = generateArticleSchema(post, siteUrl);
+const faqSchema = generateFAQSchema(post.data.faqs || []);
+---
+
+<BaseLayout
+  title={post.data.seoTitle || post.data.title}
+  description={post.data.description}
+  canonicalURL={canonicalUrl}
+  ogImage={heroImageUrl}
+  ogType="article"
+  breadcrumbItems={breadcrumbItems}
+>
+  <Fragment slot="head">
+    <meta property="article:published_time" content={new Date(post.data.pubDate).toISOString()} />
+    {post.data.updatedDate && (
+      <meta property="article:modified_time" content={new Date(post.data.updatedDate).toISOString()} />
+    )}
+    <meta property="article:section" content={post.data.category} />
+    {post.data.tags.map((tag) => (
+      <meta property="article:tag" content={tag} />
+    ))}
+
+    <!-- JSON-LD Schemas -->
+    <script type="application/ld+json" set:html={articleSchema} />
+    {faqSchema && <script type="application/ld+json" set:html={faqSchema} />}
+  </Fragment>
+
+  <main class="py-10 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-10">
+    <!-- Breadcrumbs -->
+    <Breadcrumbs items={breadcrumbItems} />
+
+    <!-- Article Header -->
+    <header class="space-y-6">
+      <div class="flex flex-wrap items-center gap-3">
+        <CategoryBadge category={post.data.category} />
+        <span class="text-xs sm:text-sm text-gray-500 font-medium">
+          Published: {formattedPubDate}
+        </span>
+        {formattedUpdatedDate && (
+          <span class="text-xs sm:text-sm text-gray-500 font-medium">
+            &bull; Updated: {formattedUpdatedDate}
+          </span>
+        )}
+        <span class="text-xs sm:text-sm text-gray-500 font-medium">
+          &bull; {readingTime} min read
+        </span>
+      </div>
+
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight tracking-tight">
+        {post.data.title}
+      </h1>
+
+      <p class="text-lg sm:text-xl text-gray-600 leading-relaxed font-normal">
+        {post.data.excerpt}
+      </p>
+
+      <!-- Author Card Header -->
+      <div class="flex items-center gap-3 pt-2 border-t border-gray-100">
+        <div class="w-11 h-11 rounded-full bg-pink-100 border border-pink-200 flex items-center justify-center shrink-0">
+          <span class="text-pink-600 font-bold text-sm">FGP</span>
+        </div>
+        <div>
+          <p class="text-sm font-bold text-gray-900">{post.data.author}</p>
+          <p class="text-xs text-gray-500">{post.data.authorRole}</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Featured Hero Image -->
+    <div class="rounded-3xl overflow-hidden border border-gray-200 bg-gray-100 shadow-xs aspect-[16/9] sm:aspect-[21/9]">
+      <img
+        src={post.data.heroImage}
+        alt={post.data.heroImageAlt}
+        class="w-full h-full object-cover"
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+      />
+    </div>
+
+    <!-- Table of Contents -->
+    <TableOfContents headings={headings} />
+
+    <!-- Article Content -->
+    <article class="prose prose-pink prose-lg max-w-none prose-headings:font-bold prose-headings:text-gray-900 prose-p:text-gray-700 prose-p:leading-relaxed prose-a:text-pink-600 prose-a:underline hover:prose-a:text-pink-700 prose-img:rounded-2xl prose-strong:text-gray-900">
+      <Content />
+    </article>
+
+    <!-- Medical Review Notice -->
+    <MedicalReviewNotice />
+
+    <!-- FAQs Accordion Section (if present) -->
+    {post.data.faqs && post.data.faqs.length > 0 && (
+      <section class="my-12 p-6 sm:p-8 rounded-3xl bg-pink-50/40 border border-pink-100 space-y-6">
+        <div class="space-y-1">
+          <h2 class="text-2xl font-bold text-gray-900">Frequently Asked Questions</h2>
+          <p class="text-sm text-gray-600">Common questions about {post.data.title}.</p>
+        </div>
+        <div class="space-y-4">
+          {post.data.faqs.map((faq) => (
+            <details class="group bg-white p-5 rounded-2xl border border-pink-100 space-y-2 [&_summary::-webkit-details-marker]:hidden">
+              <summary class="flex items-center justify-between font-bold text-gray-900 cursor-pointer text-base sm:text-lg">
+                <span>{faq.question}</span>
+                <span class="ml-4 shrink-0 transition-transform duration-200 group-open:rotate-180 text-pink-600 font-extrabold">
+                  &darr;
+                </span>
+              </summary>
+              <p class="text-sm sm:text-base text-gray-700 leading-relaxed pt-2 border-t border-gray-100">
+                {faq.answer}
+              </p>
+            </details>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Tags List -->
+    {post.data.tags && post.data.tags.length > 0 && (
+      <div class="pt-6 border-t border-gray-200 flex flex-wrap items-center gap-2">
+        <span class="text-xs font-bold uppercase tracking-wider text-gray-400 mr-1">Tags:</span>
+        {post.data.tags.map((tag) => (
+          <TagPill tag={tag} />
+        ))}
+      </div>
+    )}
+
+    <!-- Social Share -->
+    <SocialShare title={post.data.title} url={canonicalUrl} />
+
+    <!-- Author Box -->
+    <AuthorBox author={post.data.author} authorRole={post.data.authorRole} />
+
+    <!-- Blog CTA -->
+    <BlogCTA />
+
+    <!-- Prev / Next Navigation -->
+    <PrevNextPost prevPost={prevPost} nextPost={nextPost} />
+
+    <!-- Related Articles -->
+    <RelatedPosts posts={relatedPosts} />
+  </main>
+</BaseLayout>

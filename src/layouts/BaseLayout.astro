@@ -8,7 +8,15 @@ interface Props {
   description: string;
   canonicalURL?: string;
   ogImage?: string;
+  ogType?: string;
   includeOrg?: boolean;
+  breadcrumbItems?: { name: string; url: string }[];
+}
+
+function absoluteUrl(url: string): string {
+  return url.startsWith('http')
+    ? url
+    : `https://freegenderpredictor.com${url.startsWith('/') ? '' : '/'}${url}`;
 }
 
 const {
@@ -16,22 +24,29 @@ const {
   description,
   canonicalURL = new URL(Astro.url.pathname, 'https://freegenderpredictor.com').href,
   ogImage = 'https://freegenderpredictor.com/og-image.png',
+  ogType = 'website',
   includeOrg = false,
+  breadcrumbItems,
 } = Astro.props;
 
-const breadcrumbItems = Astro.url.pathname.split('/').filter(Boolean);
+const pathnameCrumbs = Astro.url.pathname.split('/').filter(Boolean);
 
-const breadcrumbSchemaStr = breadcrumbItems.length > 0
+const crumbItems = breadcrumbItems ?? pathnameCrumbs.map((item, i) => ({
+  name: item.replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()),
+  url: `/${pathnameCrumbs.slice(0, i + 1).join('/')}`,
+}));
+
+const breadcrumbSchemaStr = crumbItems.length > 0
   ? JSON.stringify({
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
       "itemListElement": [
         { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://freegenderpredictor.com/" },
-        ...breadcrumbItems.map((item, i) => ({
+        ...crumbItems.map((item, i) => ({
           "@type": "ListItem",
           "position": i + 2,
-          "name": item.replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()),
-          "item": `https://freegenderpredictor.com/${breadcrumbItems.slice(0, i + 1).join('/')}`,
+          "name": item.name,
+          "item": absoluteUrl(item.url),
         })),
       ],
     })
@@ -88,7 +103,7 @@ const webpageSchemaStr = JSON.stringify(webpageSchema);
     <link rel="canonical" href={canonicalURL} />
 
     <!-- Open Graph -->
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -145,9 +160,11 @@ const webpageSchemaStr = JSON.stringify(webpageSchema);
 
     <!-- Google Analytics (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-7TN9RVQ2XW"></script>
-    <script>
+    <script is:inline>
       window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
+      function gtag() {
+        window.dataLayer.push(arguments);
+      }
       gtag('js', new Date());
       gtag('config', 'G-7TN9RVQ2XW');
     </script>
