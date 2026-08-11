@@ -5,7 +5,7 @@ description: "Debunking 10 common pregnancy gender prediction myths. Learn what 
 pubDate: 2026-07-05
 category: "Gender Prediction Myths"
 tags: ["Gender Prediction Myths", "Myths vs Facts", "Pregnancy", "Baby Gender"]
-heroImage: "/logo-header.webp"
+heroImage: "/logo.svg"
 heroImageAlt: "Illustration highlighting pregnancy gender prediction myths versus scientific facts."
 featured: false
 excerpt: "Debunking 10 famous pregnancy gender prediction myths. Discover what scientific medical research reveals about heart rates, cravings, and charts."

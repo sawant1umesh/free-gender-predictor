@@ -12,7 +12,7 @@ const blogCollection = defineCollection({
     updatedDate: z.coerce.date().optional(),
     author: z.string().default('Free Gender Predictor Editorial Team'),
     authorRole: z.string().default('Medical & Cultural Research Specialist'),
-    authorAvatar: z.string().default('/logo-header.webp'),
+    authorAvatar: z.string().default('/logo.svg'),
     category: z.string(),
     tags: z.array(z.string()).default([]),
     heroImage: z.string(),

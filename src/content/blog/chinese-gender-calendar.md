@@ -5,7 +5,7 @@ description: "Everything you need to know about the Chinese Gender Calendar. Lea
 pubDate: 2026-07-28
 category: "Chinese Gender Calendar"
 tags: ["Chinese Gender Calendar", "Lunar Calendar", "Chinese Gender Chart", "Pregnancy"]
-heroImage: "/logo-header.webp"
+heroImage: "/logo.svg"
 heroImageAlt: "Chinese Gender Calendar diagram displaying lunar months and maternal age."
 featured: false
 excerpt: "Learn how the Chinese Gender Calendar converts Western solar dates into traditional lunar months, its Qing Dynasty history, and step-by-step usage."

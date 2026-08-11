@@ -5,7 +5,7 @@ description: "Discover the Mayan Gender Predictor. Learn how ancient Mayan math 
 pubDate: 2026-07-20
 category: "Mayan Gender Predictor"
 tags: ["Mayan Gender Predictor", "Mayan Calendar", "Traditional Methods", "Gender Prediction"]
-heroImage: "/logo-header.webp"
+heroImage: "/logo.svg"
 heroImageAlt: "Mayan Gender Predictor chart illustration comparing birth year and conception month."
 featured: false
 excerpt: "Explore the ancient Mayan Gender Predictor. Discover how Mayan mathematics uses even and odd parity of maternal birth year and conception month."

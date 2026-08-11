@@ -33,7 +33,7 @@ export function generateArticleSchema(post: BlogPost, siteUrl: string) {
       url: siteUrl,
       logo: {
         '@type': 'ImageObject',
-        url: `${siteUrl}/logo-header.webp`,
+        url: `${siteUrl}/logo.svg`,
       },
     },
     articleSection: post.data.category,

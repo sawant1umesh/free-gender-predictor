@@ -5,7 +5,7 @@ description: "Compare popular baby gender prediction methods from Chinese charts
 pubDate: 2026-07-15
 category: "Baby Gender Prediction Methods"
 tags: ["Baby Gender Prediction Methods", "Traditional Methods", "Ultrasound", "NIPT", "Pregnancy"]
-heroImage: "/logo-header.webp"
+heroImage: "/logo.svg"
 heroImageAlt: "Comparison of baby gender prediction methods from folk charts to clinical ultrasound."
 featured: false
 excerpt: "Compare traditional baby gender prediction methods with clinical medical procedures. Understand accuracy rates, timelines, and scientific facts."

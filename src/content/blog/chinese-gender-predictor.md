@@ -5,7 +5,7 @@ description: "Curious how the Chinese Gender Predictor works? Learn about lunar 
 pubDate: 2026-08-01
 category: "Chinese Gender Predictor"
 tags: ["Chinese Gender Predictor", "Chinese Gender Chart", "Lunar Calendar", "Pregnancy", "Gender Prediction"]
-heroImage: "/logo-header.webp"
+heroImage: "/logo.svg"
 heroImageAlt: "Chinese Gender Predictor chart guide explaining lunar age and conception month calculations."
 featured: true
 excerpt: "Discover how the Chinese Gender Predictor works, its fascinating Qing Dynasty history, lunar age calculations, 50% accuracy rates, and scientific facts."
