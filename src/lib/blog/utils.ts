@@ -36,8 +36,7 @@ export async function getAllPosts(): Promise<BlogPost[]> {
 export async function getFeaturedPost(): Promise<BlogPost | null> {
   const posts = await getAllPosts();
   if (posts.length === 0) return null;
-  const explicitFeatured = posts.find((post) => post.data.featured);
-  return explicitFeatured || posts[0];
+  return posts[0];
 }
 
 export async function getRelatedPosts(
