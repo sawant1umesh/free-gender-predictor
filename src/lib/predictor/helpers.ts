@@ -1,7 +1,5 @@
-import { Lunar, LunarYear } from 'lunar-javascript';
-import type { LunarMonth } from 'lunar-javascript';
 import { formatLunarMonth } from '../calendar/utils';
-import { CHINESE_MONTH_NAMES, MAX_LUNAR_AGE, MIN_LUNAR_AGE, QING_GONG_BIAO_MATRIX } from './constants';
+import { MAX_LUNAR_AGE, MIN_LUNAR_AGE, QING_GONG_BIAO_MATRIX } from './constants';
 import type { PredictedGender } from './types';
 
 /**
@@ -29,36 +27,6 @@ export function lookupGenderChart(lunarAge: number, lunarMonth: number): Predict
   }
 
   return ageMap[month];
-}
-
-/**
- * Computes the Gregorian start and end dates (YYYY-MM-DD) for a specific Lunar Month in a target Lunar Year.
- */
-export function getLunarMonthGregorianRange(
-  lunarYear: number,
-  lunarMonthObj: LunarMonth
-): { gregorianStart: string; gregorianEnd: string; dayCount: number; monthNameChinese: string } {
-  const monthNum = lunarMonthObj.getMonth(); // negative if leap month
-  const isLeap = lunarMonthObj.isLeap();
-  const absMonth = Math.abs(monthNum);
-  const dayCount = lunarMonthObj.getDayCount();
-
-  // Create Lunar date for day 1 and last day
-  const startLunar = Lunar.fromYmd(lunarYear, monthNum, 1);
-  const endLunar = Lunar.fromYmd(lunarYear, monthNum, dayCount);
-
-  const gregorianStart = startLunar.getSolar().toYmd();
-  const gregorianEnd = endLunar.getSolar().toYmd();
-
-  const baseName = CHINESE_MONTH_NAMES[absMonth] || `${absMonth}月`;
-  const monthNameChinese = isLeap ? `闰${baseName}` : baseName;
-
-  return {
-    gregorianStart,
-    gregorianEnd,
-    dayCount,
-    monthNameChinese,
-  };
 }
 
 /**

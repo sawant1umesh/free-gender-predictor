@@ -1,10 +1,11 @@
-import { LunarYear } from 'lunar-javascript';
+import lunarData from '../../data/lunar-months.json';
 import { calculateLunarAge } from '../calendar/age';
 import { getLunarYear } from '../calendar/lunar';
 import type { DateInput } from '../calendar/types';
 import { formatGregorianDate, getCurrentYear } from '../calendar/utils';
 import { validateBirthDate } from '../calendar/validation';
-import { calculateWindowScore, getLunarMonthGregorianRange, getRecommendation, lookupGenderChart } from './helpers';
+import { calculateWindowScore, getRecommendation, lookupGenderChart } from './helpers';
+import { CHINESE_MONTH_NAMES } from './constants';
 import type { BestWindowResult, PredictionMonth, PredictionOptions, PredictionResult, PredictionSummary } from './types';
 
 /**
@@ -45,9 +46,12 @@ export function generateGenderPrediction(
   const lunarBirthYear = lunarAgeResult.birthLunarYear;
   const lunarAge = lunarAgeResult.lunarAge;
 
-  // Retrieve Lunar months in the target year using lunar-javascript
-  const lunarYearObj = LunarYear.fromYear(targetYear);
-  const lunarMonths = lunarYearObj.getMonthsInYear();
+  // Retrieve Lunar months from pre-computed data
+  const yearData = (lunarData as Record<string, any>)[String(targetYear)];
+  if (!yearData) {
+    throw new Error(`Lunar data not available for year ${targetYear}. Supported range: 2020-2035.`);
+  }
+  const monthsData = yearData.months;
 
   const months: PredictionMonth[] = [];
   let totalBoyMonths = 0;
@@ -56,47 +60,50 @@ export function generateGenderPrediction(
   let bestBoyMonth: PredictionMonth | null = null;
   let bestGirlMonth: PredictionMonth | null = null;
 
-  for (const monthObj of lunarMonths) {
-    const rawMonth = monthObj.getMonth();
-    const absMonth = Math.abs(rawMonth);
-    const isLeap = monthObj.isLeap();
+  for (const monthData of monthsData) {
+    const absMonth = monthData.absMonth;
+    const isLeap = monthData.isLeap;
 
     // Look up gender prediction in Qing Gong Biao chart
     const predictedGender = lookupGenderChart(lunarAge, absMonth);
 
-    // Calculate Gregorian date window for this lunar month
-    const range = getLunarMonthGregorianRange(targetYear, monthObj);
+    // Get Gregorian date window from pre-computed data
+    const gregorianStart = monthData.gregorianStart;
+    const gregorianEnd = monthData.gregorianEnd;
+    const dayCount = monthData.dayCount;
 
     // Calculate score & recommendation
     const score = calculateWindowScore(predictedGender, absMonth, isLeap);
     const recommendation = getRecommendation(predictedGender, absMonth);
 
-    // Build lunar month name display (e.g. "正月初一 - 正月廿九")
-    const lunarMonthName = `${range.monthNameChinese}初一 - ${range.monthNameChinese}${range.dayCount === 30 ? '三十' : '廿九'}`;
+    // Build lunar month name display
+    const baseName = CHINESE_MONTH_NAMES[absMonth] || `${absMonth}月`;
+    const monthNameChinese = isLeap ? `闰${baseName}` : baseName;
+    const lunarMonthName = `${monthNameChinese}初一 - ${monthNameChinese}${dayCount === 30 ? '三十' : '廿九'}`;
 
-    const monthData: PredictionMonth = {
+    const monthEntry: PredictionMonth = {
       lunarMonth: absMonth,
       lunarMonthName,
-      monthNameChinese: range.monthNameChinese,
+      monthNameChinese,
       isLeap,
-      gregorianStart: range.gregorianStart,
-      gregorianEnd: range.gregorianEnd,
+      gregorianStart,
+      gregorianEnd,
       predictedGender,
       score,
       recommendation,
     };
 
-    months.push(monthData);
+    months.push(monthEntry);
 
     if (predictedGender === 'boy') {
       totalBoyMonths++;
-      if (!bestBoyMonth || monthData.score > bestBoyMonth.score) {
-        bestBoyMonth = monthData;
+      if (!bestBoyMonth || monthEntry.score > bestBoyMonth.score) {
+        bestBoyMonth = monthEntry;
       }
     } else {
       totalGirlMonths++;
-      if (!bestGirlMonth || monthData.score > bestGirlMonth.score) {
-        bestGirlMonth = monthData;
+      if (!bestGirlMonth || monthEntry.score > bestGirlMonth.score) {
+        bestGirlMonth = monthEntry;
       }
     }
   }
