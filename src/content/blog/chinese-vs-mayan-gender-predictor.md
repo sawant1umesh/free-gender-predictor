@@ -2,7 +2,7 @@
 title: "Chinese Gender Predictor vs. Mayan Gender Predictor: What's the Difference?"
 seoTitle: "Chinese vs. Mayan Gender Predictor: Key Differences"
 description: "Compare the Chinese and Mayan gender predictors, including their calendars, calculations, differences, and accuracy. Try both traditional methods for fun."
-pubDate: 2026-08-22
+pubDate: 2026-08-30
 category: "Gender Prediction"
 tags: ["Chinese Gender Predictor", "Mayan Gender Predictor", "Gender Prediction", "Traditional Methods", "Comparison"]
 heroImage: "/logo.svg"
