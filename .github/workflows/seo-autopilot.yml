@@ -86,8 +86,8 @@ jobs:
       - name: Generate AI Article Draft & Phase 3 Validation
         if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'publish') }}
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GENDER_GEMINI_KEY }}
+          GROQ_API_KEY: ${{ secrets.GENDER_GROQ_API_KEY }}
         run: |
           echo "======================================================"
           echo "  🚀 RUNNING AI GENERATION & STAGING"

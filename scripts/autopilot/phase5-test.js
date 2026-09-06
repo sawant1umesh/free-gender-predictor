@@ -88,13 +88,13 @@ async function runPhase5Tests() {
   // Test 9: Gemini secret is wired through environment
   // -------------------------------------------------------------
   console.log('\nTest 9: Gemini secret is wired through environment');
-  assert(workflowContent.includes('GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}'), 'GEMINI_API_KEY is mapped from GitHub secrets');
+  assert(workflowContent.includes('GEMINI_API_KEY: ${{ secrets.GENDER_GEMINI_KEY }}'), 'GEMINI_API_KEY is mapped from GitHub secret GENDER_GEMINI_KEY');
 
   // -------------------------------------------------------------
   // Test 10: Groq secret is wired through environment
   // -------------------------------------------------------------
   console.log('\nTest 10: Groq secret is wired through environment');
-  assert(workflowContent.includes('GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}'), 'GROQ_API_KEY is mapped from GitHub secrets');
+  assert(workflowContent.includes('GROQ_API_KEY: ${{ secrets.GENDER_GROQ_API_KEY }}'), 'GROQ_API_KEY is mapped from GitHub secret GENDER_GROQ_API_KEY');
 
   // -------------------------------------------------------------
   // Test 11: Cloudflare secrets are wired through environment
