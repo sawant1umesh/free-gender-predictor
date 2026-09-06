@@ -2,7 +2,6 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { autopilotConfig } from './core/config.js';
 import { runAutopilot } from './index.js';
-import { setMockHandler } from './core/ai-client.js';
 
 let passedTests = 0;
 let failedTests = 0;
@@ -24,7 +23,7 @@ const INITIAL_PROD_FILES = fs.readdirSync(REAL_PROD_BLOG_DIR).sort();
 async function runPhase5Tests() {
   console.log('\n======================================================================');
   console.log('  🧪 SEO AUTOPILOT - PHASE 5 TEST SUITE');
-  console.log('  CI/CD GitHub Actions Workflow & Integration Verification');
+  console.log('  CI/CD GitHub Actions Workflow & Cloudflare Pages Integration');
   console.log('======================================================================\n');
 
   // -------------------------------------------------------------
@@ -98,73 +97,85 @@ async function runPhase5Tests() {
   assert(workflowContent.includes('GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}'), 'GROQ_API_KEY is mapped from GitHub secrets');
 
   // -------------------------------------------------------------
-  // Test 11: Dry-run path does not generate content
+  // Test 11: Cloudflare secrets are wired through environment
   // -------------------------------------------------------------
-  console.log('\nTest 11: Dry-run path executes read-only command');
+  console.log('\nTest 11: Cloudflare secrets are wired through environment');
+  assert(workflowContent.includes('CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}'), 'CLOUDFLARE_API_TOKEN is mapped from GitHub secrets');
+  assert(workflowContent.includes('CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}'), 'CLOUDFLARE_ACCOUNT_ID is mapped from GitHub secrets');
+
+  // -------------------------------------------------------------
+  // Test 12: Dry-run path does not generate content or deploy
+  // -------------------------------------------------------------
+  console.log('\nTest 12: Dry-run path executes read-only command');
   assert(workflowContent.includes('inputs.mode == \'dry-run\''), 'Dry run conditional exists');
   assert(workflowContent.includes('node scripts/autopilot/index.js'), 'Dry run calls index.js without --generate');
 
   // -------------------------------------------------------------
-  // Test 12: Publish path includes generation and promotion
+  // Test 13: Publish path includes generation and promotion
   // -------------------------------------------------------------
-  console.log('\nTest 12: Publish path includes generation and promotion');
+  console.log('\nTest 13: Publish path includes generation and promotion');
   assert(workflowContent.includes('node scripts/autopilot/index.js --generate'), 'Publish path calls index.js --generate');
   assert(workflowContent.includes('node scripts/autopilot/promote-draft.js'), 'Publish path calls promote-draft.js');
 
   // -------------------------------------------------------------
-  // Test 13: Promotion occurs only after generation/validation
+  // Test 14: Promotion occurs only after generation/validation
   // -------------------------------------------------------------
-  console.log('\nTest 13: Promotion occurs after generation/validation step');
+  console.log('\nTest 14: Promotion occurs after generation/validation step');
   const genIndex = workflowContent.indexOf('node scripts/autopilot/index.js --generate');
   const promoteIndex = workflowContent.indexOf('node scripts/autopilot/promote-draft.js');
   assert(genIndex > 0 && promoteIndex > genIndex, 'Draft generation occurs before promotion step');
 
   // -------------------------------------------------------------
-  // Test 14 & 15: Astro check and build occur before generation
+  // Test 15 & 16: Astro check and build occur before generation
   // -------------------------------------------------------------
-  console.log('\nTest 14 & 15: Astro check and build occur before generation');
+  console.log('\nTest 15 & 16: Astro check and build occur before generation');
   const preCheckIndex = workflowContent.indexOf('Pre-Generation Site Verification');
   assert(preCheckIndex > 0 && preCheckIndex < genIndex, 'Pre-generation verification occurs before generation');
 
   // -------------------------------------------------------------
-  // Test 16 & 17: Astro check and build occur after promotion
+  // Test 17 & 18: Astro check and build occur after promotion
   // -------------------------------------------------------------
-  console.log('\nTest 16 & 17: Astro check and build occur after promotion');
+  console.log('\nTest 17 & 18: Astro check and build occur after promotion');
   const postCheckIndex = workflowContent.indexOf('Post-Promotion Site Verification');
   assert(postCheckIndex > promoteIndex, 'Post-promotion verification occurs after promotion step');
 
   // -------------------------------------------------------------
-  // Test 18: Commit happens only after successful post-validation/build
+  // Test 19: Commit happens after successful post-validation/build
   // -------------------------------------------------------------
-  console.log('\nTest 18: Commit happens only after successful post-validation/build');
+  console.log('\nTest 19: Commit happens only after successful post-validation/build');
   const commitIndex = workflowContent.indexOf('Commit & Push Promoted Content');
   assert(commitIndex > postCheckIndex, 'Commit step is placed after post-promotion verification');
 
   // -------------------------------------------------------------
-  // Test 19: Push targets main branch
+  // Test 20: Push targets main branch
   // -------------------------------------------------------------
-  console.log('\nTest 19: Push targets main branch');
+  console.log('\nTest 20: Push targets main branch');
   assert(workflowContent.includes('git push origin main'), 'Push command explicitly targets main');
 
   // -------------------------------------------------------------
-  // Test 20: Deployment behavior matches the existing Vercel project setup
+  // Test 21: Cloudflare Pages Wrangler deployment step is configured
   // -------------------------------------------------------------
-  console.log('\nTest 20: Deployment behavior matches existing Vercel Git integration');
-  assert(workflowContent.includes('Vercel'), 'Workflow documents Vercel integration');
+  console.log('\nTest 21: Cloudflare Pages Wrangler deployment step is configured');
+  assert(workflowContent.includes('Deploy to Cloudflare Pages via Wrangler'), 'Wrangler deployment step is present');
+  assert(workflowContent.includes('npx wrangler pages deploy dist --project-name=free-gender-predictor'), 'Wrangler deploy uses project-name free-gender-predictor');
+  const deployIndex = workflowContent.indexOf('npx wrangler pages deploy dist --project-name=free-gender-predictor');
+  assert(deployIndex > commitIndex, 'Deployment occurs after build and commit');
 
   // -------------------------------------------------------------
-  // Test 21: Workflow does not expose secrets
+  // Test 22: Workflow does not expose secrets
   // -------------------------------------------------------------
-  console.log('\nTest 21: Workflow does not expose secrets');
+  console.log('\nTest 22: Workflow does not expose secrets');
   assert(!workflowContent.includes('AIzaSy'), 'No hardcoded Gemini API keys in workflow');
   assert(!workflowContent.includes('gsk_'), 'No hardcoded Groq API keys in workflow');
-  assert(!workflowContent.includes('echo $GEMINI_API_KEY'), 'No secret echoing');
-  assert(!workflowContent.includes('echo $GROQ_API_KEY'), 'No secret echoing');
+  assert(!workflowContent.includes('echo $GEMINI_API_KEY'), 'No Gemini secret echoing');
+  assert(!workflowContent.includes('echo $GROQ_API_KEY'), 'No Groq secret echoing');
+  assert(!workflowContent.includes('echo $CLOUDFLARE_API_TOKEN'), 'No Cloudflare token echoing');
+  assert(!workflowContent.includes('echo $CLOUDFLARE_ACCOUNT_ID'), 'No Cloudflare account ID echoing');
 
   // -------------------------------------------------------------
-  // Test 22: Force-topic with rejected topic is rejected by cannibalization gate
+  // Test 23: Force-topic with rejected topic is rejected by cannibalization gate
   // -------------------------------------------------------------
-  console.log('\nTest 22: Force-topic with rejected topic is rejected by cannibalization gate');
+  console.log('\nTest 23: Force-topic with rejected topic is rejected by cannibalization gate');
   const forceRejectResult = await runAutopilot({
     generate: false,
     forceTopic: 'Chinese Gender Calendar', // Exact duplicate of existing production article
@@ -176,9 +187,9 @@ async function runPhase5Tests() {
   );
 
   // -------------------------------------------------------------
-  // Test 23: Production content safety remains intact
+  // Test 24: Production content safety remains intact
   // -------------------------------------------------------------
-  console.log('\nTest 23: Production content safety remains intact');
+  console.log('\nTest 24: Production content safety remains intact');
   const currentProdFiles = fs.readdirSync(REAL_PROD_BLOG_DIR).sort();
   assert(
     JSON.stringify(INITIAL_PROD_FILES) === JSON.stringify(currentProdFiles),

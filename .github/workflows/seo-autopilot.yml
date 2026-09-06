@@ -145,5 +145,15 @@ jobs:
             git commit -m "chore(blog): publish validated autopilot article [skip ci]"
             git push origin main
             echo "✅ Successfully pushed new article to main branch."
-            echo "ℹ️  Vercel Git Integration will automatically deploy this commit to production."
           fi
+
+      - name: Deploy to Cloudflare Pages via Wrangler
+        if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'publish') }}
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          echo "======================================================"
+          echo "  🌐 DEPLOYING TO CLOUDFLARE PAGES VIA WRANGLER"
+          echo "======================================================"
+          npx wrangler pages deploy dist --project-name=free-gender-predictor

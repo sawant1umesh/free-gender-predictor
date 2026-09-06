@@ -2072,5 +2072,25 @@
         "Frontmatter \"faqs\" must be an array of questions and answers."
       ]
     }
+  },
+  {
+    "id": "log-1788683494982-84bc73",
+    "timestamp": "2026-09-06T08:31:34.983Z",
+    "action": "TOPIC_SELECTION",
+    "status": "ERROR",
+    "summary": "Forced topic \"Chinese Gender Calendar\" REJECTED: Exact duplicate title or slug matches existing article 'Chinese Gender Calendar: History, Lunar Conversions & Guide'",
+    "stats": null,
+    "details": {
+      "topic": {
+        "id": "forced-1788683494979",
+        "title": "Chinese Gender Calendar",
+        "category": "Chinese Gender Predictor",
+        "suggestedSlug": "chinese-gender-calendar",
+        "primaryKeyword": "[REDACTED]",
+        "secondaryKeywords": "[REDACTED]",
+        "targetWordCount": 2000
+      },
+      "reason": "Exact duplicate title or slug matches existing article 'Chinese Gender Calendar: History, Lunar Conversions & Guide'"
+    }
   }
 ]
