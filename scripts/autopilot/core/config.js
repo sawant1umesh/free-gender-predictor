@@ -56,11 +56,11 @@ export const autopilotConfig = {
     primaryProvider: 'gemini',
     fallbackProvider: 'groq',
     gemini: {
-      model: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
+      model: process.env.GEMINI_MODEL || 'gemini-3.6-flash',
       apiVersion: 'v1beta',
     },
     groq: {
-      model: process.env.GROQ_MODEL || 'llama-3.3-70b-versatile',
+      model: process.env.GROQ_MODEL || 'openai/gpt-oss-120b',
     },
     generationTarget: {
       wordCount: {

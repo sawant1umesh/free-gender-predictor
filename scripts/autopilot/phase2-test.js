@@ -97,9 +97,18 @@ async function runTests() {
   const initialProdArticles = fs.readdirSync(autopilotConfig.paths.productionBlogDir);
 
   // -------------------------------------------------------------
+  // Test 0: Verify AI model configuration source of truth
+  // -------------------------------------------------------------
+  console.log('Test 0: Verify AI model configuration source of truth');
+  assert(autopilotConfig.ai.gemini.model === 'gemini-3.6-flash', 'Gemini model is configured as gemini-3.6-flash');
+  assert(autopilotConfig.ai.groq.model === 'openai/gpt-oss-120b', 'Groq fallback model is configured as openai/gpt-oss-120b');
+  assert(autopilotConfig.ai.primaryProvider === 'gemini', 'Primary provider is gemini');
+  assert(autopilotConfig.ai.fallbackProvider === 'groq', 'Fallback provider is groq');
+
+  // -------------------------------------------------------------
   // Test 1: Dry-run makes zero AI calls
   // -------------------------------------------------------------
-  console.log('Test 1: Dry-run mode makes zero AI calls');
+  console.log('\nTest 1: Dry-run mode makes zero AI calls');
   let aiCalledInDryRun = false;
   setMockHandler(() => {
     aiCalledInDryRun = true;
@@ -128,7 +137,7 @@ async function runTests() {
       success: true,
       rawText: createValidMockAIOutput('Automated Test Guide to Gender Calendars'),
       provider: 'gemini',
-      model: 'gemini-2.5-flash',
+      model: autopilotConfig.ai.gemini.model,
       fallbackUsed: false,
     };
   });
@@ -173,7 +182,7 @@ async function runTests() {
       success: true,
       rawText: createValidMockAIOutput('Groq Fallback Test Article'),
       provider: 'groq',
-      model: 'llama-3.3-70b-versatile',
+      model: autopilotConfig.ai.groq.model,
       fallbackUsed: true,
     };
   });
@@ -238,7 +247,7 @@ async function runTests() {
       success: true,
       rawText: 'This is not JSON at all, just plain conversational text from an LLM.',
       provider: 'gemini',
-      model: 'gemini-2.5-flash',
+      model: autopilotConfig.ai.gemini.model,
     };
   });
 

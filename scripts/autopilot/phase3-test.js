@@ -532,7 +532,7 @@ Done.
         markdownBody: createValidArticleBody(),
       }),
       provider: 'gemini',
-      model: 'gemini-2.5-flash',
+      model: autopilotConfig.ai.gemini.model,
     };
   });
 
@@ -572,7 +572,7 @@ Done.
         markdownBody: createValidArticleBody(),
       }),
       provider: 'gemini',
-      model: 'gemini-2.5-flash',
+      model: autopilotConfig.ai.gemini.model,
     };
   });
 
@@ -593,7 +593,7 @@ Done.
         markdownBody: createValidArticleBody(),
       }),
       provider: 'gemini',
-      model: 'gemini-2.5-flash',
+      model: autopilotConfig.ai.gemini.model,
     };
   });
 
