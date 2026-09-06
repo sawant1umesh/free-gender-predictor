@@ -1,0 +1,149 @@
+name: SEO Autopilot CI/CD
+
+on:
+  # Scheduled execution every Saturday at 8:00 AM IST (02:30 UTC)
+  # GitHub Actions cron operates in UTC: 2:30 AM UTC = 8:00 AM IST (UTC+5:30)
+  schedule:
+    - cron: '30 2 * * 6'
+
+  # Manual execution with parameter controls
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Execution mode (dry-run inspects/plans without creating files; publish runs generation, promotion, and deployment)'
+        required: true
+        type: choice
+        options:
+          - dry-run
+          - publish
+        default: 'dry-run'
+      force_topic:
+        description: 'Optional specific topic title or ID to force (still subject to strict duplicate/cannibalization checks)'
+        required: false
+        type: string
+        default: ''
+
+# Concurrency group ensures only one Autopilot workflow executes at a time
+concurrency:
+  group: seo-autopilot-production
+  cancel-in-progress: false
+
+# Minimum required permissions: contents: write allows committing published articles back to the repository
+permissions:
+  contents: write
+
+jobs:
+  seo-autopilot:
+    name: SEO Autopilot Pipeline
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Check out repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+
+      # 2. Setup Node.js (strictly >=22.12.0)
+      - name: Setup Node.js 22.12.0
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.12.0'
+          cache: 'npm'
+
+      # 3. Clean dependency installation
+      - name: Install Dependencies
+        run: npm ci
+
+      # -------------------------------------------------------------
+      # DRY-RUN EXECUTION BRANCH
+      # -------------------------------------------------------------
+      - name: Execute Autopilot (Dry-Run Mode)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'dry-run' }}
+        run: |
+          echo "======================================================"
+          echo "  🛡️  RUNNING SEO AUTOPILOT IN DRY-RUN MODE"
+          echo "======================================================"
+          if [ -n "${{ inputs.force_topic }}" ]; then
+            node scripts/autopilot/index.js --force-topic="${{ inputs.force_topic }}"
+          else
+            node scripts/autopilot/index.js
+          fi
+
+      # -------------------------------------------------------------
+      # PUBLISH EXECUTION BRANCH (Full Pipeline with Quality Gates)
+      # -------------------------------------------------------------
+      - name: Pre-Generation Site Verification (Astro Check & Build)
+        if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'publish') }}
+        run: |
+          echo "======================================================"
+          echo "  🔍 PRE-GENERATION QUALITY VERIFICATION"
+          echo "======================================================"
+          npx astro check
+          npm run build
+
+      - name: Generate AI Article Draft & Phase 3 Validation
+        if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'publish') }}
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          echo "======================================================"
+          echo "  🚀 RUNNING AI GENERATION & STAGING"
+          echo "======================================================"
+          if [ -n "${{ inputs.force_topic }}" ]; then
+            node scripts/autopilot/index.js --generate --force-topic="${{ inputs.force_topic }}"
+          else
+            node scripts/autopilot/index.js --generate
+          fi
+
+      - name: Promote Validated Draft to Production Blog
+        if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'publish') }}
+        run: |
+          echo "======================================================"
+          echo "  📦 PROMOTING VALIDATED DRAFT TO PRODUCTION"
+          echo "======================================================"
+          # Find the newest markdown draft file in scripts/autopilot/drafts/
+          LATEST_DRAFT=$(ls -t scripts/autopilot/drafts/*.md 2>/dev/null | head -n 1)
+          if [ -z "$LATEST_DRAFT" ]; then
+            echo "❌ No generated draft found in scripts/autopilot/drafts/ to promote."
+            exit 1
+          fi
+          DRAFT_FILENAME=$(basename "$LATEST_DRAFT")
+          echo "Promoting draft file: $DRAFT_FILENAME"
+          node scripts/autopilot/promote-draft.js --file="$DRAFT_FILENAME"
+
+      - name: Post-Promotion Site Verification (Astro Check & Build)
+        if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'publish') }}
+        run: |
+          echo "======================================================"
+          echo "  🛡️  POST-PROMOTION QUALITY VERIFICATION"
+          echo "======================================================"
+          npx astro check
+          npm run build
+
+      - name: Commit & Push Promoted Content to Main Branch
+        if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'publish') }}
+        run: |
+          echo "======================================================"
+          echo "  🚀 COMMITTING PROMOTED ARTICLE TO MAIN"
+          echo "======================================================"
+          git config user.name "seo-autopilot[bot]"
+          git config user.email "seo-autopilot@users.noreply.github.com"
+
+          # Check for changes in production blog or audit log
+          git status --porcelain src/content/blog data/autopilot-log.json
+
+          # Stage ONLY approved production blog files and audit logs
+          git add src/content/blog/ data/autopilot-log.json
+
+          # Check if there are staged changes to commit
+          if git diff --staged --quiet; then
+            echo "ℹ️  No changes to commit. Exiting safely."
+          else
+            git commit -m "chore(blog): publish validated autopilot article [skip ci]"
+            git push origin main
+            echo "✅ Successfully pushed new article to main branch."
+            echo "ℹ️  Vercel Git Integration will automatically deploy this commit to production."
+          fi
