@@ -2758,5 +2758,45 @@
       },
       "reason": "Exact duplicate title or slug matches existing article 'Chinese Gender Calendar: History, Lunar Conversions & Guide'"
     }
+  },
+  {
+    "id": "log-1788685675374-168ef0",
+    "timestamp": "2026-09-06T09:07:55.375Z",
+    "action": "DRAFT_VALIDATION_PASSED",
+    "status": "SUCCESS",
+    "summary": "Draft \"Chinese Gender Calendar Leap Month: How Lunar Leap Years Affect Predictions\" PASSED all validation checks (1578 words).",
+    "stats": {
+      "wordCount": 1578,
+      "internalLinks": 5,
+      "faqCount": 4,
+      "valid": true
+    },
+    "details": {
+      "topicId": "seed-001",
+      "slug": "chinese-gender-calendar-leap-month-rules",
+      "draftPath": "/home/runner/work/free-gender-predictor/free-gender-predictor/scripts/autopilot/drafts/chinese-gender-calendar-leap-month-rules.md",
+      "errors": [],
+      "warnings": [
+        "Word count (1578) meets minimum production safety (1200) but is below preferred editorial target (1800 words)."
+      ],
+      "provider": "groq"
+    }
+  },
+  {
+    "id": "log-1788685675439-6a726f",
+    "timestamp": "2026-09-06T09:07:55.439Z",
+    "action": "PROMOTE_DRAFT",
+    "status": "SUCCESS",
+    "summary": "Successfully promoted draft \"chinese-gender-calendar-leap-month-rules.md\" to production article \"chinese-gender-calendar-leap-month-rules\"",
+    "stats": null,
+    "details": {
+      "sourceDraft": "chinese-gender-calendar-leap-month-rules.md",
+      "destinationSlug": "chinese-gender-calendar-leap-month-rules",
+      "productionPath": "/home/runner/work/free-gender-predictor/free-gender-predictor/src/content/blog/chinese-gender-calendar-leap-month-rules.md",
+      "wordCount": 1578,
+      "internalLinks": 5,
+      "faqCount": 4,
+      "sourceDraftPreserved": true
+    }
   }
 ]
