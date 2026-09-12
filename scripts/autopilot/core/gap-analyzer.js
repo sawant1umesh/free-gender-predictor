@@ -75,9 +75,10 @@ export function overlapCoefficient(setA, setB) {
  * @param {string} str
  * @returns {string}
  */
-function normalizeString(str) {
+export function normalizeString(str) {
   return (str || '')
     .toLowerCase()
+    .replace(/[\u2013\u2014]/g, '-')
     .replace(/[^\w]/g, '')
     .trim();
 }
@@ -89,8 +90,12 @@ function normalizeString(str) {
  * @returns {object} Analysis result with SAFE, CAUTION, or REJECT
  */
 export function analyzeTopicCandidate(candidate, inventory) {
-  const candidateTitle = candidate.title || '';
-  const candidateSlug = candidate.suggestedSlug || slugify(candidateTitle);
+  const candidateTitle = (candidate.title || '').trim();
+  const rawCandidateSlug = (candidate.suggestedSlug || candidate.slug || candidateTitle).replace(/\.(md|mdx)$/i, '');
+  const candidateSlug = slugify(rawCandidateSlug);
+  const candidateTitleSlug = slugify(candidateTitle);
+  const candidateFilename = `${candidateSlug}.md`;
+
   const candidateTokens = tokenize(`${candidateTitle} ${candidate.primaryKeyword || ''} ${(candidate.secondaryKeywords || []).join(' ')}`);
   const candidateCategory = candidate.category || '';
 
@@ -101,12 +106,41 @@ export function analyzeTopicCandidate(candidate, inventory) {
   let closestArticle = null;
   let matchType = 'none';
 
-  for (const article of inventory.articles) {
+  const articles = inventory.articles || [];
+
+  for (const article of articles) {
     const existingTitleNorm = normalizeString(article.title);
     const candidateTitleNorm = normalizeString(candidateTitle);
+    const existingTitleLower = (article.title || '').trim().toLowerCase();
+    const candidateTitleLower = candidateTitle.toLowerCase();
 
-    // 1. Exact title or slug match
-    if (existingTitleNorm === candidateTitleNorm || article.slug === candidateSlug) {
+    const existingSlug = (article.slug || '').toLowerCase();
+    const existingFilename = (article.filename || `${existingSlug}.md`).toLowerCase();
+
+    // 1. Exact title match check
+    if (
+      existingTitleNorm === candidateTitleNorm ||
+      (candidateTitleLower && existingTitleLower === candidateTitleLower)
+    ) {
+      return {
+        candidate,
+        decision: 'REJECT',
+        score: 1.0,
+        closestMatch: article.title,
+        closestSlug: article.slug,
+        reason: `Exact duplicate title matches existing article '${article.title}'`,
+        linkingOpportunities: [],
+      };
+    }
+
+    // 2. Exact slug / filename collision check
+    if (
+      candidateSlug === existingSlug ||
+      candidateTitleSlug === existingSlug ||
+      candidateFilename === existingFilename ||
+      candidateSlug === existingFilename ||
+      candidateFilename === `${existingSlug}.md`
+    ) {
       return {
         candidate,
         decision: 'REJECT',
@@ -118,8 +152,8 @@ export function analyzeTopicCandidate(candidate, inventory) {
       };
     }
 
-    // 2. Token overlap & Jaccard comparison
-    const articleTokens = tokenize(`${article.title} ${article.description || ''} ${article.tags.join(' ')}`);
+    // 3. Token overlap & Jaccard comparison
+    const articleTokens = tokenize(`${article.title} ${article.description || ''} ${(article.tags || []).join(' ')}`);
     const jaccard = jaccardSimilarity(candidateTokens, articleTokens);
     const overlap = overlapCoefficient(candidateTokens, articleTokens);
 

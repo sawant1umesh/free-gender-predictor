@@ -12,6 +12,7 @@ export function slugify(text) {
   return text
     .toLowerCase()
     .trim()
+    .replace(/[\u2013\u2014]/g, '-')
     .replace(/[^\w\s-]/g, '')
     .replace(/[\s_-]+/g, '-')
     .replace(/^-+|-+$/g, '');
@@ -182,6 +183,10 @@ export async function scanInventory() {
     const wordCount = words.length;
     const readingTime = Math.max(1, Math.ceil(wordCount / 200));
 
+    // Extract first 150 words of body for richer topical similarity scoring
+    // This improves pre-generation gap analysis beyond title+description+tags alone
+    const bodyExcerpt = words.slice(0, 150).join(' ');
+
     const category = frontmatter.category || 'Uncategorized';
     const tags = Array.isArray(frontmatter.tags) ? frontmatter.tags : [];
 
@@ -221,6 +226,7 @@ export async function scanInventory() {
       faqsCount: Array.isArray(frontmatter.faqs) ? frontmatter.faqs.length : 0,
       wordCount,
       readingTime,
+      bodyExcerpt, // first 150 words of body — used by gap-analyzer for richer similarity scoring
     });
   }
 
@@ -248,11 +254,23 @@ export async function scanInventory() {
     })),
   ];
 
+  // Build lookup sets for existing production assets
+  const existingSlugs = new Set(articles.map((a) => a.slug.toLowerCase()));
+  const existingFilenames = new Set([
+    ...articles.map((a) => a.filename.toLowerCase()),
+    ...articles.map((a) => `${a.slug.toLowerCase()}.md`),
+    ...articles.map((a) => `${a.slug.toLowerCase()}.mdx`),
+  ]);
+  const existingTitles = new Set(articles.map((a) => a.title.toLowerCase().trim()));
+
   return {
     articles,
     categories,
     tags,
     routes,
+    existingSlugs,
+    existingFilenames,
+    existingTitles,
     stats: {
       totalArticles: articles.length,
       totalCategories: categories.length,

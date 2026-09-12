@@ -28,7 +28,7 @@ import { logEvent } from './core/audit-logger.js';
  *   error?: string
  * }>}
  */
-export async function runAutopilot({ generate = false, overrideTopic = null, forceTopic = null } = {}) {
+export async function runAutopilot({ generate = false, overrideTopic = null, forceTopic = null, allowCaution = false } = {}) {
   const isGenerateMode = Boolean(generate);
 
   console.log('\n' + '='.repeat(70));
@@ -37,15 +37,24 @@ export async function runAutopilot({ generate = false, overrideTopic = null, for
   console.log(`  Mode: ${isGenerateMode ? '🚀 GENERATE (Draft staging & validation)' : '🛡️  DRY-RUN / READ-ONLY (No drafts created)'}`);
   console.log('='.repeat(70) + '\n');
 
-  // 1. Scan Content Inventory & Whitelist Routes
+  // 1. Scan Content Inventory & Whitelist Routes (Fresh Runtime Scan)
+  // IMPORTANT: This scan reads the CURRENT filesystem state at runtime.
+  // All topic-selection safety decisions are made against this exact snapshot.
+  const inventoryScanTimestamp = new Date().toISOString();
   console.log('🔍 [1/6] Scanning production blog inventory & internal routes...');
+  console.log(`   • Scan timestamp: ${inventoryScanTimestamp}`);
   const inventory = await scanInventory();
   const whitelistedPaths = inventory.routes.map((r) => r.path);
 
   console.log(`   ✓ Found ${inventory.stats.totalArticles} published articles`);
   console.log(`   ✓ Discovered ${inventory.stats.totalCategories} active categories`);
   console.log(`   ✓ Discovered ${inventory.stats.totalRoutes} valid internal linking routes`);
-  console.log(`   ✓ Average published article length: ${inventory.stats.avgWordCount} words\n`);
+  console.log(`   ✓ Average published article length: ${inventory.stats.avgWordCount} words`);
+  console.log(`   • Current production articles (${inventory.stats.totalArticles}):`);
+  for (const art of inventory.articles) {
+    console.log(`       /blog/${art.slug}  —  "${art.title}"`);
+  }
+  console.log('');
 
   // 2. Load Topic Seeds & Gap Analysis
   console.log('🧠 [2/6] Evaluating topic candidates for duplicate/cannibalization risk...');
@@ -61,7 +70,20 @@ export async function runAutopilot({ generate = false, overrideTopic = null, for
   const cautionTopics = analysisResults.filter((r) => r.decision === 'CAUTION');
   const rejectTopics = analysisResults.filter((r) => r.decision === 'REJECT');
 
-  console.log(`   ✓ Analysis results: ${safeTopics.length} SAFE | ${cautionTopics.length} CAUTION | ${rejectTopics.length} REJECT\n`);
+  console.log(`   ✓ Analysis results: ${safeTopics.length} SAFE | ${cautionTopics.length} CAUTION | ${rejectTopics.length} REJECT`);
+  if (cautionTopics.length > 0) {
+    console.log(`   ⚠️  CAUTION seeds (blocked by default):`);
+    for (const r of cautionTopics) {
+      console.log(`       [CAUTION] "${r.candidate.title}" — ${r.reason}`);
+    }
+  }
+  if (rejectTopics.length > 0) {
+    console.log(`   ❌ REJECT seeds:`);
+    for (const r of rejectTopics) {
+      console.log(`       [REJECT]  "${r.candidate.title}" — ${r.reason}`);
+    }
+  }
+  console.log('');
 
   // Select target topic
   let selectedCandidate = null;
@@ -86,7 +108,7 @@ export async function runAutopilot({ generate = false, overrideTopic = null, for
       candidateToTest = rawTarget;
     }
 
-    // Run strict cannibalization check on the forced candidate
+    // Run strict duplicate & cannibalization check on the forced candidate
     const forcedAnalysis = analyzeTopicCandidate(candidateToTest, inventory);
     if (forcedAnalysis.decision === 'REJECT') {
       console.error(`❌ Forced topic rejected due to cannibalization or duplicate conflict: ${forcedAnalysis.reason}`);
@@ -97,16 +119,49 @@ export async function runAutopilot({ generate = false, overrideTopic = null, for
         details: { topic: candidateToTest, reason: forcedAnalysis.reason },
       });
       return {
-        state: RESULT_STATES.PROMOTION_CANNIBALIZATION_REJECTED || 'TOPIC_CANNIBALIZATION_REJECTED',
+        state: RESULT_STATES.PROMOTION_CANNIBALIZATION_REJECTED,
         success: false,
         error: `Forced topic rejected by cannibalization gate: ${forcedAnalysis.reason}`,
       };
     } else if (forcedAnalysis.decision === 'CAUTION') {
-      console.warn(`⚠️  Forced topic has CAUTION overlap: ${forcedAnalysis.reason}`);
+      if (!allowCaution) {
+        console.error(`❌ Forced topic rejected before generation due to CAUTION-level overlap: ${forcedAnalysis.reason}`);
+        logEvent({
+          action: 'TOPIC_SELECTION',
+          status: 'ERROR',
+          summary: `Forced topic "${candidateToTest.title}" REJECTED: ${forcedAnalysis.reason}`,
+          details: { topic: candidateToTest, reason: forcedAnalysis.reason },
+        });
+        return {
+          state: RESULT_STATES.PROMOTION_CANNIBALIZATION_REJECTED,
+          success: false,
+          error: `Forced topic rejected before generation due to CAUTION-level overlap: ${forcedAnalysis.reason}`,
+        };
+      } else {
+        console.warn(`⚠️  Forced topic has CAUTION overlap: ${forcedAnalysis.reason}`);
+        selectedCandidate = candidateToTest;
+      }
+    } else {
+      selectedCandidate = candidateToTest;
     }
-    selectedCandidate = candidateToTest;
-  } else if (safeTopics.length > 0) {
-    selectedCandidate = safeTopics[0].candidate;
+  } else {
+    // Autonomous topic selection:
+    // Exclude test seeds (priority: 'test')
+    // Exclude any seed whose slug, title, or filename exists in current production inventory
+    const eligibleSafe = safeTopics.filter((r) => {
+      const cand = r.candidate;
+      if (cand.priority === 'test') return false;
+      const cSlug = slugify((cand.suggestedSlug || cand.slug || cand.title || '').replace(/\.(md|mdx)$/i, ''));
+      const cTitle = (cand.title || '').trim().toLowerCase();
+      if (inventory.existingSlugs && inventory.existingSlugs.has(cSlug)) return false;
+      if (inventory.existingFilenames && inventory.existingFilenames.has(`${cSlug}.md`)) return false;
+      if (inventory.existingTitles && inventory.existingTitles.has(cTitle)) return false;
+      return true;
+    });
+
+    if (eligibleSafe.length > 0) {
+      selectedCandidate = eligibleSafe[0].candidate;
+    }
   }
 
   if (!selectedCandidate) {
@@ -122,6 +177,23 @@ export async function runAutopilot({ generate = false, overrideTopic = null, for
       state: RESULT_STATES.NO_STRONG_TOPIC_FOUND,
       success: false,
       error: 'No safe topic candidates found.',
+    };
+  }
+
+  // Pre-generation final safety check: confirm candidate is genuinely SAFE
+  const preGenCheck = analyzeTopicCandidate(selectedCandidate, inventory);
+  if (preGenCheck.decision === 'REJECT' || (preGenCheck.decision === 'CAUTION' && !allowCaution)) {
+    console.error(`❌ Selected topic failed pre-generation safety check: ${preGenCheck.reason}`);
+    logEvent({
+      action: 'TOPIC_SELECTION',
+      status: 'ERROR',
+      summary: `Selected topic "${selectedCandidate.title}" REJECTED before generation: ${preGenCheck.reason}`,
+      details: { topic: selectedCandidate, reason: preGenCheck.reason },
+    });
+    return {
+      state: RESULT_STATES.PROMOTION_CANNIBALIZATION_REJECTED,
+      success: false,
+      error: `Topic rejected by pre-generation safety gate: ${preGenCheck.reason}`,
     };
   }
 
@@ -163,6 +235,8 @@ export async function runAutopilot({ generate = false, overrideTopic = null, for
       details: {
         selectedTopicId: selectedCandidate.id,
         selectedTopicTitle: selectedCandidate.title,
+        inventoryScanTimestamp,
+        inventorySlugsAtScanTime: inventory.articles.map((a) => a.slug),
       },
     });
 
@@ -331,6 +405,8 @@ export async function runAutopilot({ generate = false, overrideTopic = null, for
       errors: validation.errors,
       warnings: validation.warnings,
       provider: aiResult.provider,
+      inventoryScanTimestamp,
+      inventorySlugsAtScanTime: inventory.articles.map((a) => a.slug),
     },
   });
 
@@ -361,6 +437,7 @@ const invokedFile = process.argv[1] ? path.resolve(process.argv[1]) : null;
 
 if (invokedFile && invokedFile === path.resolve(currentFile)) {
   const isGenerate = process.argv.includes('--generate');
+  const allowCaution = process.argv.includes('--allow-caution');
   let forceTopic = null;
 
   for (let i = 2; i < process.argv.length; i++) {
@@ -373,7 +450,7 @@ if (invokedFile && invokedFile === path.resolve(currentFile)) {
     }
   }
 
-  runAutopilot({ generate: isGenerate, forceTopic }).then((result) => {
+  runAutopilot({ generate: isGenerate, forceTopic, allowCaution }).then((result) => {
     if (!result.success) {
       process.exit(1);
     }
