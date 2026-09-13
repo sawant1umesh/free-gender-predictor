@@ -99,28 +99,35 @@ export function sanitizeSlug(rawSlug) {
 }
 
 /**
- * Generates an Astro-compatible draft file in scripts/autopilot/drafts/
+ * Generates an Astro-compatible draft file in scripts/autopilot/drafts/ (or run-specific subfolder)
  * NEVER writes to production src/content/blog/.
+ * 
  * @param {object} params
  * @param {object} params.frontmatter - Validated frontmatter metadata
  * @param {string} params.markdownBody - Validated markdown body
  * @param {string} [params.suggestedSlug] - Preferred slug
+ * @param {string} [params.runId] - Optional run identifier to isolate drafts inside drafts/<runId>/
+ * @param {string} [params.draftsDir] - Optional custom base drafts directory (for isolated testing)
  * @returns {{
  *   success: boolean,
+ *   runId?: string|null,
+ *   title?: string,
  *   draftPath?: string,
  *   slug?: string,
  *   filename?: string,
+ *   category?: string,
  *   frontmatter?: object,
  *   creationStatus?: string,
+ *   generationTimestamp?: string,
  *   error?: string
  * }}
  */
-export function createDraft({ frontmatter, markdownBody, suggestedSlug = null }) {
+export function createDraft({ frontmatter, markdownBody, suggestedSlug = null, runId = null, draftsDir = null }) {
   if (!frontmatter || !markdownBody) {
     return { success: false, error: 'Missing frontmatter or markdownBody' };
   }
 
-  const draftsDir = path.resolve(autopilotConfig.paths.draftsDir);
+  const baseDraftsDir = path.resolve(draftsDir || autopilotConfig.paths.draftsDir);
   const productionBlogDir = path.resolve(autopilotConfig.paths.productionBlogDir);
 
   // 1. Generate & sanitize slug
@@ -132,16 +139,32 @@ export function createDraft({ frontmatter, markdownBody, suggestedSlug = null })
   }
 
   const filename = `${slug}.md`;
-  const draftPath = path.resolve(draftsDir, filename);
 
-  // 2. Strict path traversal & production directory boundary enforcement
-  const normalizedDraftsDir = path.normalize(draftsDir) + path.sep;
+  // 2. Resolve target staging directory (run-isolated when runId is provided)
+  let targetDir = baseDraftsDir;
+  if (runId && typeof runId === 'string') {
+    const cleanRunId = runId.replace(/[\/\\]/g, '-').replace(/\.\./g, '').trim();
+    targetDir = path.resolve(baseDraftsDir, cleanRunId);
+  }
+
+  const draftPath = path.resolve(targetDir, filename);
+
+  // 3. Strict path traversal & production directory boundary enforcement
+  const normalizedBaseDraftsDir = path.normalize(baseDraftsDir) + path.sep;
+  const normalizedTargetDir = path.normalize(targetDir) + path.sep;
   const normalizedDraftPath = path.normalize(draftPath);
 
-  if (!normalizedDraftPath.startsWith(normalizedDraftsDir)) {
+  if (!normalizedDraftPath.startsWith(normalizedBaseDraftsDir) && normalizedDraftPath !== path.normalize(baseDraftsDir)) {
     return {
       success: false,
-      error: `Security violation: draft path "${draftPath}" escapes drafts directory "${draftsDir}"`,
+      error: `Security violation: draft path "${draftPath}" escapes drafts directory "${baseDraftsDir}"`,
+    };
+  }
+
+  if (runId && !normalizedDraftPath.startsWith(normalizedTargetDir) && normalizedDraftPath !== path.normalize(targetDir)) {
+    return {
+      success: false,
+      error: `Security violation: draft path "${draftPath}" escapes run directory "${targetDir}"`,
     };
   }
 
@@ -152,24 +175,38 @@ export function createDraft({ frontmatter, markdownBody, suggestedSlug = null })
     };
   }
 
-  // 3. Ensure drafts directory exists
-  if (!fs.existsSync(draftsDir)) {
-    fs.mkdirSync(draftsDir, { recursive: true });
+  // 4. Ensure target directory exists
+  if (!fs.existsSync(targetDir)) {
+    fs.mkdirSync(targetDir, { recursive: true });
   }
 
-  // 4. Serialize document
+  // 5. Check if draft file already exists in current run location (never silently overwrite in same run)
+  if (fs.existsSync(draftPath)) {
+    return {
+      success: false,
+      error: `Draft "${filename}" already exists in run directory "${targetDir}". Overwriting is blocked.`,
+    };
+  }
+
+  // 6. Serialize document
   const content = serializeAstroMarkdown(frontmatter, markdownBody);
 
-  // 5. Write draft file
-  fs.writeFileSync(draftPath, content, 'utf-8');
+  // 7. Write draft file atomically
+  const tempDraftPath = `${draftPath}.${Date.now()}.tmp`;
+  fs.writeFileSync(tempDraftPath, content, 'utf-8');
+  fs.renameSync(tempDraftPath, draftPath);
 
   return {
     success: true,
-    draftPath,
+    runId: runId || null,
+    title: frontmatter.title || slug,
     slug,
     filename,
+    draftPath,
+    category: frontmatter.category || '',
     frontmatter,
     creationStatus: 'DRAFT_CREATED',
+    generationTimestamp: new Date().toISOString(),
   };
 }
 

@@ -11,6 +11,7 @@ import { generateArticleContent, getProviderAvailability } from './core/ai-clien
 import { createDraft } from './core/draft-generator.js';
 import { validateDraft } from './core/validator.js';
 import { logEvent } from './core/audit-logger.js';
+import { createRunId, writeRunManifest, updateRunManifest, clearCurrentRunManifest } from './core/manifest.js';
 
 /**
  * Main orchestrator for SEO Autopilot
@@ -18,22 +19,31 @@ import { logEvent } from './core/audit-logger.js';
  * @param {boolean} [options.generate] - If true, runs generation pipeline. Defaults to false (dry-run).
  * @param {object|string} [options.overrideTopic] - Optional specific topic candidate to run.
  * @param {object|string} [options.forceTopic] - Optional specific topic candidate to run with safety checks.
+ * @param {boolean} [options.allowCaution] - Whether to allow CAUTION-level topic selection.
+ * @param {string} [options.runId] - Optional explicit run identifier for transaction tracking.
  * @returns {Promise<{
  *   state: string,
  *   success: boolean,
+ *   runId: string,
  *   topic?: object,
  *   draftPath?: string,
  *   slug?: string,
  *   validation?: object,
+ *   manifestPath?: string,
  *   error?: string
  * }>}
  */
-export async function runAutopilot({ generate = false, overrideTopic = null, forceTopic = null, allowCaution = false } = {}) {
+export async function runAutopilot({ generate = false, overrideTopic = null, forceTopic = null, allowCaution = false, runId: customRunId = null } = {}) {
   const isGenerateMode = Boolean(generate);
+  const runId = (customRunId && typeof customRunId === 'string') ? customRunId : createRunId();
+
+  // Reset/clean previous run state safely
+  clearCurrentRunManifest();
 
   console.log('\n' + '='.repeat(70));
   console.log('  🎯 SEO AUTOPILOT - PHASE 3: QUALITY GATE & DRAFT VALIDATION');
   console.log('  Site: Free Gender Predictor (https://freegenderpredictor.com)');
+  console.log(`  Run ID: ${runId}`);
   console.log(`  Mode: ${isGenerateMode ? '🚀 GENERATE (Draft staging & validation)' : '🛡️  DRY-RUN / READ-ONLY (No drafts created)'}`);
   console.log('='.repeat(70) + '\n');
 
@@ -42,9 +52,31 @@ export async function runAutopilot({ generate = false, overrideTopic = null, for
   // All topic-selection safety decisions are made against this exact snapshot.
   const inventoryScanTimestamp = new Date().toISOString();
   console.log('🔍 [1/6] Scanning production blog inventory & internal routes...');
+  console.log(`   • Run ID:         ${runId}`);
   console.log(`   • Scan timestamp: ${inventoryScanTimestamp}`);
   const inventory = await scanInventory();
   const whitelistedPaths = inventory.routes.map((r) => r.path);
+
+  // Initialize current run manifest
+  const manifestData = {
+    runId,
+    createdAt: new Date().toISOString(),
+    mode: isGenerateMode ? 'generate' : 'dry-run',
+    status: 'INITIALIZING',
+    resultState: null,
+    inventoryScan: {
+      timestamp: inventoryScanTimestamp,
+      totalArticles: inventory.stats.totalArticles,
+      productionSlugs: inventory.articles.map((a) => a.slug),
+      productionTitles: inventory.articles.map((a) => a.title),
+    },
+    selectedTopic: null,
+    draft: null,
+    validation: null,
+    promotion: null,
+    errors: [],
+  };
+  writeRunManifest(manifestData);
 
   console.log(`   ✓ Found ${inventory.stats.totalArticles} published articles`);
   console.log(`   ✓ Discovered ${inventory.stats.totalCategories} active categories`);
@@ -112,29 +144,63 @@ export async function runAutopilot({ generate = false, overrideTopic = null, for
     const forcedAnalysis = analyzeTopicCandidate(candidateToTest, inventory);
     if (forcedAnalysis.decision === 'REJECT') {
       console.error(`❌ Forced topic rejected due to cannibalization or duplicate conflict: ${forcedAnalysis.reason}`);
+      updateRunManifest({
+        status: 'REJECTED',
+        resultState: RESULT_STATES.PROMOTION_CANNIBALIZATION_REJECTED,
+        errors: [forcedAnalysis.reason],
+      });
       logEvent({
         action: 'TOPIC_SELECTION',
         status: 'ERROR',
         summary: `Forced topic "${candidateToTest.title}" REJECTED: ${forcedAnalysis.reason}`,
-        details: { topic: candidateToTest, reason: forcedAnalysis.reason },
+        details: {
+          runId,
+          inventoryScanTimestamp,
+          selectedTopic: candidateToTest.title,
+          selectedSlug: candidateToTest.suggestedSlug,
+          exactGeneratedDraftPath: null,
+          exactValidatedDraftPath: null,
+          exactPromotedDraftPath: null,
+          finalResultState: RESULT_STATES.PROMOTION_CANNIBALIZATION_REJECTED,
+          topic: candidateToTest,
+          reason: forcedAnalysis.reason,
+        },
       });
       return {
         state: RESULT_STATES.PROMOTION_CANNIBALIZATION_REJECTED,
         success: false,
+        runId,
         error: `Forced topic rejected by cannibalization gate: ${forcedAnalysis.reason}`,
       };
     } else if (forcedAnalysis.decision === 'CAUTION') {
       if (!allowCaution) {
         console.error(`❌ Forced topic rejected before generation due to CAUTION-level overlap: ${forcedAnalysis.reason}`);
+        updateRunManifest({
+          status: 'REJECTED',
+          resultState: RESULT_STATES.PROMOTION_CANNIBALIZATION_REJECTED,
+          errors: [forcedAnalysis.reason],
+        });
         logEvent({
           action: 'TOPIC_SELECTION',
           status: 'ERROR',
           summary: `Forced topic "${candidateToTest.title}" REJECTED: ${forcedAnalysis.reason}`,
-          details: { topic: candidateToTest, reason: forcedAnalysis.reason },
+          details: {
+            runId,
+            inventoryScanTimestamp,
+            selectedTopic: candidateToTest.title,
+            selectedSlug: candidateToTest.suggestedSlug,
+            exactGeneratedDraftPath: null,
+            exactValidatedDraftPath: null,
+            exactPromotedDraftPath: null,
+            finalResultState: RESULT_STATES.PROMOTION_CANNIBALIZATION_REJECTED,
+            topic: candidateToTest,
+            reason: forcedAnalysis.reason,
+          },
         });
         return {
           state: RESULT_STATES.PROMOTION_CANNIBALIZATION_REJECTED,
           success: false,
+          runId,
           error: `Forced topic rejected before generation due to CAUTION-level overlap: ${forcedAnalysis.reason}`,
         };
       } else {
@@ -166,16 +232,32 @@ export async function runAutopilot({ generate = false, overrideTopic = null, for
 
   if (!selectedCandidate) {
     console.warn('⚠️  No SAFE topic candidate found for generation.');
+    updateRunManifest({
+      status: 'NO_STRONG_TOPIC_FOUND',
+      resultState: RESULT_STATES.NO_STRONG_TOPIC_FOUND,
+      errors: ['No safe topic candidates available after gap analysis.'],
+    });
     logEvent({
       action: 'TOPIC_SELECTION',
       status: 'WARNING',
       summary: 'Pipeline halted: No SAFE topic candidates available after gap analysis.',
       stats: { safeCount: 0, cautionCount: cautionTopics.length, rejectCount: rejectTopics.length },
+      details: {
+        runId,
+        inventoryScanTimestamp,
+        selectedTopic: null,
+        selectedSlug: null,
+        exactGeneratedDraftPath: null,
+        exactValidatedDraftPath: null,
+        exactPromotedDraftPath: null,
+        finalResultState: RESULT_STATES.NO_STRONG_TOPIC_FOUND,
+      },
     });
 
     return {
       state: RESULT_STATES.NO_STRONG_TOPIC_FOUND,
       success: false,
+      runId,
       error: 'No safe topic candidates found.',
     };
   }
@@ -184,20 +266,48 @@ export async function runAutopilot({ generate = false, overrideTopic = null, for
   const preGenCheck = analyzeTopicCandidate(selectedCandidate, inventory);
   if (preGenCheck.decision === 'REJECT' || (preGenCheck.decision === 'CAUTION' && !allowCaution)) {
     console.error(`❌ Selected topic failed pre-generation safety check: ${preGenCheck.reason}`);
+    updateRunManifest({
+      status: 'REJECTED',
+      resultState: RESULT_STATES.PROMOTION_CANNIBALIZATION_REJECTED,
+      errors: [preGenCheck.reason],
+    });
     logEvent({
       action: 'TOPIC_SELECTION',
       status: 'ERROR',
       summary: `Selected topic "${selectedCandidate.title}" REJECTED before generation: ${preGenCheck.reason}`,
-      details: { topic: selectedCandidate, reason: preGenCheck.reason },
+      details: {
+        runId,
+        inventoryScanTimestamp,
+        selectedTopic: selectedCandidate.title,
+        selectedSlug: selectedCandidate.suggestedSlug,
+        exactGeneratedDraftPath: null,
+        exactValidatedDraftPath: null,
+        exactPromotedDraftPath: null,
+        finalResultState: RESULT_STATES.PROMOTION_CANNIBALIZATION_REJECTED,
+        topic: selectedCandidate,
+        reason: preGenCheck.reason,
+      },
     });
     return {
       state: RESULT_STATES.PROMOTION_CANNIBALIZATION_REJECTED,
       success: false,
+      runId,
       error: `Topic rejected by pre-generation safety gate: ${preGenCheck.reason}`,
     };
   }
 
+  // Update manifest with selected candidate
+  updateRunManifest({
+    selectedTopic: {
+      id: selectedCandidate.id,
+      title: selectedCandidate.title,
+      category: selectedCandidate.category,
+      suggestedSlug: selectedCandidate.suggestedSlug,
+    },
+  });
+
   console.log(`🎯 Selected Topic for Pipeline:`);
+  console.log(`   • Run ID: ${runId}`);
   console.log(`   • Title: "${selectedCandidate.title}"`);
   console.log(`   • Category: "${selectedCandidate.category}"`);
   console.log(`   • Target Word Count: ${selectedCandidate.targetWordCount || 2000}`);
@@ -224,6 +334,11 @@ export async function runAutopilot({ generate = false, overrideTopic = null, for
     console.log('   • ZERO production files touched.');
     console.log(`   • Prompt constructed successfully (${promptData.prompt.length} chars).\n`);
 
+    updateRunManifest({
+      status: 'DRY_RUN_COMPLETE',
+      resultState: RESULT_STATES.DRY_RUN_COMPLETE,
+    });
+
     logEvent({
       action: 'CONTENT_PLANNING_DRY_RUN',
       status: 'SUCCESS',
@@ -233,9 +348,15 @@ export async function runAutopilot({ generate = false, overrideTopic = null, for
         safeTopicsCount: safeTopics.length,
       },
       details: {
-        selectedTopicId: selectedCandidate.id,
-        selectedTopicTitle: selectedCandidate.title,
+        runId,
         inventoryScanTimestamp,
+        selectedTopic: selectedCandidate.title,
+        selectedSlug: selectedCandidate.suggestedSlug,
+        exactGeneratedDraftPath: null,
+        exactValidatedDraftPath: null,
+        exactPromotedDraftPath: null,
+        finalResultState: RESULT_STATES.DRY_RUN_COMPLETE,
+        selectedTopicId: selectedCandidate.id,
         inventorySlugsAtScanTime: inventory.articles.map((a) => a.slug),
       },
     });
@@ -243,6 +364,7 @@ export async function runAutopilot({ generate = false, overrideTopic = null, for
     console.log('='.repeat(70));
     console.log('  🛡️  SAFETY VERIFICATION:');
     console.log('     • Result State: DRY_RUN_COMPLETE');
+    console.log(`     • Run ID: ${runId}`);
     console.log('     • Production files modified: 0');
     console.log('     • Drafts created: 0');
     console.log('='.repeat(70) + '\n');
@@ -250,7 +372,9 @@ export async function runAutopilot({ generate = false, overrideTopic = null, for
     return {
       state: RESULT_STATES.DRY_RUN_COMPLETE,
       success: true,
+      runId,
       topic: selectedCandidate,
+      manifestPath: autopilotConfig.paths.currentRunManifest,
     };
   }
 
@@ -266,11 +390,25 @@ export async function runAutopilot({ generate = false, overrideTopic = null, for
     const errMsg = aiResult.error || 'Unknown AI generation failure';
     console.error(`❌ AI Generation Failed: ${errMsg}`);
 
+    updateRunManifest({
+      status: 'GENERATION_FAILED',
+      resultState: RESULT_STATES.GENERATION_FAILED,
+      errors: [errMsg],
+    });
+
     logEvent({
       action: 'DRAFT_GENERATION',
       status: 'ERROR',
       summary: `Generation failed for "${selectedCandidate.title}": ${errMsg}`,
       details: {
+        runId,
+        inventoryScanTimestamp,
+        selectedTopic: selectedCandidate.title,
+        selectedSlug: selectedCandidate.suggestedSlug,
+        exactGeneratedDraftPath: null,
+        exactValidatedDraftPath: null,
+        exactPromotedDraftPath: null,
+        finalResultState: RESULT_STATES.GENERATION_FAILED,
         topicId: selectedCandidate.id,
         error: errMsg,
       },
@@ -279,12 +417,13 @@ export async function runAutopilot({ generate = false, overrideTopic = null, for
     return {
       state: RESULT_STATES.GENERATION_FAILED,
       success: false,
+      runId,
       topic: selectedCandidate,
       error: errMsg,
     };
   }
 
-  console.log(`   ✓ Received response via ${aiResult.provider.toUpperCase()} (${aiResult.model})`);
+  console.log(`   ✓ Received response via ${(aiResult.provider || 'AI').toUpperCase()} (${aiResult.model || 'default'})`);
   if (aiResult.fallbackUsed) {
     console.log('   ℹ️  Note: Fallback provider was utilized due to primary provider issue.');
   }
@@ -300,11 +439,25 @@ export async function runAutopilot({ generate = false, overrideTopic = null, for
     const parseErr = parsed.error || 'AI output failed initial parsing/syntax check';
     console.error(`❌ Invalid AI Response: ${parseErr}`);
 
+    updateRunManifest({
+      status: 'INVALID_AI_RESPONSE',
+      resultState: RESULT_STATES.INVALID_AI_RESPONSE,
+      errors: [parseErr],
+    });
+
     logEvent({
       action: 'DRAFT_SYNTAX_PARSING',
       status: 'ERROR',
       summary: `Invalid AI output for "${selectedCandidate.title}": ${parseErr}`,
       details: {
+        runId,
+        inventoryScanTimestamp,
+        selectedTopic: selectedCandidate.title,
+        selectedSlug: selectedCandidate.suggestedSlug,
+        exactGeneratedDraftPath: null,
+        exactValidatedDraftPath: null,
+        exactPromotedDraftPath: null,
+        finalResultState: RESULT_STATES.INVALID_AI_RESPONSE,
         topicId: selectedCandidate.id,
         error: parseErr,
       },
@@ -313,49 +466,79 @@ export async function runAutopilot({ generate = false, overrideTopic = null, for
     return {
       state: RESULT_STATES.INVALID_AI_RESPONSE,
       success: false,
+      runId,
       topic: selectedCandidate,
       error: parseErr,
     };
   }
 
-  // 7. Write Staged Draft into scripts/autopilot/drafts/
-  console.log('\n💾 Staging draft file into drafts directory...');
+  // 7. Write Staged Draft into run-isolated scripts/autopilot/drafts/<run-id>/
+  console.log('\n💾 Staging draft file into run-isolated drafts directory...');
   const draftResult = createDraft({
     frontmatter: parsed.data.frontmatter,
     markdownBody: parsed.data.markdownBody,
     suggestedSlug: selectedCandidate.suggestedSlug,
+    runId,
   });
 
   if (!draftResult.success) {
     console.error(`❌ Draft File Creation Failed: ${draftResult.error}`);
+    updateRunManifest({
+      status: 'GENERATION_FAILED',
+      resultState: RESULT_STATES.GENERATION_FAILED,
+      errors: [draftResult.error],
+    });
+
     logEvent({
       action: 'DRAFT_FILE_WRITE',
       status: 'ERROR',
       summary: `Failed to write draft file: ${draftResult.error}`,
-      details: { error: draftResult.error },
+      details: {
+        runId,
+        inventoryScanTimestamp,
+        selectedTopic: selectedCandidate.title,
+        selectedSlug: selectedCandidate.suggestedSlug,
+        exactGeneratedDraftPath: null,
+        exactValidatedDraftPath: null,
+        exactPromotedDraftPath: null,
+        finalResultState: RESULT_STATES.GENERATION_FAILED,
+        error: draftResult.error,
+      },
     });
 
     return {
       state: RESULT_STATES.GENERATION_FAILED,
       success: false,
+      runId,
       topic: selectedCandidate,
       error: draftResult.error,
     };
   }
 
-  // 8. Phase 3 Quality Gate Validation
-  console.log('\n🛡️  [6/6] Running Phase 3 Quality Gate & Schema Validation...');
-  const validation = validateDraft(
-    {
-      frontmatter: parsed.data.frontmatter,
-      markdownBody: parsed.data.markdownBody,
+  // Record draft details in manifest
+  updateRunManifest({
+    status: 'DRAFT_CREATED',
+    resultState: RESULT_STATES.DRAFT_CREATED,
+    draft: {
+      runId,
+      title: draftResult.title,
+      slug: draftResult.slug,
+      filename: draftResult.filename,
+      draftPath: draftResult.draftPath,
+      category: draftResult.category,
+      generationTimestamp: draftResult.generationTimestamp,
     },
-    { whitelistedRoutes: whitelistedPaths }
-  );
+  });
+
+  // 8. Phase 3 Quality Gate Validation - Validate ONLY the exact draft created during current run
+  console.log('\n🛡️  [6/6] Running Phase 3 Quality Gate & Schema Validation on CURRENT run draft...');
+  const draftContentOnDisk = fs.readFileSync(draftResult.draftPath, 'utf-8');
+  const validation = validateDraft(draftContentOnDisk, { whitelistedRoutes: whitelistedPaths });
 
   console.log('\n' + '='.repeat(70));
   console.log('  📊 DRAFT VALIDATION REPORT');
   console.log('='.repeat(70));
+  console.log(`  • Run ID:         ${runId}`);
   console.log(`  • Title:          ${parsed.data.frontmatter.title}`);
   console.log(`  • Word Count:     ${validation.metrics.wordCount} words`);
   console.log(`  • Internal Links: ${validation.metrics.uniqueInternalLinks} unique (${validation.metrics.internalLinks} total)`);
@@ -385,7 +568,20 @@ export async function runAutopilot({ generate = false, overrideTopic = null, for
   console.log('     • Live deployment triggered: 0');
   console.log('='.repeat(70) + '\n');
 
-  // Log validation audit event
+  // Update manifest with validation result
+  updateRunManifest({
+    status: validation.valid ? 'VALIDATED' : 'VALIDATION_FAILED',
+    resultState: validation.valid ? RESULT_STATES.VALIDATED_DRAFT_CREATED : RESULT_STATES.VALIDATION_FAILED,
+    validation: {
+      valid: validation.valid,
+      metrics: validation.metrics,
+      errors: validation.errors,
+      warnings: validation.warnings,
+    },
+    errors: validation.errors,
+  });
+
+  // Log validation audit event with required transaction metadata
   logEvent({
     action: validation.valid ? 'DRAFT_VALIDATION_PASSED' : 'DRAFT_VALIDATION_FAILED',
     status: validation.valid ? 'SUCCESS' : 'WARNING',
@@ -399,13 +595,20 @@ export async function runAutopilot({ generate = false, overrideTopic = null, for
       valid: validation.valid,
     },
     details: {
+      runId,
+      inventoryScanTimestamp,
+      selectedTopic: selectedCandidate.title,
+      selectedSlug: draftResult.slug,
+      exactGeneratedDraftPath: draftResult.draftPath,
+      exactValidatedDraftPath: draftResult.draftPath,
+      exactPromotedDraftPath: null,
+      finalResultState: validation.valid ? RESULT_STATES.VALIDATED_DRAFT_CREATED : RESULT_STATES.VALIDATION_FAILED,
       topicId: selectedCandidate.id,
       slug: draftResult.slug,
       draftPath: draftResult.draftPath,
       errors: validation.errors,
       warnings: validation.warnings,
       provider: aiResult.provider,
-      inventoryScanTimestamp,
       inventorySlugsAtScanTime: inventory.articles.map((a) => a.slug),
     },
   });
@@ -414,20 +617,24 @@ export async function runAutopilot({ generate = false, overrideTopic = null, for
     return {
       state: RESULT_STATES.VALIDATION_FAILED,
       success: false,
+      runId,
       topic: selectedCandidate,
       draftPath: draftResult.draftPath,
       slug: draftResult.slug,
       validation,
+      manifestPath: autopilotConfig.paths.currentRunManifest,
     };
   }
 
   return {
     state: RESULT_STATES.VALIDATED_DRAFT_CREATED,
     success: true,
+    runId,
     topic: selectedCandidate,
     draftPath: draftResult.draftPath,
     slug: draftResult.slug,
     validation,
+    manifestPath: autopilotConfig.paths.currentRunManifest,
   };
 }
 
@@ -439,6 +646,7 @@ if (invokedFile && invokedFile === path.resolve(currentFile)) {
   const isGenerate = process.argv.includes('--generate');
   const allowCaution = process.argv.includes('--allow-caution');
   let forceTopic = null;
+  let cliRunId = null;
 
   for (let i = 2; i < process.argv.length; i++) {
     const arg = process.argv[i];
@@ -447,10 +655,23 @@ if (invokedFile && invokedFile === path.resolve(currentFile)) {
       i++;
     } else if (arg.startsWith('--force-topic=')) {
       forceTopic = arg.slice('--force-topic='.length);
+    } else if (arg === '--run-id') {
+      cliRunId = process.argv[i + 1];
+      i++;
+    } else if (arg.startsWith('--run-id=')) {
+      cliRunId = arg.slice('--run-id='.length);
     }
   }
 
-  runAutopilot({ generate: isGenerate, forceTopic, allowCaution }).then((result) => {
+  runAutopilot({ generate: isGenerate, forceTopic, allowCaution, runId: cliRunId }).then((result) => {
+    console.log(`\nRUN_ID: ${result.runId}`);
+    if (result.manifestPath) {
+      console.log(`MANIFEST: ${result.manifestPath}`);
+    }
+    if (result.draftPath) {
+      console.log(`CURRENT_RUN_DRAFT: ${result.draftPath}`);
+    }
+    console.log(`STATUS: ${result.state}`);
     if (!result.success) {
       process.exit(1);
     }

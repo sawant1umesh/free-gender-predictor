@@ -229,7 +229,12 @@ export async function generateArticleContent({ prompt, systemInstruction, dryRun
 
   // If mock handler is registered (for automated unit testing), delegate to mock
   if (typeof _mockHandler === 'function') {
-    return _mockHandler({ prompt, systemInstruction });
+    const mockRes = await _mockHandler({ prompt, systemInstruction });
+    return {
+      provider: 'mock',
+      model: 'test-model',
+      ...mockRes,
+    };
   }
 
   const { geminiAvailable, groqAvailable } = getProviderAvailability();

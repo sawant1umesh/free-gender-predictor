@@ -26,6 +26,9 @@ export const RESULT_STATES = Object.freeze({
   PROMOTION_UNSAFE_FILENAME: 'PROMOTION_UNSAFE_FILENAME',
   PROMOTION_FILE_NOT_FOUND: 'PROMOTION_FILE_NOT_FOUND',
   PROMOTION_VERIFICATION_FAILED: 'PROMOTION_VERIFICATION_FAILED',
+  NO_PROMOTION_REQUIRED: 'NO_PROMOTION_REQUIRED',
+  TOPIC_ALREADY_EXISTS: 'TOPIC_ALREADY_EXISTS',
+  CURRENT_RUN_DRAFT_INVALID: 'CURRENT_RUN_DRAFT_INVALID',
 });
 
 /**
@@ -49,6 +52,7 @@ export const autopilotConfig = {
     dataDir: path.join(PROJECT_ROOT, 'data'),
     topicSeedsFile: path.join(PROJECT_ROOT, 'data', 'topic-seeds.json'),
     auditLogFile: path.join(PROJECT_ROOT, 'data', 'autopilot-log.json'),
+    currentRunManifest: path.join(PROJECT_ROOT, 'scripts', 'autopilot', '.current-run.json'),
   },
 
   // AI Generation Provider Settings

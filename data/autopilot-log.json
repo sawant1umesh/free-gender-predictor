@@ -1,944 +1,5 @@
 [
   {
-    "id": "log-1788681452354-7cb3b9",
-    "timestamp": "2026-09-06T07:57:32.354Z",
-    "action": "DRAFT_VALIDATION_FAILED",
-    "status": "WARNING",
-    "summary": "Draft \"Invalid Draft With Bad Category\" FAILED validation: Category \"Invalid Category\" is not an approved category. Approved: Chinese Gender Predictor, Chinese Gender Calendar, Mayan Gender Predictor, Baby Gender Prediction Methods, Gender Prediction Myths, Gender Prediction.",
-    "stats": {
-      "wordCount": 2172,
-      "internalLinks": 5,
-      "faqCount": 4,
-      "valid": false
-    },
-    "details": {
-      "topicId": "val-test-01",
-      "slug": "phase-three-test-article-topic",
-      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\phase-three-test-article-topic.md",
-      "errors": [
-        "Category \"Invalid Category\" is not an approved category. Approved: Chinese Gender Predictor, Chinese Gender Calendar, Mayan Gender Predictor, Baby Gender Prediction Methods, Gender Prediction Myths, Gender Prediction."
-      ],
-      "warnings": [],
-      "provider": "gemini"
-    }
-  },
-  {
-    "id": "log-1788681452385-7af425",
-    "timestamp": "2026-09-06T07:57:32.386Z",
-    "action": "DRAFT_VALIDATION_PASSED",
-    "status": "SUCCESS",
-    "summary": "Draft \"Approved Validated Draft Title\" PASSED all validation checks (2172 words).",
-    "stats": {
-      "wordCount": 2172,
-      "internalLinks": 5,
-      "faqCount": 4,
-      "valid": true
-    },
-    "details": {
-      "topicId": "val-test-01",
-      "slug": "phase-three-test-article-topic",
-      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\phase-three-test-article-topic.md",
-      "errors": [],
-      "warnings": [],
-      "provider": "gemini"
-    }
-  },
-  {
-    "id": "log-1788681767093-a741d2",
-    "timestamp": "2026-09-06T08:02:47.095Z",
-    "action": "TOPIC_SELECTION",
-    "status": "ERROR",
-    "summary": "Forced topic \"Chinese Gender Calendar\" REJECTED: Exact duplicate title or slug matches existing article 'Chinese Gender Calendar: History, Lunar Conversions & Guide'",
-    "stats": null,
-    "details": {
-      "topic": {
-        "id": "forced-1788681767090",
-        "title": "Chinese Gender Calendar",
-        "category": "Chinese Gender Predictor",
-        "suggestedSlug": "chinese-gender-calendar",
-        "primaryKeyword": "[REDACTED]",
-        "secondaryKeywords": "[REDACTED]",
-        "targetWordCount": 2000
-      },
-      "reason": "Exact duplicate title or slug matches existing article 'Chinese Gender Calendar: History, Lunar Conversions & Guide'"
-    }
-  },
-  {
-    "id": "log-1788681770631-54fab9",
-    "timestamp": "2026-09-06T08:02:50.632Z",
-    "action": "CONTENT_PLANNING_DRY_RUN",
-    "status": "SUCCESS",
-    "summary": "Dry-run completed successfully for \"Chinese Gender Calendar Leap Month: How Lunar Leap Years Affect Predictions\". Zero drafts created.",
-    "stats": {
-      "publishedArticles": 8,
-      "safeTopicsCount": 12
-    },
-    "details": {
-      "selectedTopicId": "seed-001",
-      "selectedTopicTitle": "Chinese Gender Calendar Leap Month: How Lunar Leap Years Affect Predictions"
-    }
-  },
-  {
-    "id": "log-1788681770673-f05983",
-    "timestamp": "2026-09-06T08:02:50.673Z",
-    "action": "DRAFT_VALIDATION_PASSED",
-    "status": "SUCCESS",
-    "summary": "Draft \"Automated Test Guide to Gender Calendars\" PASSED all validation checks (2065 words).",
-    "stats": {
-      "wordCount": 2065,
-      "internalLinks": 4,
-      "faqCount": 4,
-      "valid": true
-    },
-    "details": {
-      "topicId": "test-seed-001",
-      "slug": "automated-test-guide-gender-calendars",
-      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\automated-test-guide-gender-calendars.md",
-      "errors": [],
-      "warnings": [],
-      "provider": "gemini"
-    }
-  },
-  {
-    "id": "log-1788681770706-4be256",
-    "timestamp": "2026-09-06T08:02:50.706Z",
-    "action": "DRAFT_GENERATION",
-    "status": "ERROR",
-    "summary": "Generation failed for \"Automated Test Guide to Gender Calendars\": Simulated failure of all providers",
-    "stats": null,
-    "details": {
-      "topicId": "test-seed-001",
-      "error": "Simulated failure of all providers"
-    }
-  },
-  {
-    "id": "log-1788681770732-3c14b1",
-    "timestamp": "2026-09-06T08:02:50.732Z",
-    "action": "DRAFT_SYNTAX_PARSING",
-    "status": "ERROR",
-    "summary": "Invalid AI output for \"Automated Test Guide to Gender Calendars\": No JSON object detected in AI response: Unexpected token 'T', \"This is no\"... is not valid JSON",
-    "stats": null,
-    "details": {
-      "topicId": "test-seed-001",
-      "error": "No JSON object detected in AI response: Unexpected token 'T', \"This is no\"... is not valid JSON"
-    }
-  },
-  {
-    "id": "log-1788681775611-6f38d1",
-    "timestamp": "2026-09-06T08:02:55.612Z",
-    "action": "DRAFT_VALIDATION_PASSED",
-    "status": "SUCCESS",
-    "summary": "Draft \"Phase Three Test Article Topic\" PASSED all validation checks (2172 words).",
-    "stats": {
-      "wordCount": 2172,
-      "internalLinks": 5,
-      "faqCount": 4,
-      "valid": true
-    },
-    "details": {
-      "topicId": "val-test-01",
-      "slug": "phase-three-test-article-topic",
-      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\phase-three-test-article-topic.md",
-      "errors": [],
-      "warnings": [],
-      "provider": "gemini"
-    }
-  },
-  {
-    "id": "log-1788681775645-98d422",
-    "timestamp": "2026-09-06T08:02:55.645Z",
-    "action": "DRAFT_VALIDATION_FAILED",
-    "status": "WARNING",
-    "summary": "Draft \"Invalid Draft With Bad Category\" FAILED validation: Category \"Invalid Category\" is not an approved category. Approved: Chinese Gender Predictor, Chinese Gender Calendar, Mayan Gender Predictor, Baby Gender Prediction Methods, Gender Prediction Myths, Gender Prediction.",
-    "stats": {
-      "wordCount": 2172,
-      "internalLinks": 5,
-      "faqCount": 4,
-      "valid": false
-    },
-    "details": {
-      "topicId": "val-test-01",
-      "slug": "phase-three-test-article-topic",
-      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\phase-three-test-article-topic.md",
-      "errors": [
-        "Category \"Invalid Category\" is not an approved category. Approved: Chinese Gender Predictor, Chinese Gender Calendar, Mayan Gender Predictor, Baby Gender Prediction Methods, Gender Prediction Myths, Gender Prediction."
-      ],
-      "warnings": [],
-      "provider": "gemini"
-    }
-  },
-  {
-    "id": "log-1788681775673-90eb7e",
-    "timestamp": "2026-09-06T08:02:55.673Z",
-    "action": "DRAFT_VALIDATION_PASSED",
-    "status": "SUCCESS",
-    "summary": "Draft \"Approved Validated Draft Title\" PASSED all validation checks (2172 words).",
-    "stats": {
-      "wordCount": 2172,
-      "internalLinks": 5,
-      "faqCount": 4,
-      "valid": true
-    },
-    "details": {
-      "topicId": "val-test-01",
-      "slug": "phase-three-test-article-topic",
-      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\phase-three-test-article-topic.md",
-      "errors": [],
-      "warnings": [],
-      "provider": "gemini"
-    }
-  },
-  {
-    "id": "log-1788681779779-a23831",
-    "timestamp": "2026-09-06T08:02:59.779Z",
-    "action": "PROMOTE_DRAFT",
-    "status": "SUCCESS",
-    "summary": "Successfully promoted draft \"safe-lunar-calendar-guide.md\" to production article \"safe-lunar-calendar-guide\"",
-    "stats": null,
-    "details": {
-      "sourceDraft": "safe-lunar-calendar-guide.md",
-      "destinationSlug": "safe-lunar-calendar-guide",
-      "productionPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\blog\\safe-lunar-calendar-guide.md",
-      "wordCount": 1740,
-      "internalLinks": 5,
-      "faqCount": 4,
-      "sourceDraftPreserved": true
-    }
-  },
-  {
-    "id": "log-1788681779801-6d601f",
-    "timestamp": "2026-09-06T08:02:59.801Z",
-    "action": "PROMOTE_DRAFT",
-    "status": "ERROR",
-    "summary": "Promotion rejected: Draft \"bad-frontmatter-draft.md\" failed Phase 3 validation",
-    "stats": null,
-    "details": {
-      "sourceDraft": "bad-frontmatter-draft.md",
-      "errors": [
-        "Frontmatter field \"title\" is missing or does not meet minimum length (5 chars).",
-        "Frontmatter field \"description\" is missing or does not meet minimum length (20 chars).",
-        "Frontmatter field \"category\" is missing or does not meet minimum length (3 chars).",
-        "Frontmatter field \"heroImage\" is missing or does not meet minimum length (3 chars).",
-        "Frontmatter field \"heroImageAlt\" is missing or does not meet minimum length (5 chars).",
-        "Frontmatter field \"excerpt\" is missing or does not meet minimum length (20 chars).",
-        "Frontmatter \"pubDate\" is missing.",
-        "Word count (2) is below production minimum threshold of 1200 words.",
-        "Article body contains only 0 H2 section(s). Long-form articles require at least 4 H2 sections.",
-        "Article body is empty, missing, or trivially short.",
-        "Found 0 unique internal link(s). Minimum required is 4.",
-        "Frontmatter \"faqs\" must be an array of questions and answers."
-      ]
-    }
-  },
-  {
-    "id": "log-1788681779831-a189e7",
-    "timestamp": "2026-09-06T08:02:59.832Z",
-    "action": "PROMOTE_DRAFT",
-    "status": "ERROR",
-    "summary": "Promotion rejected: Draft \"short-draft-article.md\" failed Phase 3 validation",
-    "stats": null,
-    "details": {
-      "sourceDraft": "short-draft-article.md",
-      "errors": [
-        "Word count (30) is below production minimum threshold of 1200 words.",
-        "Article body contains only 2 H2 section(s). Long-form articles require at least 4 H2 sections.",
-        "Article body is empty, missing, or trivially short."
-      ]
-    }
-  },
-  {
-    "id": "log-1788681779844-c24400",
-    "timestamp": "2026-09-06T08:02:59.844Z",
-    "action": "PROMOTE_DRAFT",
-    "status": "ERROR",
-    "summary": "Promotion rejected: Production article already exists for slug \"existing-blog-article\"",
-    "stats": null,
-    "details": {
-      "sourceDraft": "existing-blog-article.md",
-      "destinationSlug": "existing-blog-article",
-      "reason": "PRODUCTION_SLUG_EXISTS"
-    }
-  },
-  {
-    "id": "log-1788681779852-7fe381",
-    "timestamp": "2026-09-06T08:02:59.852Z",
-    "action": "PROMOTE_DRAFT",
-    "status": "ERROR",
-    "summary": "Promotion rejected: Production article already exists for slug \"existing-blog-article\"",
-    "stats": null,
-    "details": {
-      "sourceDraft": "existing-blog-article.md",
-      "destinationSlug": "existing-blog-article",
-      "reason": "PRODUCTION_SLUG_EXISTS"
-    }
-  },
-  {
-    "id": "log-1788681779866-99e006",
-    "timestamp": "2026-09-06T08:02:59.866Z",
-    "action": "PROMOTE_DRAFT",
-    "status": "ERROR",
-    "summary": "Promotion rejected: Cannibalization conflict for \"Existing Blog Article\"",
-    "stats": null,
-    "details": {
-      "sourceDraft": "unique-slug-same-title.md",
-      "reason": "Exact duplicate title or slug matches existing article 'Existing Blog Article'",
-      "closestMatch": "Existing Blog Article"
-    }
-  },
-  {
-    "id": "log-1788681779881-2566d4",
-    "timestamp": "2026-09-06T08:02:59.881Z",
-    "action": "PROMOTE_DRAFT",
-    "status": "ERROR",
-    "summary": "Promotion rejected: Draft \"existing-blog-article-overlap.md\" failed Phase 3 validation",
-    "stats": null,
-    "details": {
-      "sourceDraft": "existing-blog-article-overlap.md",
-      "errors": [
-        "Category \"Unapproved Category\" is not an approved category. Approved: Chinese Gender Predictor, Chinese Gender Calendar, Mayan Gender Predictor, Baby Gender Prediction Methods, Gender Prediction Myths, Gender Prediction."
-      ]
-    }
-  },
-  {
-    "id": "log-1788681779892-0d5eb9",
-    "timestamp": "2026-09-06T08:02:59.892Z",
-    "action": "PROMOTE_DRAFT",
-    "status": "WARNING",
-    "summary": "Promotion blocked: CAUTION-level topical overlap for \"Chinese Gender Predictor Accuracy Rates Study\"",
-    "stats": null,
-    "details": {
-      "sourceDraft": "chinese-gender-predictor-accuracy-rates.md",
-      "reason": "Moderate topical overlap with 'Chinese Gender Predictor Accuracy Analysis' (50% similarity) - requires distinct search angle"
-    }
-  },
-  {
-    "id": "log-1788681779912-7af79d",
-    "timestamp": "2026-09-06T08:02:59.912Z",
-    "action": "PROMOTE_DRAFT",
-    "status": "SUCCESS",
-    "summary": "Successfully promoted draft \"ancient-mayan-calendar-origins.md\" to production article \"ancient-mayan-calendar-origins\"",
-    "stats": null,
-    "details": {
-      "sourceDraft": "ancient-mayan-calendar-origins.md",
-      "destinationSlug": "ancient-mayan-calendar-origins",
-      "productionPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\blog\\ancient-mayan-calendar-origins.md",
-      "wordCount": 1741,
-      "internalLinks": 5,
-      "faqCount": 4,
-      "sourceDraftPreserved": true
-    }
-  },
-  {
-    "id": "log-1788681780727-47808b",
-    "timestamp": "2026-09-06T08:03:00.727Z",
-    "action": "PROMOTE_DRAFT",
-    "status": "ERROR",
-    "summary": "Promotion rejected: Production article already exists for slug \"safe-lunar-calendar-guide\"",
-    "stats": null,
-    "details": {
-      "sourceDraft": "safe-lunar-calendar-guide.md",
-      "destinationSlug": "safe-lunar-calendar-guide",
-      "reason": "PRODUCTION_SLUG_EXISTS"
-    }
-  },
-  {
-    "id": "log-1788681780734-3c2501",
-    "timestamp": "2026-09-06T08:03:00.734Z",
-    "action": "PROMOTE_DRAFT",
-    "status": "ERROR",
-    "summary": "Promotion rejected: Draft \"malformed-article.md\" failed Phase 3 validation",
-    "stats": null,
-    "details": {
-      "sourceDraft": "malformed-article.md",
-      "errors": [
-        "Frontmatter field \"title\" is missing or does not meet minimum length (5 chars).",
-        "Frontmatter field \"description\" is missing or does not meet minimum length (20 chars).",
-        "Frontmatter field \"category\" is missing or does not meet minimum length (3 chars).",
-        "Frontmatter field \"heroImage\" is missing or does not meet minimum length (3 chars).",
-        "Frontmatter field \"heroImageAlt\" is missing or does not meet minimum length (5 chars).",
-        "Frontmatter field \"excerpt\" is missing or does not meet minimum length (20 chars).",
-        "Frontmatter \"pubDate\" is missing.",
-        "Word count (0) is below production minimum threshold of 1200 words.",
-        "Article body contains only 0 H2 section(s). Long-form articles require at least 4 H2 sections.",
-        "Article body is empty, missing, or trivially short.",
-        "Found 0 unique internal link(s). Minimum required is 4.",
-        "Frontmatter \"faqs\" must be an array of questions and answers."
-      ]
-    }
-  },
-  {
-    "id": "log-1788683494982-84bc73",
-    "timestamp": "2026-09-06T08:31:34.983Z",
-    "action": "TOPIC_SELECTION",
-    "status": "ERROR",
-    "summary": "Forced topic \"Chinese Gender Calendar\" REJECTED: Exact duplicate title or slug matches existing article 'Chinese Gender Calendar: History, Lunar Conversions & Guide'",
-    "stats": null,
-    "details": {
-      "topic": {
-        "id": "forced-1788683494979",
-        "title": "Chinese Gender Calendar",
-        "category": "Chinese Gender Predictor",
-        "suggestedSlug": "chinese-gender-calendar",
-        "primaryKeyword": "[REDACTED]",
-        "secondaryKeywords": "[REDACTED]",
-        "targetWordCount": 2000
-      },
-      "reason": "Exact duplicate title or slug matches existing article 'Chinese Gender Calendar: History, Lunar Conversions & Guide'"
-    }
-  },
-  {
-    "id": "log-1788684468396-9e702a",
-    "timestamp": "2026-09-06T08:47:48.396Z",
-    "action": "TOPIC_SELECTION",
-    "status": "ERROR",
-    "summary": "Forced topic \"Chinese Gender Calendar\" REJECTED: Exact duplicate title or slug matches existing article 'Chinese Gender Calendar: History, Lunar Conversions & Guide'",
-    "stats": null,
-    "details": {
-      "topic": {
-        "id": "forced-1788684468392",
-        "title": "Chinese Gender Calendar",
-        "category": "Chinese Gender Predictor",
-        "suggestedSlug": "chinese-gender-calendar",
-        "primaryKeyword": "[REDACTED]",
-        "secondaryKeywords": "[REDACTED]",
-        "targetWordCount": 2000
-      },
-      "reason": "Exact duplicate title or slug matches existing article 'Chinese Gender Calendar: History, Lunar Conversions & Guide'"
-    }
-  },
-  {
-    "id": "log-1788685130598-05d15b",
-    "timestamp": "2026-09-06T08:58:50.598Z",
-    "action": "CONTENT_PLANNING_DRY_RUN",
-    "status": "SUCCESS",
-    "summary": "Dry-run completed successfully for \"Chinese Gender Calendar Leap Month: How Lunar Leap Years Affect Predictions\". Zero drafts created.",
-    "stats": {
-      "publishedArticles": 8,
-      "safeTopicsCount": 12
-    },
-    "details": {
-      "selectedTopicId": "seed-001",
-      "selectedTopicTitle": "Chinese Gender Calendar Leap Month: How Lunar Leap Years Affect Predictions"
-    }
-  },
-  {
-    "id": "log-1788685131095-8bf43a",
-    "timestamp": "2026-09-06T08:58:51.095Z",
-    "action": "DRAFT_VALIDATION_PASSED",
-    "status": "SUCCESS",
-    "summary": "Draft \"Automated Test Guide to Gender Calendars\" PASSED all validation checks (2065 words).",
-    "stats": {
-      "wordCount": 2065,
-      "internalLinks": 4,
-      "faqCount": 4,
-      "valid": true
-    },
-    "details": {
-      "topicId": "test-seed-001",
-      "slug": "automated-test-guide-gender-calendars",
-      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\automated-test-guide-gender-calendars.md",
-      "errors": [],
-      "warnings": [],
-      "provider": "gemini"
-    }
-  },
-  {
-    "id": "log-1788685131119-1b7503",
-    "timestamp": "2026-09-06T08:58:51.119Z",
-    "action": "DRAFT_GENERATION",
-    "status": "ERROR",
-    "summary": "Generation failed for \"Automated Test Guide to Gender Calendars\": Simulated failure of all providers",
-    "stats": null,
-    "details": {
-      "topicId": "test-seed-001",
-      "error": "Simulated failure of all providers"
-    }
-  },
-  {
-    "id": "log-1788685131140-910adb",
-    "timestamp": "2026-09-06T08:58:51.140Z",
-    "action": "DRAFT_SYNTAX_PARSING",
-    "status": "ERROR",
-    "summary": "Invalid AI output for \"Automated Test Guide to Gender Calendars\": No JSON object detected in AI response: Unexpected token 'T', \"This is no\"... is not valid JSON",
-    "stats": null,
-    "details": {
-      "topicId": "test-seed-001",
-      "error": "No JSON object detected in AI response: Unexpected token 'T', \"This is no\"... is not valid JSON"
-    }
-  },
-  {
-    "id": "log-1788685136402-2c6350",
-    "timestamp": "2026-09-06T08:58:56.403Z",
-    "action": "DRAFT_VALIDATION_PASSED",
-    "status": "SUCCESS",
-    "summary": "Draft \"Phase Three Test Article Topic\" PASSED all validation checks (2172 words).",
-    "stats": {
-      "wordCount": 2172,
-      "internalLinks": 5,
-      "faqCount": 4,
-      "valid": true
-    },
-    "details": {
-      "topicId": "val-test-01",
-      "slug": "phase-three-test-article-topic",
-      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\phase-three-test-article-topic.md",
-      "errors": [],
-      "warnings": [],
-      "provider": "gemini"
-    }
-  },
-  {
-    "id": "log-1788685136443-efa10a",
-    "timestamp": "2026-09-06T08:58:56.443Z",
-    "action": "DRAFT_VALIDATION_FAILED",
-    "status": "WARNING",
-    "summary": "Draft \"Invalid Draft With Bad Category\" FAILED validation: Category \"Invalid Category\" is not an approved category. Approved: Chinese Gender Predictor, Chinese Gender Calendar, Mayan Gender Predictor, Baby Gender Prediction Methods, Gender Prediction Myths, Gender Prediction.",
-    "stats": {
-      "wordCount": 2172,
-      "internalLinks": 5,
-      "faqCount": 4,
-      "valid": false
-    },
-    "details": {
-      "topicId": "val-test-01",
-      "slug": "phase-three-test-article-topic",
-      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\phase-three-test-article-topic.md",
-      "errors": [
-        "Category \"Invalid Category\" is not an approved category. Approved: Chinese Gender Predictor, Chinese Gender Calendar, Mayan Gender Predictor, Baby Gender Prediction Methods, Gender Prediction Myths, Gender Prediction."
-      ],
-      "warnings": [],
-      "provider": "gemini"
-    }
-  },
-  {
-    "id": "log-1788685136475-471444",
-    "timestamp": "2026-09-06T08:58:56.475Z",
-    "action": "DRAFT_VALIDATION_PASSED",
-    "status": "SUCCESS",
-    "summary": "Draft \"Approved Validated Draft Title\" PASSED all validation checks (2172 words).",
-    "stats": {
-      "wordCount": 2172,
-      "internalLinks": 5,
-      "faqCount": 4,
-      "valid": true
-    },
-    "details": {
-      "topicId": "val-test-01",
-      "slug": "phase-three-test-article-topic",
-      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\phase-three-test-article-topic.md",
-      "errors": [],
-      "warnings": [],
-      "provider": "gemini"
-    }
-  },
-  {
-    "id": "log-1788685141646-440de0",
-    "timestamp": "2026-09-06T08:59:01.646Z",
-    "action": "PROMOTE_DRAFT",
-    "status": "SUCCESS",
-    "summary": "Successfully promoted draft \"safe-lunar-calendar-guide.md\" to production article \"safe-lunar-calendar-guide\"",
-    "stats": null,
-    "details": {
-      "sourceDraft": "safe-lunar-calendar-guide.md",
-      "destinationSlug": "safe-lunar-calendar-guide",
-      "productionPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\blog\\safe-lunar-calendar-guide.md",
-      "wordCount": 1740,
-      "internalLinks": 5,
-      "faqCount": 4,
-      "sourceDraftPreserved": true
-    }
-  },
-  {
-    "id": "log-1788685141663-59567e",
-    "timestamp": "2026-09-06T08:59:01.664Z",
-    "action": "PROMOTE_DRAFT",
-    "status": "ERROR",
-    "summary": "Promotion rejected: Draft \"bad-frontmatter-draft.md\" failed Phase 3 validation",
-    "stats": null,
-    "details": {
-      "sourceDraft": "bad-frontmatter-draft.md",
-      "errors": [
-        "Frontmatter field \"title\" is missing or does not meet minimum length (5 chars).",
-        "Frontmatter field \"description\" is missing or does not meet minimum length (20 chars).",
-        "Frontmatter field \"category\" is missing or does not meet minimum length (3 chars).",
-        "Frontmatter field \"heroImage\" is missing or does not meet minimum length (3 chars).",
-        "Frontmatter field \"heroImageAlt\" is missing or does not meet minimum length (5 chars).",
-        "Frontmatter field \"excerpt\" is missing or does not meet minimum length (20 chars).",
-        "Frontmatter \"pubDate\" is missing.",
-        "Word count (2) is below production minimum threshold of 1200 words.",
-        "Article body contains only 0 H2 section(s). Long-form articles require at least 4 H2 sections.",
-        "Article body is empty, missing, or trivially short.",
-        "Found 0 unique internal link(s). Minimum required is 4.",
-        "Frontmatter \"faqs\" must be an array of questions and answers."
-      ]
-    }
-  },
-  {
-    "id": "log-1788685141676-31412e",
-    "timestamp": "2026-09-06T08:59:01.676Z",
-    "action": "PROMOTE_DRAFT",
-    "status": "ERROR",
-    "summary": "Promotion rejected: Draft \"short-draft-article.md\" failed Phase 3 validation",
-    "stats": null,
-    "details": {
-      "sourceDraft": "short-draft-article.md",
-      "errors": [
-        "Word count (30) is below production minimum threshold of 1200 words.",
-        "Article body contains only 2 H2 section(s). Long-form articles require at least 4 H2 sections.",
-        "Article body is empty, missing, or trivially short."
-      ]
-    }
-  },
-  {
-    "id": "log-1788685141689-b1fb33",
-    "timestamp": "2026-09-06T08:59:01.689Z",
-    "action": "PROMOTE_DRAFT",
-    "status": "ERROR",
-    "summary": "Promotion rejected: Production article already exists for slug \"existing-blog-article\"",
-    "stats": null,
-    "details": {
-      "sourceDraft": "existing-blog-article.md",
-      "destinationSlug": "existing-blog-article",
-      "reason": "PRODUCTION_SLUG_EXISTS"
-    }
-  },
-  {
-    "id": "log-1788685141699-d7926f",
-    "timestamp": "2026-09-06T08:59:01.700Z",
-    "action": "PROMOTE_DRAFT",
-    "status": "ERROR",
-    "summary": "Promotion rejected: Production article already exists for slug \"existing-blog-article\"",
-    "stats": null,
-    "details": {
-      "sourceDraft": "existing-blog-article.md",
-      "destinationSlug": "existing-blog-article",
-      "reason": "PRODUCTION_SLUG_EXISTS"
-    }
-  },
-  {
-    "id": "log-1788685141714-99c3bb",
-    "timestamp": "2026-09-06T08:59:01.714Z",
-    "action": "PROMOTE_DRAFT",
-    "status": "ERROR",
-    "summary": "Promotion rejected: Cannibalization conflict for \"Existing Blog Article\"",
-    "stats": null,
-    "details": {
-      "sourceDraft": "unique-slug-same-title.md",
-      "reason": "Exact duplicate title or slug matches existing article 'Existing Blog Article'",
-      "closestMatch": "Existing Blog Article"
-    }
-  },
-  {
-    "id": "log-1788685141728-9fe7fc",
-    "timestamp": "2026-09-06T08:59:01.728Z",
-    "action": "PROMOTE_DRAFT",
-    "status": "ERROR",
-    "summary": "Promotion rejected: Draft \"existing-blog-article-overlap.md\" failed Phase 3 validation",
-    "stats": null,
-    "details": {
-      "sourceDraft": "existing-blog-article-overlap.md",
-      "errors": [
-        "Category \"Unapproved Category\" is not an approved category. Approved: Chinese Gender Predictor, Chinese Gender Calendar, Mayan Gender Predictor, Baby Gender Prediction Methods, Gender Prediction Myths, Gender Prediction."
-      ]
-    }
-  },
-  {
-    "id": "log-1788685141740-8a404a",
-    "timestamp": "2026-09-06T08:59:01.741Z",
-    "action": "PROMOTE_DRAFT",
-    "status": "WARNING",
-    "summary": "Promotion blocked: CAUTION-level topical overlap for \"Chinese Gender Predictor Accuracy Rates Study\"",
-    "stats": null,
-    "details": {
-      "sourceDraft": "chinese-gender-predictor-accuracy-rates.md",
-      "reason": "Moderate topical overlap with 'Chinese Gender Predictor Accuracy Analysis' (50% similarity) - requires distinct search angle"
-    }
-  },
-  {
-    "id": "log-1788685141756-04f779",
-    "timestamp": "2026-09-06T08:59:01.756Z",
-    "action": "PROMOTE_DRAFT",
-    "status": "SUCCESS",
-    "summary": "Successfully promoted draft \"ancient-mayan-calendar-origins.md\" to production article \"ancient-mayan-calendar-origins\"",
-    "stats": null,
-    "details": {
-      "sourceDraft": "ancient-mayan-calendar-origins.md",
-      "destinationSlug": "ancient-mayan-calendar-origins",
-      "productionPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\blog\\ancient-mayan-calendar-origins.md",
-      "wordCount": 1741,
-      "internalLinks": 5,
-      "faqCount": 4,
-      "sourceDraftPreserved": true
-    }
-  },
-  {
-    "id": "log-1788685142617-5eb770",
-    "timestamp": "2026-09-06T08:59:02.617Z",
-    "action": "PROMOTE_DRAFT",
-    "status": "ERROR",
-    "summary": "Promotion rejected: Production article already exists for slug \"safe-lunar-calendar-guide\"",
-    "stats": null,
-    "details": {
-      "sourceDraft": "safe-lunar-calendar-guide.md",
-      "destinationSlug": "safe-lunar-calendar-guide",
-      "reason": "PRODUCTION_SLUG_EXISTS"
-    }
-  },
-  {
-    "id": "log-1788685142624-5971e4",
-    "timestamp": "2026-09-06T08:59:02.624Z",
-    "action": "PROMOTE_DRAFT",
-    "status": "ERROR",
-    "summary": "Promotion rejected: Draft \"malformed-article.md\" failed Phase 3 validation",
-    "stats": null,
-    "details": {
-      "sourceDraft": "malformed-article.md",
-      "errors": [
-        "Frontmatter field \"title\" is missing or does not meet minimum length (5 chars).",
-        "Frontmatter field \"description\" is missing or does not meet minimum length (20 chars).",
-        "Frontmatter field \"category\" is missing or does not meet minimum length (3 chars).",
-        "Frontmatter field \"heroImage\" is missing or does not meet minimum length (3 chars).",
-        "Frontmatter field \"heroImageAlt\" is missing or does not meet minimum length (5 chars).",
-        "Frontmatter field \"excerpt\" is missing or does not meet minimum length (20 chars).",
-        "Frontmatter \"pubDate\" is missing.",
-        "Word count (0) is below production minimum threshold of 1200 words.",
-        "Article body contains only 0 H2 section(s). Long-form articles require at least 4 H2 sections.",
-        "Article body is empty, missing, or trivially short.",
-        "Found 0 unique internal link(s). Minimum required is 4.",
-        "Frontmatter \"faqs\" must be an array of questions and answers."
-      ]
-    }
-  },
-  {
-    "id": "log-1788685146686-138a9f",
-    "timestamp": "2026-09-06T08:59:06.686Z",
-    "action": "TOPIC_SELECTION",
-    "status": "ERROR",
-    "summary": "Forced topic \"Chinese Gender Calendar\" REJECTED: Exact duplicate title or slug matches existing article 'Chinese Gender Calendar: History, Lunar Conversions & Guide'",
-    "stats": null,
-    "details": {
-      "topic": {
-        "id": "forced-1788685146682",
-        "title": "Chinese Gender Calendar",
-        "category": "Chinese Gender Predictor",
-        "suggestedSlug": "chinese-gender-calendar",
-        "primaryKeyword": "[REDACTED]",
-        "secondaryKeywords": "[REDACTED]",
-        "targetWordCount": 2000
-      },
-      "reason": "Exact duplicate title or slug matches existing article 'Chinese Gender Calendar: History, Lunar Conversions & Guide'"
-    }
-  },
-  {
-    "id": "log-1788685305337-45168b",
-    "timestamp": "2026-09-06T09:01:45.338Z",
-    "action": "CONTENT_PLANNING_DRY_RUN",
-    "status": "SUCCESS",
-    "summary": "Dry-run completed successfully for \"Chinese Gender Calendar Leap Month: How Lunar Leap Years Affect Predictions\". Zero drafts created.",
-    "stats": {
-      "publishedArticles": 8,
-      "safeTopicsCount": 12
-    },
-    "details": {
-      "selectedTopicId": "seed-001",
-      "selectedTopicTitle": "Chinese Gender Calendar Leap Month: How Lunar Leap Years Affect Predictions"
-    }
-  },
-  {
-    "id": "log-1788685305429-022c6c",
-    "timestamp": "2026-09-06T09:01:45.429Z",
-    "action": "DRAFT_VALIDATION_PASSED",
-    "status": "SUCCESS",
-    "summary": "Draft \"Automated Test Guide to Gender Calendars\" PASSED all validation checks (2065 words).",
-    "stats": {
-      "wordCount": 2065,
-      "internalLinks": 4,
-      "faqCount": 4,
-      "valid": true
-    },
-    "details": {
-      "topicId": "test-seed-001",
-      "slug": "automated-test-guide-gender-calendars",
-      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\automated-test-guide-gender-calendars.md",
-      "errors": [],
-      "warnings": [],
-      "provider": "gemini"
-    }
-  },
-  {
-    "id": "log-1788685305477-93208b",
-    "timestamp": "2026-09-06T09:01:45.477Z",
-    "action": "DRAFT_GENERATION",
-    "status": "ERROR",
-    "summary": "Generation failed for \"Automated Test Guide to Gender Calendars\": Simulated failure of all providers",
-    "stats": null,
-    "details": {
-      "topicId": "test-seed-001",
-      "error": "Simulated failure of all providers"
-    }
-  },
-  {
-    "id": "log-1788685305514-cb8420",
-    "timestamp": "2026-09-06T09:01:45.514Z",
-    "action": "DRAFT_SYNTAX_PARSING",
-    "status": "ERROR",
-    "summary": "Invalid AI output for \"Automated Test Guide to Gender Calendars\": No JSON object detected in AI response: Unexpected token 'T', \"This is no\"... is not valid JSON",
-    "stats": null,
-    "details": {
-      "topicId": "test-seed-001",
-      "error": "No JSON object detected in AI response: Unexpected token 'T', \"This is no\"... is not valid JSON"
-    }
-  },
-  {
-    "id": "log-1788685314707-0fa56f",
-    "timestamp": "2026-09-06T09:01:54.708Z",
-    "action": "DRAFT_VALIDATION_PASSED",
-    "status": "SUCCESS",
-    "summary": "Draft \"Phase Three Test Article Topic\" PASSED all validation checks (2172 words).",
-    "stats": {
-      "wordCount": 2172,
-      "internalLinks": 5,
-      "faqCount": 4,
-      "valid": true
-    },
-    "details": {
-      "topicId": "val-test-01",
-      "slug": "phase-three-test-article-topic",
-      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\phase-three-test-article-topic.md",
-      "errors": [],
-      "warnings": [],
-      "provider": "gemini"
-    }
-  },
-  {
-    "id": "log-1788685314807-eb57b9",
-    "timestamp": "2026-09-06T09:01:54.807Z",
-    "action": "DRAFT_VALIDATION_FAILED",
-    "status": "WARNING",
-    "summary": "Draft \"Invalid Draft With Bad Category\" FAILED validation: Category \"Invalid Category\" is not an approved category. Approved: Chinese Gender Predictor, Chinese Gender Calendar, Mayan Gender Predictor, Baby Gender Prediction Methods, Gender Prediction Myths, Gender Prediction.",
-    "stats": {
-      "wordCount": 2172,
-      "internalLinks": 5,
-      "faqCount": 4,
-      "valid": false
-    },
-    "details": {
-      "topicId": "val-test-01",
-      "slug": "phase-three-test-article-topic",
-      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\phase-three-test-article-topic.md",
-      "errors": [
-        "Category \"Invalid Category\" is not an approved category. Approved: Chinese Gender Predictor, Chinese Gender Calendar, Mayan Gender Predictor, Baby Gender Prediction Methods, Gender Prediction Myths, Gender Prediction."
-      ],
-      "warnings": [],
-      "provider": "gemini"
-    }
-  },
-  {
-    "id": "log-1788685314851-7b7047",
-    "timestamp": "2026-09-06T09:01:54.851Z",
-    "action": "DRAFT_VALIDATION_PASSED",
-    "status": "SUCCESS",
-    "summary": "Draft \"Approved Validated Draft Title\" PASSED all validation checks (2172 words).",
-    "stats": {
-      "wordCount": 2172,
-      "internalLinks": 5,
-      "faqCount": 4,
-      "valid": true
-    },
-    "details": {
-      "topicId": "val-test-01",
-      "slug": "phase-three-test-article-topic",
-      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\phase-three-test-article-topic.md",
-      "errors": [],
-      "warnings": [],
-      "provider": "gemini"
-    }
-  },
-  {
-    "id": "log-1788685322761-b7442f",
-    "timestamp": "2026-09-06T09:02:02.761Z",
-    "action": "PROMOTE_DRAFT",
-    "status": "SUCCESS",
-    "summary": "Successfully promoted draft \"safe-lunar-calendar-guide.md\" to production article \"safe-lunar-calendar-guide\"",
-    "stats": null,
-    "details": {
-      "sourceDraft": "safe-lunar-calendar-guide.md",
-      "destinationSlug": "safe-lunar-calendar-guide",
-      "productionPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\blog\\safe-lunar-calendar-guide.md",
-      "wordCount": 1740,
-      "internalLinks": 5,
-      "faqCount": 4,
-      "sourceDraftPreserved": true
-    }
-  },
-  {
-    "id": "log-1788685322802-6896bb",
-    "timestamp": "2026-09-06T09:02:02.802Z",
-    "action": "PROMOTE_DRAFT",
-    "status": "ERROR",
-    "summary": "Promotion rejected: Draft \"bad-frontmatter-draft.md\" failed Phase 3 validation",
-    "stats": null,
-    "details": {
-      "sourceDraft": "bad-frontmatter-draft.md",
-      "errors": [
-        "Frontmatter field \"title\" is missing or does not meet minimum length (5 chars).",
-        "Frontmatter field \"description\" is missing or does not meet minimum length (20 chars).",
-        "Frontmatter field \"category\" is missing or does not meet minimum length (3 chars).",
-        "Frontmatter field \"heroImage\" is missing or does not meet minimum length (3 chars).",
-        "Frontmatter field \"heroImageAlt\" is missing or does not meet minimum length (5 chars).",
-        "Frontmatter field \"excerpt\" is missing or does not meet minimum length (20 chars).",
-        "Frontmatter \"pubDate\" is missing.",
-        "Word count (2) is below production minimum threshold of 1200 words.",
-        "Article body contains only 0 H2 section(s). Long-form articles require at least 4 H2 sections.",
-        "Article body is empty, missing, or trivially short.",
-        "Found 0 unique internal link(s). Minimum required is 4.",
-        "Frontmatter \"faqs\" must be an array of questions and answers."
-      ]
-    }
-  },
-  {
-    "id": "log-1788685322837-95c6cf",
-    "timestamp": "2026-09-06T09:02:02.837Z",
-    "action": "PROMOTE_DRAFT",
-    "status": "ERROR",
-    "summary": "Promotion rejected: Draft \"short-draft-article.md\" failed Phase 3 validation",
-    "stats": null,
-    "details": {
-      "sourceDraft": "short-draft-article.md",
-      "errors": [
-        "Word count (30) is below production minimum threshold of 1200 words.",
-        "Article body contains only 2 H2 section(s). Long-form articles require at least 4 H2 sections.",
-        "Article body is empty, missing, or trivially short."
-      ]
-    }
-  },
-  {
-    "id": "log-1788685322868-921375",
-    "timestamp": "2026-09-06T09:02:02.868Z",
-    "action": "PROMOTE_DRAFT",
-    "status": "ERROR",
-    "summary": "Promotion rejected: Production article already exists for slug \"existing-blog-article\"",
-    "stats": null,
-    "details": {
-      "sourceDraft": "existing-blog-article.md",
-      "destinationSlug": "existing-blog-article",
-      "reason": "PRODUCTION_SLUG_EXISTS"
-    }
-  },
-  {
-    "id": "log-1788685322878-3b7aed",
-    "timestamp": "2026-09-06T09:02:02.878Z",
-    "action": "PROMOTE_DRAFT",
-    "status": "ERROR",
-    "summary": "Promotion rejected: Production article already exists for slug \"existing-blog-article\"",
-    "stats": null,
-    "details": {
-      "sourceDraft": "existing-blog-article.md",
-      "destinationSlug": "existing-blog-article",
-      "reason": "PRODUCTION_SLUG_EXISTS"
-    }
-  },
-  {
     "id": "log-1788685322902-e8ff75",
     "timestamp": "2026-09-06T09:02:02.902Z",
     "action": "PROMOTE_DRAFT",
@@ -3461,6 +2522,1601 @@
     "details": {
       "topic": {
         "id": "forced-1789213014299",
+        "title": "Chinese Gender Calendar",
+        "category": "Chinese Gender Predictor",
+        "suggestedSlug": "chinese-gender-calendar",
+        "primaryKeyword": "[REDACTED]",
+        "secondaryKeywords": "[REDACTED]",
+        "targetWordCount": 2000
+      },
+      "reason": "Exact duplicate title or slug matches existing article 'Chinese Gender Calendar: History, Lunar Conversions & Guide'"
+    }
+  },
+  {
+    "id": "log-1789264042322-108e7c",
+    "timestamp": "2026-09-13T01:47:22.322Z",
+    "action": "DRAFT_VALIDATION_PASSED",
+    "status": "SUCCESS",
+    "summary": "Draft \"Fresh Generated Article for Current Run\" PASSED all validation checks (2125 words).",
+    "stats": {
+      "wordCount": 2125,
+      "internalLinks": 5,
+      "faqCount": 4,
+      "valid": true
+    },
+    "details": {
+      "runId": "run-2026-09-13T01-47-22-141Z-9eb19e",
+      "inventoryScanTimestamp": "2026-09-13T01:47:22.142Z",
+      "selectedTopic": "Fresh Generated Article for Current Run",
+      "selectedSlug": "fresh-generated-article-current-run",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-47-22-141Z-9eb19e\\fresh-generated-article-current-run.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-47-22-141Z-9eb19e\\fresh-generated-article-current-run.md",
+      "exactPromotedDraftPath": null,
+      "finalResultState": "VALIDATED_DRAFT_CREATED",
+      "topicId": "seed-fresh-01",
+      "slug": "fresh-generated-article-current-run",
+      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-47-22-141Z-9eb19e\\fresh-generated-article-current-run.md",
+      "errors": [],
+      "warnings": [],
+      "provider": "mock",
+      "inventorySlugsAtScanTime": [
+        "chinese-gender-calendar-leap-month-rules",
+        "can-you-predict-babys-gender",
+        "chinese-vs-mayan-gender-predictor",
+        "chinese-gender-calendar-2026-2027",
+        "how-does-the-chinese-gender-predictor-work",
+        "chinese-gender-calendar",
+        "mayan-gender-predictor",
+        "baby-gender-prediction-methods",
+        "gender-prediction-myths"
+      ]
+    }
+  },
+  {
+    "id": "log-1789264042416-038296",
+    "timestamp": "2026-09-13T01:47:22.416Z",
+    "action": "DRAFT_GENERATION",
+    "status": "ERROR",
+    "summary": "Generation failed for \"Valid Topic That Fails Generation\": Simulated upstream AI provider failure",
+    "stats": null,
+    "details": {
+      "runId": "run-2026-09-13T01-47-22-373Z-0cecb6",
+      "inventoryScanTimestamp": "2026-09-13T01:47:22.374Z",
+      "selectedTopic": "Valid Topic That Fails Generation",
+      "selectedSlug": "valid-topic-fails-generation",
+      "exactGeneratedDraftPath": null,
+      "exactValidatedDraftPath": null,
+      "exactPromotedDraftPath": null,
+      "finalResultState": "GENERATION_FAILED",
+      "error": "Simulated upstream AI provider failure"
+    }
+  },
+  {
+    "id": "log-1789264042474-863e8d",
+    "timestamp": "2026-09-13T01:47:22.474Z",
+    "action": "DRAFT_SYNTAX_PARSING",
+    "status": "ERROR",
+    "summary": "Invalid AI output for \"Trivially Short Draft Title\": Missing, empty, or too short \"markdownBody\" in AI output",
+    "stats": null,
+    "details": {
+      "runId": "run-2026-09-13T01-47-22-427Z-fa8880",
+      "inventoryScanTimestamp": "2026-09-13T01:47:22.428Z",
+      "selectedTopic": "Trivially Short Draft Title",
+      "selectedSlug": "trivially-short-draft-title",
+      "exactGeneratedDraftPath": null,
+      "exactValidatedDraftPath": null,
+      "exactPromotedDraftPath": null,
+      "finalResultState": "INVALID_AI_RESPONSE",
+      "error": "Missing, empty, or too short \"markdownBody\" in AI output"
+    }
+  },
+  {
+    "id": "log-1789264105040-fc0665",
+    "timestamp": "2026-09-13T01:48:25.040Z",
+    "action": "DRAFT_VALIDATION_PASSED",
+    "status": "SUCCESS",
+    "summary": "Draft \"Fresh Generated Article for Current Run\" PASSED all validation checks (2125 words).",
+    "stats": {
+      "wordCount": 2125,
+      "internalLinks": 5,
+      "faqCount": 4,
+      "valid": true
+    },
+    "details": {
+      "runId": "run-2026-09-13T01-48-24-860Z-83ee8d",
+      "inventoryScanTimestamp": "2026-09-13T01:48:24.861Z",
+      "selectedTopic": "Fresh Generated Article for Current Run",
+      "selectedSlug": "fresh-generated-article-current-run",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-48-24-860Z-83ee8d\\fresh-generated-article-current-run.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-48-24-860Z-83ee8d\\fresh-generated-article-current-run.md",
+      "exactPromotedDraftPath": null,
+      "finalResultState": "VALIDATED_DRAFT_CREATED",
+      "topicId": "seed-fresh-01",
+      "slug": "fresh-generated-article-current-run",
+      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-48-24-860Z-83ee8d\\fresh-generated-article-current-run.md",
+      "errors": [],
+      "warnings": [],
+      "provider": "mock",
+      "inventorySlugsAtScanTime": [
+        "chinese-gender-calendar-leap-month-rules",
+        "can-you-predict-babys-gender",
+        "chinese-vs-mayan-gender-predictor",
+        "chinese-gender-calendar-2026-2027",
+        "how-does-the-chinese-gender-predictor-work",
+        "chinese-gender-calendar",
+        "mayan-gender-predictor",
+        "baby-gender-prediction-methods",
+        "gender-prediction-myths"
+      ]
+    }
+  },
+  {
+    "id": "log-1789264105136-1d70f7",
+    "timestamp": "2026-09-13T01:48:25.136Z",
+    "action": "DRAFT_GENERATION",
+    "status": "ERROR",
+    "summary": "Generation failed for \"Valid Topic That Fails Generation\": Simulated upstream AI provider failure",
+    "stats": null,
+    "details": {
+      "runId": "run-2026-09-13T01-48-25-091Z-37dba6",
+      "inventoryScanTimestamp": "2026-09-13T01:48:25.092Z",
+      "selectedTopic": "Valid Topic That Fails Generation",
+      "selectedSlug": "valid-topic-fails-generation",
+      "exactGeneratedDraftPath": null,
+      "exactValidatedDraftPath": null,
+      "exactPromotedDraftPath": null,
+      "finalResultState": "GENERATION_FAILED",
+      "error": "Simulated upstream AI provider failure"
+    }
+  },
+  {
+    "id": "log-1789264105200-f45aac",
+    "timestamp": "2026-09-13T01:48:25.200Z",
+    "action": "DRAFT_SYNTAX_PARSING",
+    "status": "ERROR",
+    "summary": "Invalid AI output for \"Draft With Invalid Unapproved Category\": Invalid FAQs: Expected between 4 and 8 items, received 0",
+    "stats": null,
+    "details": {
+      "runId": "run-2026-09-13T01-48-25-149Z-2fc07e",
+      "inventoryScanTimestamp": "2026-09-13T01:48:25.150Z",
+      "selectedTopic": "Draft With Invalid Unapproved Category",
+      "selectedSlug": "draft-with-invalid-unapproved-category",
+      "exactGeneratedDraftPath": null,
+      "exactValidatedDraftPath": null,
+      "exactPromotedDraftPath": null,
+      "finalResultState": "INVALID_AI_RESPONSE",
+      "error": "Invalid FAQs: Expected between 4 and 8 items, received 0"
+    }
+  },
+  {
+    "id": "log-1789264156553-6f3ae6",
+    "timestamp": "2026-09-13T01:49:16.554Z",
+    "action": "DRAFT_VALIDATION_PASSED",
+    "status": "SUCCESS",
+    "summary": "Draft \"Fresh Generated Article for Current Run\" PASSED all validation checks (2125 words).",
+    "stats": {
+      "wordCount": 2125,
+      "internalLinks": 5,
+      "faqCount": 4,
+      "valid": true
+    },
+    "details": {
+      "runId": "run-2026-09-13T01-49-16-365Z-ca1d48",
+      "inventoryScanTimestamp": "2026-09-13T01:49:16.366Z",
+      "selectedTopic": "Fresh Generated Article for Current Run",
+      "selectedSlug": "fresh-generated-article-current-run",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-49-16-365Z-ca1d48\\fresh-generated-article-current-run.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-49-16-365Z-ca1d48\\fresh-generated-article-current-run.md",
+      "exactPromotedDraftPath": null,
+      "finalResultState": "VALIDATED_DRAFT_CREATED",
+      "topicId": "seed-fresh-01",
+      "slug": "fresh-generated-article-current-run",
+      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-49-16-365Z-ca1d48\\fresh-generated-article-current-run.md",
+      "errors": [],
+      "warnings": [],
+      "provider": "mock",
+      "inventorySlugsAtScanTime": [
+        "chinese-gender-calendar-leap-month-rules",
+        "can-you-predict-babys-gender",
+        "chinese-vs-mayan-gender-predictor",
+        "chinese-gender-calendar-2026-2027",
+        "how-does-the-chinese-gender-predictor-work",
+        "chinese-gender-calendar",
+        "mayan-gender-predictor",
+        "baby-gender-prediction-methods",
+        "gender-prediction-myths"
+      ]
+    }
+  },
+  {
+    "id": "log-1789264156667-9f0f1f",
+    "timestamp": "2026-09-13T01:49:16.667Z",
+    "action": "DRAFT_GENERATION",
+    "status": "ERROR",
+    "summary": "Generation failed for \"Valid Topic That Fails Generation\": Simulated upstream AI provider failure",
+    "stats": null,
+    "details": {
+      "runId": "run-2026-09-13T01-49-16-597Z-707219",
+      "inventoryScanTimestamp": "2026-09-13T01:49:16.598Z",
+      "selectedTopic": "Valid Topic That Fails Generation",
+      "selectedSlug": "valid-topic-fails-generation",
+      "exactGeneratedDraftPath": null,
+      "exactValidatedDraftPath": null,
+      "exactPromotedDraftPath": null,
+      "finalResultState": "GENERATION_FAILED",
+      "error": "Simulated upstream AI provider failure"
+    }
+  },
+  {
+    "id": "log-1789264156774-8984f5",
+    "timestamp": "2026-09-13T01:49:16.774Z",
+    "action": "DRAFT_VALIDATION_FAILED",
+    "status": "WARNING",
+    "summary": "Draft \"Draft With Invalid Unapproved Category\" FAILED validation: Category \"Invalid Unapproved Category\" is not an approved category. Approved: Chinese Gender Predictor, Chinese Gender Calendar, Mayan Gender Predictor, Baby Gender Prediction Methods, Gender Prediction Myths, Gender Prediction.",
+    "stats": {
+      "wordCount": 2124,
+      "internalLinks": 5,
+      "faqCount": 4,
+      "valid": false
+    },
+    "details": {
+      "runId": "run-2026-09-13T01-49-16-679Z-20f925",
+      "inventoryScanTimestamp": "2026-09-13T01:49:16.680Z",
+      "selectedTopic": "Draft With Invalid Unapproved Category",
+      "selectedSlug": "draft-with-invalid-unapproved-category",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-49-16-679Z-20f925\\draft-with-invalid-unapproved-category.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-49-16-679Z-20f925\\draft-with-invalid-unapproved-category.md",
+      "exactPromotedDraftPath": null,
+      "finalResultState": "VALIDATION_FAILED",
+      "slug": "draft-with-invalid-unapproved-category",
+      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-49-16-679Z-20f925\\draft-with-invalid-unapproved-category.md",
+      "errors": [
+        "Category \"Invalid Unapproved Category\" is not an approved category. Approved: Chinese Gender Predictor, Chinese Gender Calendar, Mayan Gender Predictor, Baby Gender Prediction Methods, Gender Prediction Myths, Gender Prediction."
+      ],
+      "warnings": [],
+      "provider": "mock",
+      "inventorySlugsAtScanTime": [
+        "chinese-gender-calendar-leap-month-rules",
+        "can-you-predict-babys-gender",
+        "chinese-vs-mayan-gender-predictor",
+        "chinese-gender-calendar-2026-2027",
+        "how-does-the-chinese-gender-predictor-work",
+        "chinese-gender-calendar",
+        "mayan-gender-predictor",
+        "baby-gender-prediction-methods",
+        "gender-prediction-myths"
+      ]
+    }
+  },
+  {
+    "id": "log-1789264177406-1becc6",
+    "timestamp": "2026-09-13T01:49:37.406Z",
+    "action": "DRAFT_VALIDATION_PASSED",
+    "status": "SUCCESS",
+    "summary": "Draft \"Fresh Generated Article for Current Run\" PASSED all validation checks (2125 words).",
+    "stats": {
+      "wordCount": 2125,
+      "internalLinks": 5,
+      "faqCount": 4,
+      "valid": true
+    },
+    "details": {
+      "runId": "run-2026-09-13T01-49-37-202Z-b381a8",
+      "inventoryScanTimestamp": "2026-09-13T01:49:37.203Z",
+      "selectedTopic": "Fresh Generated Article for Current Run",
+      "selectedSlug": "fresh-generated-article-current-run",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-49-37-202Z-b381a8\\fresh-generated-article-current-run.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-49-37-202Z-b381a8\\fresh-generated-article-current-run.md",
+      "exactPromotedDraftPath": null,
+      "finalResultState": "VALIDATED_DRAFT_CREATED",
+      "topicId": "seed-fresh-01",
+      "slug": "fresh-generated-article-current-run",
+      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-49-37-202Z-b381a8\\fresh-generated-article-current-run.md",
+      "errors": [],
+      "warnings": [],
+      "provider": "mock",
+      "inventorySlugsAtScanTime": [
+        "chinese-gender-calendar-leap-month-rules",
+        "can-you-predict-babys-gender",
+        "chinese-vs-mayan-gender-predictor",
+        "chinese-gender-calendar-2026-2027",
+        "how-does-the-chinese-gender-predictor-work",
+        "chinese-gender-calendar",
+        "mayan-gender-predictor",
+        "baby-gender-prediction-methods",
+        "gender-prediction-myths"
+      ]
+    }
+  },
+  {
+    "id": "log-1789264177483-87f703",
+    "timestamp": "2026-09-13T01:49:37.484Z",
+    "action": "DRAFT_GENERATION",
+    "status": "ERROR",
+    "summary": "Generation failed for \"Valid Topic That Fails Generation\": Simulated upstream AI provider failure",
+    "stats": null,
+    "details": {
+      "runId": "run-2026-09-13T01-49-37-446Z-ecda40",
+      "inventoryScanTimestamp": "2026-09-13T01:49:37.446Z",
+      "selectedTopic": "Valid Topic That Fails Generation",
+      "selectedSlug": "valid-topic-fails-generation",
+      "exactGeneratedDraftPath": null,
+      "exactValidatedDraftPath": null,
+      "exactPromotedDraftPath": null,
+      "finalResultState": "GENERATION_FAILED",
+      "error": "Simulated upstream AI provider failure"
+    }
+  },
+  {
+    "id": "log-1789264177638-d950e5",
+    "timestamp": "2026-09-13T01:49:37.638Z",
+    "action": "DRAFT_VALIDATION_FAILED",
+    "status": "WARNING",
+    "summary": "Draft \"Draft With Invalid Unapproved Category\" FAILED validation: Category \"Invalid Unapproved Category\" is not an approved category. Approved: Chinese Gender Predictor, Chinese Gender Calendar, Mayan Gender Predictor, Baby Gender Prediction Methods, Gender Prediction Myths, Gender Prediction.",
+    "stats": {
+      "wordCount": 2124,
+      "internalLinks": 5,
+      "faqCount": 4,
+      "valid": false
+    },
+    "details": {
+      "runId": "run-2026-09-13T01-49-37-492Z-6723fa",
+      "inventoryScanTimestamp": "2026-09-13T01:49:37.494Z",
+      "selectedTopic": "Draft With Invalid Unapproved Category",
+      "selectedSlug": "draft-with-invalid-unapproved-category",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-49-37-492Z-6723fa\\draft-with-invalid-unapproved-category.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-49-37-492Z-6723fa\\draft-with-invalid-unapproved-category.md",
+      "exactPromotedDraftPath": null,
+      "finalResultState": "VALIDATION_FAILED",
+      "slug": "draft-with-invalid-unapproved-category",
+      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-49-37-492Z-6723fa\\draft-with-invalid-unapproved-category.md",
+      "errors": [
+        "Category \"Invalid Unapproved Category\" is not an approved category. Approved: Chinese Gender Predictor, Chinese Gender Calendar, Mayan Gender Predictor, Baby Gender Prediction Methods, Gender Prediction Myths, Gender Prediction."
+      ],
+      "warnings": [],
+      "provider": "mock",
+      "inventorySlugsAtScanTime": [
+        "chinese-gender-calendar-leap-month-rules",
+        "can-you-predict-babys-gender",
+        "chinese-vs-mayan-gender-predictor",
+        "chinese-gender-calendar-2026-2027",
+        "how-does-the-chinese-gender-predictor-work",
+        "chinese-gender-calendar",
+        "mayan-gender-predictor",
+        "baby-gender-prediction-methods",
+        "gender-prediction-myths"
+      ]
+    }
+  },
+  {
+    "id": "log-1789264218521-7c92d7",
+    "timestamp": "2026-09-13T01:50:18.522Z",
+    "action": "DRAFT_VALIDATION_PASSED",
+    "status": "SUCCESS",
+    "summary": "Draft \"Fresh Generated Article for Current Run\" PASSED all validation checks (2125 words).",
+    "stats": {
+      "wordCount": 2125,
+      "internalLinks": 5,
+      "faqCount": 4,
+      "valid": true
+    },
+    "details": {
+      "runId": "run-2026-09-13T01-50-18-345Z-66f9b0",
+      "inventoryScanTimestamp": "2026-09-13T01:50:18.347Z",
+      "selectedTopic": "Fresh Generated Article for Current Run",
+      "selectedSlug": "fresh-generated-article-current-run",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-50-18-345Z-66f9b0\\fresh-generated-article-current-run.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-50-18-345Z-66f9b0\\fresh-generated-article-current-run.md",
+      "exactPromotedDraftPath": null,
+      "finalResultState": "VALIDATED_DRAFT_CREATED",
+      "topicId": "seed-fresh-01",
+      "slug": "fresh-generated-article-current-run",
+      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-50-18-345Z-66f9b0\\fresh-generated-article-current-run.md",
+      "errors": [],
+      "warnings": [],
+      "provider": "mock",
+      "inventorySlugsAtScanTime": [
+        "chinese-gender-calendar-leap-month-rules",
+        "can-you-predict-babys-gender",
+        "chinese-vs-mayan-gender-predictor",
+        "chinese-gender-calendar-2026-2027",
+        "how-does-the-chinese-gender-predictor-work",
+        "chinese-gender-calendar",
+        "mayan-gender-predictor",
+        "baby-gender-prediction-methods",
+        "gender-prediction-myths"
+      ]
+    }
+  },
+  {
+    "id": "log-1789264218594-b37949",
+    "timestamp": "2026-09-13T01:50:18.594Z",
+    "action": "DRAFT_GENERATION",
+    "status": "ERROR",
+    "summary": "Generation failed for \"Valid Topic That Fails Generation\": Simulated upstream AI provider failure",
+    "stats": null,
+    "details": {
+      "runId": "run-2026-09-13T01-50-18-560Z-bb0b39",
+      "inventoryScanTimestamp": "2026-09-13T01:50:18.561Z",
+      "selectedTopic": "Valid Topic That Fails Generation",
+      "selectedSlug": "valid-topic-fails-generation",
+      "exactGeneratedDraftPath": null,
+      "exactValidatedDraftPath": null,
+      "exactPromotedDraftPath": null,
+      "finalResultState": "GENERATION_FAILED",
+      "error": "Simulated upstream AI provider failure"
+    }
+  },
+  {
+    "id": "log-1789264218644-b3831d",
+    "timestamp": "2026-09-13T01:50:18.645Z",
+    "action": "DRAFT_VALIDATION_FAILED",
+    "status": "WARNING",
+    "summary": "Draft \"Draft With Invalid Unapproved Category\" FAILED validation: Category \"Invalid Unapproved Category\" is not an approved category. Approved: Chinese Gender Predictor, Chinese Gender Calendar, Mayan Gender Predictor, Baby Gender Prediction Methods, Gender Prediction Myths, Gender Prediction.",
+    "stats": {
+      "wordCount": 2124,
+      "internalLinks": 5,
+      "faqCount": 4,
+      "valid": false
+    },
+    "details": {
+      "runId": "run-2026-09-13T01-50-18-601Z-c272cc",
+      "inventoryScanTimestamp": "2026-09-13T01:50:18.602Z",
+      "selectedTopic": "Draft With Invalid Unapproved Category",
+      "selectedSlug": "draft-with-invalid-unapproved-category",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-50-18-601Z-c272cc\\draft-with-invalid-unapproved-category.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-50-18-601Z-c272cc\\draft-with-invalid-unapproved-category.md",
+      "exactPromotedDraftPath": null,
+      "finalResultState": "VALIDATION_FAILED",
+      "slug": "draft-with-invalid-unapproved-category",
+      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-50-18-601Z-c272cc\\draft-with-invalid-unapproved-category.md",
+      "errors": [
+        "Category \"Invalid Unapproved Category\" is not an approved category. Approved: Chinese Gender Predictor, Chinese Gender Calendar, Mayan Gender Predictor, Baby Gender Prediction Methods, Gender Prediction Myths, Gender Prediction."
+      ],
+      "warnings": [],
+      "provider": "mock",
+      "inventorySlugsAtScanTime": [
+        "chinese-gender-calendar-leap-month-rules",
+        "can-you-predict-babys-gender",
+        "chinese-vs-mayan-gender-predictor",
+        "chinese-gender-calendar-2026-2027",
+        "how-does-the-chinese-gender-predictor-work",
+        "chinese-gender-calendar",
+        "mayan-gender-predictor",
+        "baby-gender-prediction-methods",
+        "gender-prediction-myths"
+      ]
+    }
+  },
+  {
+    "id": "log-1789264245299-9637c7",
+    "timestamp": "2026-09-13T01:50:45.299Z",
+    "action": "DRAFT_VALIDATION_PASSED",
+    "status": "SUCCESS",
+    "summary": "Draft \"Fresh Generated Article for Current Run\" PASSED all validation checks (2125 words).",
+    "stats": {
+      "wordCount": 2125,
+      "internalLinks": 5,
+      "faqCount": 4,
+      "valid": true
+    },
+    "details": {
+      "runId": "run-2026-09-13T01-50-45-079Z-cbc80f",
+      "inventoryScanTimestamp": "2026-09-13T01:50:45.079Z",
+      "selectedTopic": "Fresh Generated Article for Current Run",
+      "selectedSlug": "fresh-generated-article-current-run",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-50-45-079Z-cbc80f\\fresh-generated-article-current-run.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-50-45-079Z-cbc80f\\fresh-generated-article-current-run.md",
+      "exactPromotedDraftPath": null,
+      "finalResultState": "VALIDATED_DRAFT_CREATED",
+      "topicId": "seed-fresh-01",
+      "slug": "fresh-generated-article-current-run",
+      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-50-45-079Z-cbc80f\\fresh-generated-article-current-run.md",
+      "errors": [],
+      "warnings": [],
+      "provider": "mock",
+      "inventorySlugsAtScanTime": [
+        "chinese-gender-calendar-leap-month-rules",
+        "can-you-predict-babys-gender",
+        "chinese-vs-mayan-gender-predictor",
+        "chinese-gender-calendar-2026-2027",
+        "how-does-the-chinese-gender-predictor-work",
+        "chinese-gender-calendar",
+        "mayan-gender-predictor",
+        "baby-gender-prediction-methods",
+        "gender-prediction-myths"
+      ]
+    }
+  },
+  {
+    "id": "log-1789264245396-e5f024",
+    "timestamp": "2026-09-13T01:50:45.396Z",
+    "action": "DRAFT_GENERATION",
+    "status": "ERROR",
+    "summary": "Generation failed for \"Valid Topic That Fails Generation\": Simulated upstream AI provider failure",
+    "stats": null,
+    "details": {
+      "runId": "run-2026-09-13T01-50-45-349Z-eb2a80",
+      "inventoryScanTimestamp": "2026-09-13T01:50:45.349Z",
+      "selectedTopic": "Valid Topic That Fails Generation",
+      "selectedSlug": "valid-topic-fails-generation",
+      "exactGeneratedDraftPath": null,
+      "exactValidatedDraftPath": null,
+      "exactPromotedDraftPath": null,
+      "finalResultState": "GENERATION_FAILED",
+      "error": "Simulated upstream AI provider failure"
+    }
+  },
+  {
+    "id": "log-1789264245498-de9aea",
+    "timestamp": "2026-09-13T01:50:45.498Z",
+    "action": "DRAFT_VALIDATION_FAILED",
+    "status": "WARNING",
+    "summary": "Draft \"Draft With Invalid Unapproved Category\" FAILED validation: Category \"Invalid Unapproved Category\" is not an approved category. Approved: Chinese Gender Predictor, Chinese Gender Calendar, Mayan Gender Predictor, Baby Gender Prediction Methods, Gender Prediction Myths, Gender Prediction.",
+    "stats": {
+      "wordCount": 2124,
+      "internalLinks": 5,
+      "faqCount": 4,
+      "valid": false
+    },
+    "details": {
+      "runId": "run-2026-09-13T01-50-45-404Z-6045ca",
+      "inventoryScanTimestamp": "2026-09-13T01:50:45.412Z",
+      "selectedTopic": "Draft With Invalid Unapproved Category",
+      "selectedSlug": "draft-with-invalid-unapproved-category",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-50-45-404Z-6045ca\\draft-with-invalid-unapproved-category.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-50-45-404Z-6045ca\\draft-with-invalid-unapproved-category.md",
+      "exactPromotedDraftPath": null,
+      "finalResultState": "VALIDATION_FAILED",
+      "slug": "draft-with-invalid-unapproved-category",
+      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-50-45-404Z-6045ca\\draft-with-invalid-unapproved-category.md",
+      "errors": [
+        "Category \"Invalid Unapproved Category\" is not an approved category. Approved: Chinese Gender Predictor, Chinese Gender Calendar, Mayan Gender Predictor, Baby Gender Prediction Methods, Gender Prediction Myths, Gender Prediction."
+      ],
+      "warnings": [],
+      "provider": "mock",
+      "inventorySlugsAtScanTime": [
+        "chinese-gender-calendar-leap-month-rules",
+        "can-you-predict-babys-gender",
+        "chinese-vs-mayan-gender-predictor",
+        "chinese-gender-calendar-2026-2027",
+        "how-does-the-chinese-gender-predictor-work",
+        "chinese-gender-calendar",
+        "mayan-gender-predictor",
+        "baby-gender-prediction-methods",
+        "gender-prediction-myths"
+      ]
+    }
+  },
+  {
+    "id": "log-1789264259104-60b9c9",
+    "timestamp": "2026-09-13T01:50:59.104Z",
+    "action": "DRAFT_VALIDATION_PASSED",
+    "status": "SUCCESS",
+    "summary": "Draft \"Fresh Generated Article for Current Run\" PASSED all validation checks (2125 words).",
+    "stats": {
+      "wordCount": 2125,
+      "internalLinks": 5,
+      "faqCount": 4,
+      "valid": true
+    },
+    "details": {
+      "runId": "run-2026-09-13T01-50-58-910Z-760e4f",
+      "inventoryScanTimestamp": "2026-09-13T01:50:58.911Z",
+      "selectedTopic": "Fresh Generated Article for Current Run",
+      "selectedSlug": "fresh-generated-article-current-run",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-50-58-910Z-760e4f\\fresh-generated-article-current-run.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-50-58-910Z-760e4f\\fresh-generated-article-current-run.md",
+      "exactPromotedDraftPath": null,
+      "finalResultState": "VALIDATED_DRAFT_CREATED",
+      "topicId": "seed-fresh-01",
+      "slug": "fresh-generated-article-current-run",
+      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-50-58-910Z-760e4f\\fresh-generated-article-current-run.md",
+      "errors": [],
+      "warnings": [],
+      "provider": "mock",
+      "inventorySlugsAtScanTime": [
+        "chinese-gender-calendar-leap-month-rules",
+        "can-you-predict-babys-gender",
+        "chinese-vs-mayan-gender-predictor",
+        "chinese-gender-calendar-2026-2027",
+        "how-does-the-chinese-gender-predictor-work",
+        "chinese-gender-calendar",
+        "mayan-gender-predictor",
+        "baby-gender-prediction-methods",
+        "gender-prediction-myths"
+      ]
+    }
+  },
+  {
+    "id": "log-1789264259201-df918f",
+    "timestamp": "2026-09-13T01:50:59.201Z",
+    "action": "DRAFT_GENERATION",
+    "status": "ERROR",
+    "summary": "Generation failed for \"Valid Topic That Fails Generation\": Simulated upstream AI provider failure",
+    "stats": null,
+    "details": {
+      "runId": "run-2026-09-13T01-50-59-145Z-0580bd",
+      "inventoryScanTimestamp": "2026-09-13T01:50:59.145Z",
+      "selectedTopic": "Valid Topic That Fails Generation",
+      "selectedSlug": "valid-topic-fails-generation",
+      "exactGeneratedDraftPath": null,
+      "exactValidatedDraftPath": null,
+      "exactPromotedDraftPath": null,
+      "finalResultState": "GENERATION_FAILED",
+      "error": "Simulated upstream AI provider failure"
+    }
+  },
+  {
+    "id": "log-1789264259357-35018a",
+    "timestamp": "2026-09-13T01:50:59.357Z",
+    "action": "DRAFT_VALIDATION_FAILED",
+    "status": "WARNING",
+    "summary": "Draft \"Draft With Invalid Unapproved Category\" FAILED validation: Category \"Invalid Unapproved Category\" is not an approved category. Approved: Chinese Gender Predictor, Chinese Gender Calendar, Mayan Gender Predictor, Baby Gender Prediction Methods, Gender Prediction Myths, Gender Prediction.",
+    "stats": {
+      "wordCount": 2124,
+      "internalLinks": 5,
+      "faqCount": 4,
+      "valid": false
+    },
+    "details": {
+      "runId": "run-2026-09-13T01-50-59-232Z-baf377",
+      "inventoryScanTimestamp": "2026-09-13T01:50:59.233Z",
+      "selectedTopic": "Draft With Invalid Unapproved Category",
+      "selectedSlug": "draft-with-invalid-unapproved-category",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-50-59-232Z-baf377\\draft-with-invalid-unapproved-category.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-50-59-232Z-baf377\\draft-with-invalid-unapproved-category.md",
+      "exactPromotedDraftPath": null,
+      "finalResultState": "VALIDATION_FAILED",
+      "slug": "draft-with-invalid-unapproved-category",
+      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-50-59-232Z-baf377\\draft-with-invalid-unapproved-category.md",
+      "errors": [
+        "Category \"Invalid Unapproved Category\" is not an approved category. Approved: Chinese Gender Predictor, Chinese Gender Calendar, Mayan Gender Predictor, Baby Gender Prediction Methods, Gender Prediction Myths, Gender Prediction."
+      ],
+      "warnings": [],
+      "provider": "mock",
+      "inventorySlugsAtScanTime": [
+        "chinese-gender-calendar-leap-month-rules",
+        "can-you-predict-babys-gender",
+        "chinese-vs-mayan-gender-predictor",
+        "chinese-gender-calendar-2026-2027",
+        "how-does-the-chinese-gender-predictor-work",
+        "chinese-gender-calendar",
+        "mayan-gender-predictor",
+        "baby-gender-prediction-methods",
+        "gender-prediction-myths"
+      ]
+    }
+  },
+  {
+    "id": "log-1789264276258-11a490",
+    "timestamp": "2026-09-13T01:51:16.259Z",
+    "action": "DRAFT_VALIDATION_PASSED",
+    "status": "SUCCESS",
+    "summary": "Draft \"Fresh Generated Article for Current Run\" PASSED all validation checks (2125 words).",
+    "stats": {
+      "wordCount": 2125,
+      "internalLinks": 5,
+      "faqCount": 4,
+      "valid": true
+    },
+    "details": {
+      "runId": "run-2026-09-13T01-51-16-073Z-0f29f3",
+      "inventoryScanTimestamp": "2026-09-13T01:51:16.074Z",
+      "selectedTopic": "Fresh Generated Article for Current Run",
+      "selectedSlug": "fresh-generated-article-current-run",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-51-16-073Z-0f29f3\\fresh-generated-article-current-run.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-51-16-073Z-0f29f3\\fresh-generated-article-current-run.md",
+      "exactPromotedDraftPath": null,
+      "finalResultState": "VALIDATED_DRAFT_CREATED",
+      "topicId": "seed-fresh-01",
+      "slug": "fresh-generated-article-current-run",
+      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-51-16-073Z-0f29f3\\fresh-generated-article-current-run.md",
+      "errors": [],
+      "warnings": [],
+      "provider": "mock",
+      "inventorySlugsAtScanTime": [
+        "chinese-gender-calendar-leap-month-rules",
+        "can-you-predict-babys-gender",
+        "chinese-vs-mayan-gender-predictor",
+        "chinese-gender-calendar-2026-2027",
+        "how-does-the-chinese-gender-predictor-work",
+        "chinese-gender-calendar",
+        "mayan-gender-predictor",
+        "baby-gender-prediction-methods",
+        "gender-prediction-myths"
+      ]
+    }
+  },
+  {
+    "id": "log-1789264276340-785a06",
+    "timestamp": "2026-09-13T01:51:16.340Z",
+    "action": "DRAFT_GENERATION",
+    "status": "ERROR",
+    "summary": "Generation failed for \"Valid Topic That Fails Generation\": Simulated upstream AI provider failure",
+    "stats": null,
+    "details": {
+      "runId": "run-2026-09-13T01-51-16-306Z-8d71ee",
+      "inventoryScanTimestamp": "2026-09-13T01:51:16.306Z",
+      "selectedTopic": "Valid Topic That Fails Generation",
+      "selectedSlug": "valid-topic-fails-generation",
+      "exactGeneratedDraftPath": null,
+      "exactValidatedDraftPath": null,
+      "exactPromotedDraftPath": null,
+      "finalResultState": "GENERATION_FAILED",
+      "error": "Simulated upstream AI provider failure"
+    }
+  },
+  {
+    "id": "log-1789264276413-d420bb",
+    "timestamp": "2026-09-13T01:51:16.413Z",
+    "action": "DRAFT_VALIDATION_FAILED",
+    "status": "WARNING",
+    "summary": "Draft \"Draft With Invalid Unapproved Category\" FAILED validation: Category \"Invalid Unapproved Category\" is not an approved category. Approved: Chinese Gender Predictor, Chinese Gender Calendar, Mayan Gender Predictor, Baby Gender Prediction Methods, Gender Prediction Myths, Gender Prediction.",
+    "stats": {
+      "wordCount": 2124,
+      "internalLinks": 5,
+      "faqCount": 4,
+      "valid": false
+    },
+    "details": {
+      "runId": "run-2026-09-13T01-51-16-349Z-6ddd67",
+      "inventoryScanTimestamp": "2026-09-13T01:51:16.350Z",
+      "selectedTopic": "Draft With Invalid Unapproved Category",
+      "selectedSlug": "draft-with-invalid-unapproved-category",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-51-16-349Z-6ddd67\\draft-with-invalid-unapproved-category.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-51-16-349Z-6ddd67\\draft-with-invalid-unapproved-category.md",
+      "exactPromotedDraftPath": null,
+      "finalResultState": "VALIDATION_FAILED",
+      "slug": "draft-with-invalid-unapproved-category",
+      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-51-16-349Z-6ddd67\\draft-with-invalid-unapproved-category.md",
+      "errors": [
+        "Category \"Invalid Unapproved Category\" is not an approved category. Approved: Chinese Gender Predictor, Chinese Gender Calendar, Mayan Gender Predictor, Baby Gender Prediction Methods, Gender Prediction Myths, Gender Prediction."
+      ],
+      "warnings": [],
+      "provider": "mock",
+      "inventorySlugsAtScanTime": [
+        "chinese-gender-calendar-leap-month-rules",
+        "can-you-predict-babys-gender",
+        "chinese-vs-mayan-gender-predictor",
+        "chinese-gender-calendar-2026-2027",
+        "how-does-the-chinese-gender-predictor-work",
+        "chinese-gender-calendar",
+        "mayan-gender-predictor",
+        "baby-gender-prediction-methods",
+        "gender-prediction-myths"
+      ]
+    }
+  },
+  {
+    "id": "log-1789264292240-51db1f",
+    "timestamp": "2026-09-13T01:51:32.240Z",
+    "action": "DRAFT_VALIDATION_PASSED",
+    "status": "SUCCESS",
+    "summary": "Draft \"Fresh Generated Article for Current Run\" PASSED all validation checks (2125 words).",
+    "stats": {
+      "wordCount": 2125,
+      "internalLinks": 5,
+      "faqCount": 4,
+      "valid": true
+    },
+    "details": {
+      "runId": "run-2026-09-13T01-51-32-003Z-45dac1",
+      "inventoryScanTimestamp": "2026-09-13T01:51:32.004Z",
+      "selectedTopic": "Fresh Generated Article for Current Run",
+      "selectedSlug": "fresh-generated-article-current-run",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-51-32-003Z-45dac1\\fresh-generated-article-current-run.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-51-32-003Z-45dac1\\fresh-generated-article-current-run.md",
+      "exactPromotedDraftPath": null,
+      "finalResultState": "VALIDATED_DRAFT_CREATED",
+      "topicId": "seed-fresh-01",
+      "slug": "fresh-generated-article-current-run",
+      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-51-32-003Z-45dac1\\fresh-generated-article-current-run.md",
+      "errors": [],
+      "warnings": [],
+      "provider": "mock",
+      "inventorySlugsAtScanTime": [
+        "chinese-gender-calendar-leap-month-rules",
+        "can-you-predict-babys-gender",
+        "chinese-vs-mayan-gender-predictor",
+        "chinese-gender-calendar-2026-2027",
+        "how-does-the-chinese-gender-predictor-work",
+        "chinese-gender-calendar",
+        "mayan-gender-predictor",
+        "baby-gender-prediction-methods",
+        "gender-prediction-myths"
+      ]
+    }
+  },
+  {
+    "id": "log-1789264292353-93c637",
+    "timestamp": "2026-09-13T01:51:32.353Z",
+    "action": "DRAFT_GENERATION",
+    "status": "ERROR",
+    "summary": "Generation failed for \"Valid Topic That Fails Generation\": Simulated upstream AI provider failure",
+    "stats": null,
+    "details": {
+      "runId": "run-2026-09-13T01-51-32-306Z-df5727",
+      "inventoryScanTimestamp": "2026-09-13T01:51:32.316Z",
+      "selectedTopic": "Valid Topic That Fails Generation",
+      "selectedSlug": "valid-topic-fails-generation",
+      "exactGeneratedDraftPath": null,
+      "exactValidatedDraftPath": null,
+      "exactPromotedDraftPath": null,
+      "finalResultState": "GENERATION_FAILED",
+      "error": "Simulated upstream AI provider failure"
+    }
+  },
+  {
+    "id": "log-1789264292456-25094b",
+    "timestamp": "2026-09-13T01:51:32.456Z",
+    "action": "DRAFT_VALIDATION_FAILED",
+    "status": "WARNING",
+    "summary": "Draft \"Draft With Invalid Unapproved Category\" FAILED validation: Category \"Invalid Unapproved Category\" is not an approved category. Approved: Chinese Gender Predictor, Chinese Gender Calendar, Mayan Gender Predictor, Baby Gender Prediction Methods, Gender Prediction Myths, Gender Prediction.",
+    "stats": {
+      "wordCount": 2124,
+      "internalLinks": 5,
+      "faqCount": 4,
+      "valid": false
+    },
+    "details": {
+      "runId": "run-2026-09-13T01-51-32-381Z-76f398",
+      "inventoryScanTimestamp": "2026-09-13T01:51:32.382Z",
+      "selectedTopic": "Draft With Invalid Unapproved Category",
+      "selectedSlug": "draft-with-invalid-unapproved-category",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-51-32-381Z-76f398\\draft-with-invalid-unapproved-category.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-51-32-381Z-76f398\\draft-with-invalid-unapproved-category.md",
+      "exactPromotedDraftPath": null,
+      "finalResultState": "VALIDATION_FAILED",
+      "slug": "draft-with-invalid-unapproved-category",
+      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-51-32-381Z-76f398\\draft-with-invalid-unapproved-category.md",
+      "errors": [
+        "Category \"Invalid Unapproved Category\" is not an approved category. Approved: Chinese Gender Predictor, Chinese Gender Calendar, Mayan Gender Predictor, Baby Gender Prediction Methods, Gender Prediction Myths, Gender Prediction."
+      ],
+      "warnings": [],
+      "provider": "mock",
+      "inventorySlugsAtScanTime": [
+        "chinese-gender-calendar-leap-month-rules",
+        "can-you-predict-babys-gender",
+        "chinese-vs-mayan-gender-predictor",
+        "chinese-gender-calendar-2026-2027",
+        "how-does-the-chinese-gender-predictor-work",
+        "chinese-gender-calendar",
+        "mayan-gender-predictor",
+        "baby-gender-prediction-methods",
+        "gender-prediction-myths"
+      ]
+    }
+  },
+  {
+    "id": "log-1789264297786-ed34ac",
+    "timestamp": "2026-09-13T01:51:37.786Z",
+    "action": "TOPIC_SELECTION",
+    "status": "ERROR",
+    "summary": "Forced topic \"Completely Unique Title Here\" REJECTED: Exact duplicate title or slug matches existing article 'Chinese Gender Calendar 2026–2027: How Does It Work?'",
+    "stats": null,
+    "details": {
+      "runId": "run-2026-09-13T01-51-37-738Z-6f709e",
+      "inventoryScanTimestamp": "2026-09-13T01:51:37.741Z",
+      "selectedTopic": "Completely Unique Title Here",
+      "selectedSlug": "chinese-gender-calendar-2026-2027",
+      "exactGeneratedDraftPath": null,
+      "exactValidatedDraftPath": null,
+      "exactPromotedDraftPath": null,
+      "finalResultState": "PROMOTION_CANNIBALIZATION_REJECTED",
+      "topic": {
+        "title": "Completely Unique Title Here",
+        "suggestedSlug": "chinese-gender-calendar-2026-2027",
+        "category": "Chinese Gender Calendar"
+      },
+      "reason": "Exact duplicate title or slug matches existing article 'Chinese Gender Calendar 2026–2027: How Does It Work?'"
+    }
+  },
+  {
+    "id": "log-1789264297823-5203f9",
+    "timestamp": "2026-09-13T01:51:37.823Z",
+    "action": "TOPIC_SELECTION",
+    "status": "ERROR",
+    "summary": "Forced topic \"Brand New Topic Idea\" REJECTED: Exact duplicate title or slug matches existing article 'Chinese Gender Calendar 2026–2027: How Does It Work?'",
+    "stats": null,
+    "details": {
+      "runId": "run-2026-09-13T01-51-37-792Z-437454",
+      "inventoryScanTimestamp": "2026-09-13T01:51:37.794Z",
+      "selectedTopic": "Brand New Topic Idea",
+      "selectedSlug": "chinese-gender-calendar-2026-2027.md",
+      "exactGeneratedDraftPath": null,
+      "exactValidatedDraftPath": null,
+      "exactPromotedDraftPath": null,
+      "finalResultState": "PROMOTION_CANNIBALIZATION_REJECTED",
+      "topic": {
+        "title": "Brand New Topic Idea",
+        "suggestedSlug": "chinese-gender-calendar-2026-2027.md",
+        "category": "Chinese Gender Calendar"
+      },
+      "reason": "Exact duplicate title or slug matches existing article 'Chinese Gender Calendar 2026–2027: How Does It Work?'"
+    }
+  },
+  {
+    "id": "log-1789264297880-842563",
+    "timestamp": "2026-09-13T01:51:37.880Z",
+    "action": "TOPIC_SELECTION",
+    "status": "ERROR",
+    "summary": "Forced topic \"Chinese Gender Calendar 2026–2027: How Does It Work?\" REJECTED: Exact duplicate title matches existing article 'Chinese Gender Calendar 2026–2027: How Does It Work?'",
+    "stats": null,
+    "details": {
+      "runId": "run-2026-09-13T01-51-37-827Z-5aac17",
+      "inventoryScanTimestamp": "2026-09-13T01:51:37.828Z",
+      "selectedTopic": "Chinese Gender Calendar 2026–2027: How Does It Work?",
+      "selectedSlug": "brand-new-distinct-slug-xyz",
+      "exactGeneratedDraftPath": null,
+      "exactValidatedDraftPath": null,
+      "exactPromotedDraftPath": null,
+      "finalResultState": "PROMOTION_CANNIBALIZATION_REJECTED",
+      "topic": {
+        "title": "Chinese Gender Calendar 2026–2027: How Does It Work?",
+        "suggestedSlug": "brand-new-distinct-slug-xyz",
+        "category": "Chinese Gender Calendar"
+      },
+      "reason": "Exact duplicate title matches existing article 'Chinese Gender Calendar 2026–2027: How Does It Work?'"
+    }
+  },
+  {
+    "id": "log-1789264297916-b58f79",
+    "timestamp": "2026-09-13T01:51:37.916Z",
+    "action": "TOPIC_SELECTION",
+    "status": "ERROR",
+    "summary": "Forced topic \"Chinese Gender Calendar 2026-2027: How Does It Work?\" REJECTED: Exact duplicate title matches existing article 'Chinese Gender Calendar 2026–2027: How Does It Work?'",
+    "stats": null,
+    "details": {
+      "runId": "run-2026-09-13T01-51-37-884Z-3b880e",
+      "inventoryScanTimestamp": "2026-09-13T01:51:37.884Z",
+      "selectedTopic": "Chinese Gender Calendar 2026-2027: How Does It Work?",
+      "selectedSlug": "chinese-calendar-alt-slug",
+      "exactGeneratedDraftPath": null,
+      "exactValidatedDraftPath": null,
+      "exactPromotedDraftPath": null,
+      "finalResultState": "PROMOTION_CANNIBALIZATION_REJECTED",
+      "topic": {
+        "title": "Chinese Gender Calendar 2026-2027: How Does It Work?",
+        "suggestedSlug": "chinese-calendar-alt-slug",
+        "category": "Chinese Gender Calendar"
+      },
+      "reason": "Exact duplicate title matches existing article 'Chinese Gender Calendar 2026–2027: How Does It Work?'"
+    }
+  },
+  {
+    "id": "log-1789264297956-950ca3",
+    "timestamp": "2026-09-13T01:51:37.956Z",
+    "action": "TOPIC_SELECTION",
+    "status": "ERROR",
+    "summary": "Forced topic \"How Does the Chinese Gender Predictor Work?\" REJECTED: Exact duplicate title matches existing article 'How Does the Chinese Gender Predictor Work?'",
+    "stats": null,
+    "details": {
+      "runId": "run-2026-09-13T01-51-37-920Z-9b7fc9",
+      "inventoryScanTimestamp": "2026-09-13T01:51:37.920Z",
+      "selectedTopic": "How Does the Chinese Gender Predictor Work?",
+      "selectedSlug": "how-does-the-chinese-gender-predictor-work",
+      "exactGeneratedDraftPath": null,
+      "exactValidatedDraftPath": null,
+      "exactPromotedDraftPath": null,
+      "finalResultState": "PROMOTION_CANNIBALIZATION_REJECTED",
+      "topic": {
+        "id": "test-cannibalization-reject",
+        "title": "How Does the Chinese Gender Predictor Work?",
+        "category": "Chinese Gender Predictor",
+        "suggestedSlug": "how-does-the-chinese-gender-predictor-work"
+      },
+      "reason": "Exact duplicate title matches existing article 'How Does the Chinese Gender Predictor Work?'"
+    }
+  },
+  {
+    "id": "log-1789264298168-ac4211",
+    "timestamp": "2026-09-13T01:51:38.168Z",
+    "action": "TOPIC_SELECTION",
+    "status": "ERROR",
+    "summary": "Forced topic \"Chinese Gender Calendar 2027: How Does It Work?\" REJECTED: Moderate topical overlap with 'Chinese Gender Calendar 2026–2027: How Does It Work?' (54% similarity) - requires distinct search angle",
+    "stats": null,
+    "details": {
+      "runId": "run-2026-09-13T01-51-37-961Z-0100e8",
+      "inventoryScanTimestamp": "2026-09-13T01:51:37.962Z",
+      "selectedTopic": "Chinese Gender Calendar 2027: How Does It Work?",
+      "selectedSlug": "chinese-gender-calendar-2027-how-does-it-work",
+      "exactGeneratedDraftPath": null,
+      "exactValidatedDraftPath": null,
+      "exactPromotedDraftPath": null,
+      "finalResultState": "PROMOTION_CANNIBALIZATION_REJECTED",
+      "topic": {
+        "title": "Chinese Gender Calendar 2027: How Does It Work?",
+        "category": "Chinese Gender Calendar",
+        "suggestedSlug": "chinese-gender-calendar-2027-how-does-it-work",
+        "primaryKeyword": "[REDACTED]"
+      },
+      "reason": "Moderate topical overlap with 'Chinese Gender Calendar 2026–2027: How Does It Work?' (54% similarity) - requires distinct search angle"
+    }
+  },
+  {
+    "id": "log-1789264298444-fe3e02",
+    "timestamp": "2026-09-13T01:51:38.444Z",
+    "action": "TOPIC_SELECTION",
+    "status": "ERROR",
+    "summary": "Forced topic \"Chinese Gender Calendar: Complete History and Lunar Conversion Guide\" REJECTED: Moderate topical overlap with 'Chinese Gender Calendar: History, Lunar Conversions & Guide' (52% similarity) - requires distinct search angle",
+    "stats": null,
+    "details": {
+      "runId": "run-2026-09-13T01-51-38-172Z-abc252",
+      "inventoryScanTimestamp": "2026-09-13T01:51:38.173Z",
+      "selectedTopic": "Chinese Gender Calendar: Complete History and Lunar Conversion Guide",
+      "selectedSlug": "chinese-gender-calendar-history-conversions-guide",
+      "exactGeneratedDraftPath": null,
+      "exactValidatedDraftPath": null,
+      "exactPromotedDraftPath": null,
+      "finalResultState": "PROMOTION_CANNIBALIZATION_REJECTED",
+      "topic": {
+        "id": "test-cannibalization-caution",
+        "title": "Chinese Gender Calendar: Complete History and Lunar Conversion Guide",
+        "suggestedSlug": "chinese-gender-calendar-history-conversions-guide",
+        "category": "Chinese Gender Calendar",
+        "primaryKeyword": "[REDACTED]",
+        "secondaryKeywords": "[REDACTED]",
+        "searchIntent": "informational",
+        "targetWordCount": 1600,
+        "priority": "test",
+        "notes": "TEST CASE: Deliberately designed to test moderate overlap with published chinese-gender-calendar.md."
+      },
+      "reason": "Moderate topical overlap with 'Chinese Gender Calendar: History, Lunar Conversions & Guide' (52% similarity) - requires distinct search angle"
+    }
+  },
+  {
+    "id": "log-1789264298509-116a1f",
+    "timestamp": "2026-09-13T01:51:38.509Z",
+    "action": "CONTENT_PLANNING_DRY_RUN",
+    "status": "SUCCESS",
+    "summary": "Dry-run completed successfully for \"How to Calculate Maternal Lunar Age for the Chinese Gender Predictor\". Zero drafts created.",
+    "stats": {
+      "publishedArticles": 9,
+      "safeTopicsCount": 11
+    },
+    "details": {
+      "runId": "run-2026-09-13T01-51-38-448Z-a09056",
+      "inventoryScanTimestamp": "2026-09-13T01:51:38.449Z",
+      "selectedTopic": "How to Calculate Maternal Lunar Age for the Chinese Gender Predictor",
+      "selectedSlug": "how-to-calculate-maternal-lunar-age",
+      "exactGeneratedDraftPath": null,
+      "exactValidatedDraftPath": null,
+      "exactPromotedDraftPath": null,
+      "finalResultState": "DRY_RUN_COMPLETE",
+      "selectedTopicId": "seed-002",
+      "inventorySlugsAtScanTime": [
+        "chinese-gender-calendar-leap-month-rules",
+        "can-you-predict-babys-gender",
+        "chinese-vs-mayan-gender-predictor",
+        "chinese-gender-calendar-2026-2027",
+        "how-does-the-chinese-gender-predictor-work",
+        "chinese-gender-calendar",
+        "mayan-gender-predictor",
+        "baby-gender-prediction-methods",
+        "gender-prediction-myths"
+      ]
+    }
+  },
+  {
+    "id": "log-1789264305054-7f8b26",
+    "timestamp": "2026-09-13T01:51:45.055Z",
+    "action": "CONTENT_PLANNING_DRY_RUN",
+    "status": "SUCCESS",
+    "summary": "Dry-run completed successfully for \"How to Calculate Maternal Lunar Age for the Chinese Gender Predictor\". Zero drafts created.",
+    "stats": {
+      "publishedArticles": 9,
+      "safeTopicsCount": 11
+    },
+    "details": {
+      "runId": "run-2026-09-13T01-51-44-992Z-bb2d98",
+      "inventoryScanTimestamp": "2026-09-13T01:51:44.996Z",
+      "selectedTopic": "How to Calculate Maternal Lunar Age for the Chinese Gender Predictor",
+      "selectedSlug": "how-to-calculate-maternal-lunar-age",
+      "exactGeneratedDraftPath": null,
+      "exactValidatedDraftPath": null,
+      "exactPromotedDraftPath": null,
+      "finalResultState": "DRY_RUN_COMPLETE",
+      "selectedTopicId": "seed-002",
+      "inventorySlugsAtScanTime": [
+        "chinese-gender-calendar-leap-month-rules",
+        "can-you-predict-babys-gender",
+        "chinese-vs-mayan-gender-predictor",
+        "chinese-gender-calendar-2026-2027",
+        "how-does-the-chinese-gender-predictor-work",
+        "chinese-gender-calendar",
+        "mayan-gender-predictor",
+        "baby-gender-prediction-methods",
+        "gender-prediction-myths"
+      ]
+    }
+  },
+  {
+    "id": "log-1789264305150-158852",
+    "timestamp": "2026-09-13T01:51:45.150Z",
+    "action": "DRAFT_VALIDATION_PASSED",
+    "status": "SUCCESS",
+    "summary": "Draft \"Automated Test Guide to Gender Calendars\" PASSED all validation checks (2065 words).",
+    "stats": {
+      "wordCount": 2065,
+      "internalLinks": 4,
+      "faqCount": 4,
+      "valid": true
+    },
+    "details": {
+      "runId": "run-2026-09-13T01-51-45-061Z-b9345c",
+      "inventoryScanTimestamp": "2026-09-13T01:51:45.062Z",
+      "selectedTopic": "Automated Test Guide to Gender Calendars",
+      "selectedSlug": "automated-test-guide-gender-calendars",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-51-45-061Z-b9345c\\automated-test-guide-gender-calendars.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-51-45-061Z-b9345c\\automated-test-guide-gender-calendars.md",
+      "exactPromotedDraftPath": null,
+      "finalResultState": "VALIDATED_DRAFT_CREATED",
+      "topicId": "test-seed-001",
+      "slug": "automated-test-guide-gender-calendars",
+      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-51-45-061Z-b9345c\\automated-test-guide-gender-calendars.md",
+      "errors": [],
+      "warnings": [],
+      "provider": "gemini",
+      "inventorySlugsAtScanTime": [
+        "chinese-gender-calendar-leap-month-rules",
+        "can-you-predict-babys-gender",
+        "chinese-vs-mayan-gender-predictor",
+        "chinese-gender-calendar-2026-2027",
+        "how-does-the-chinese-gender-predictor-work",
+        "chinese-gender-calendar",
+        "mayan-gender-predictor",
+        "baby-gender-prediction-methods",
+        "gender-prediction-myths"
+      ]
+    }
+  },
+  {
+    "id": "log-1789264305202-9d44c8",
+    "timestamp": "2026-09-13T01:51:45.202Z",
+    "action": "DRAFT_GENERATION",
+    "status": "ERROR",
+    "summary": "Generation failed for \"Automated Test Guide to Gender Calendars\": Simulated failure of all providers",
+    "stats": null,
+    "details": {
+      "runId": "run-2026-09-13T01-51-45-155Z-ebe761",
+      "inventoryScanTimestamp": "2026-09-13T01:51:45.155Z",
+      "selectedTopic": "Automated Test Guide to Gender Calendars",
+      "selectedSlug": "automated-test-guide-gender-calendars",
+      "exactGeneratedDraftPath": null,
+      "exactValidatedDraftPath": null,
+      "exactPromotedDraftPath": null,
+      "finalResultState": "GENERATION_FAILED",
+      "topicId": "test-seed-001",
+      "error": "Simulated failure of all providers"
+    }
+  },
+  {
+    "id": "log-1789264305264-c9ad8c",
+    "timestamp": "2026-09-13T01:51:45.264Z",
+    "action": "DRAFT_SYNTAX_PARSING",
+    "status": "ERROR",
+    "summary": "Invalid AI output for \"Automated Test Guide to Gender Calendars\": No JSON object detected in AI response: Unexpected token 'T', \"This is no\"... is not valid JSON",
+    "stats": null,
+    "details": {
+      "runId": "run-2026-09-13T01-51-45-207Z-3817fb",
+      "inventoryScanTimestamp": "2026-09-13T01:51:45.210Z",
+      "selectedTopic": "Automated Test Guide to Gender Calendars",
+      "selectedSlug": "automated-test-guide-gender-calendars",
+      "exactGeneratedDraftPath": null,
+      "exactValidatedDraftPath": null,
+      "exactPromotedDraftPath": null,
+      "finalResultState": "INVALID_AI_RESPONSE",
+      "topicId": "test-seed-001",
+      "error": "No JSON object detected in AI response: Unexpected token 'T', \"This is no\"... is not valid JSON"
+    }
+  },
+  {
+    "id": "log-1789264313399-b3f6bd",
+    "timestamp": "2026-09-13T01:51:53.399Z",
+    "action": "DRAFT_VALIDATION_PASSED",
+    "status": "SUCCESS",
+    "summary": "Draft \"Phase Three Test Article Topic\" PASSED all validation checks (2172 words).",
+    "stats": {
+      "wordCount": 2172,
+      "internalLinks": 5,
+      "faqCount": 4,
+      "valid": true
+    },
+    "details": {
+      "runId": "run-2026-09-13T01-51-53-313Z-dad30e",
+      "inventoryScanTimestamp": "2026-09-13T01:51:53.316Z",
+      "selectedTopic": "Phase Three Test Article Topic",
+      "selectedSlug": "phase-three-test-article-topic",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-51-53-313Z-dad30e\\phase-three-test-article-topic.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-51-53-313Z-dad30e\\phase-three-test-article-topic.md",
+      "exactPromotedDraftPath": null,
+      "finalResultState": "VALIDATED_DRAFT_CREATED",
+      "topicId": "val-test-01",
+      "slug": "phase-three-test-article-topic",
+      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-51-53-313Z-dad30e\\phase-three-test-article-topic.md",
+      "errors": [],
+      "warnings": [],
+      "provider": "gemini",
+      "inventorySlugsAtScanTime": [
+        "chinese-gender-calendar-leap-month-rules",
+        "can-you-predict-babys-gender",
+        "chinese-vs-mayan-gender-predictor",
+        "chinese-gender-calendar-2026-2027",
+        "how-does-the-chinese-gender-predictor-work",
+        "chinese-gender-calendar",
+        "mayan-gender-predictor",
+        "baby-gender-prediction-methods",
+        "gender-prediction-myths"
+      ]
+    }
+  },
+  {
+    "id": "log-1789264313466-e99575",
+    "timestamp": "2026-09-13T01:51:53.466Z",
+    "action": "DRAFT_VALIDATION_FAILED",
+    "status": "WARNING",
+    "summary": "Draft \"Invalid Draft With Bad Category\" FAILED validation: Category \"Invalid Category\" is not an approved category. Approved: Chinese Gender Predictor, Chinese Gender Calendar, Mayan Gender Predictor, Baby Gender Prediction Methods, Gender Prediction Myths, Gender Prediction.",
+    "stats": {
+      "wordCount": 2172,
+      "internalLinks": 5,
+      "faqCount": 4,
+      "valid": false
+    },
+    "details": {
+      "runId": "run-2026-09-13T01-51-53-414Z-caff11",
+      "inventoryScanTimestamp": "2026-09-13T01:51:53.415Z",
+      "selectedTopic": "Phase Three Test Article Topic",
+      "selectedSlug": "phase-three-test-article-topic",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-51-53-414Z-caff11\\phase-three-test-article-topic.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-51-53-414Z-caff11\\phase-three-test-article-topic.md",
+      "exactPromotedDraftPath": null,
+      "finalResultState": "VALIDATION_FAILED",
+      "topicId": "val-test-01",
+      "slug": "phase-three-test-article-topic",
+      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-51-53-414Z-caff11\\phase-three-test-article-topic.md",
+      "errors": [
+        "Category \"Invalid Category\" is not an approved category. Approved: Chinese Gender Predictor, Chinese Gender Calendar, Mayan Gender Predictor, Baby Gender Prediction Methods, Gender Prediction Myths, Gender Prediction."
+      ],
+      "warnings": [],
+      "provider": "gemini",
+      "inventorySlugsAtScanTime": [
+        "chinese-gender-calendar-leap-month-rules",
+        "can-you-predict-babys-gender",
+        "chinese-vs-mayan-gender-predictor",
+        "chinese-gender-calendar-2026-2027",
+        "how-does-the-chinese-gender-predictor-work",
+        "chinese-gender-calendar",
+        "mayan-gender-predictor",
+        "baby-gender-prediction-methods",
+        "gender-prediction-myths"
+      ]
+    }
+  },
+  {
+    "id": "log-1789264313550-7d829f",
+    "timestamp": "2026-09-13T01:51:53.550Z",
+    "action": "DRAFT_VALIDATION_PASSED",
+    "status": "SUCCESS",
+    "summary": "Draft \"Approved Validated Draft Title\" PASSED all validation checks (2172 words).",
+    "stats": {
+      "wordCount": 2172,
+      "internalLinks": 5,
+      "faqCount": 4,
+      "valid": true
+    },
+    "details": {
+      "runId": "run-2026-09-13T01-51-53-480Z-7b93e3",
+      "inventoryScanTimestamp": "2026-09-13T01:51:53.481Z",
+      "selectedTopic": "Phase Three Test Article Topic",
+      "selectedSlug": "phase-three-test-article-topic",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-51-53-480Z-7b93e3\\phase-three-test-article-topic.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-51-53-480Z-7b93e3\\phase-three-test-article-topic.md",
+      "exactPromotedDraftPath": null,
+      "finalResultState": "VALIDATED_DRAFT_CREATED",
+      "topicId": "val-test-01",
+      "slug": "phase-three-test-article-topic",
+      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T01-51-53-480Z-7b93e3\\phase-three-test-article-topic.md",
+      "errors": [],
+      "warnings": [],
+      "provider": "gemini",
+      "inventorySlugsAtScanTime": [
+        "chinese-gender-calendar-leap-month-rules",
+        "can-you-predict-babys-gender",
+        "chinese-vs-mayan-gender-predictor",
+        "chinese-gender-calendar-2026-2027",
+        "how-does-the-chinese-gender-predictor-work",
+        "chinese-gender-calendar",
+        "mayan-gender-predictor",
+        "baby-gender-prediction-methods",
+        "gender-prediction-myths"
+      ]
+    }
+  },
+  {
+    "id": "log-1789264325301-903032",
+    "timestamp": "2026-09-13T01:52:05.302Z",
+    "action": "PROMOTE_DRAFT",
+    "status": "SUCCESS",
+    "summary": "Successfully promoted draft \"safe-lunar-calendar-guide.md\" to production article \"safe-lunar-calendar-guide\"",
+    "stats": null,
+    "details": {
+      "runId": null,
+      "inventoryScanTimestamp": "2026-09-13T01:52:05.274Z",
+      "selectedTopic": "Safe Lunar Calendar Guide",
+      "selectedSlug": "safe-lunar-calendar-guide",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\drafts\\safe-lunar-calendar-guide.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\drafts\\safe-lunar-calendar-guide.md",
+      "exactPromotedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\blog\\safe-lunar-calendar-guide.md",
+      "finalResultState": "PROMOTION_SUCCESS",
+      "sourceDraft": "safe-lunar-calendar-guide.md",
+      "destinationSlug": "safe-lunar-calendar-guide",
+      "productionPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\blog\\safe-lunar-calendar-guide.md",
+      "wordCount": 1740,
+      "internalLinks": 5,
+      "faqCount": 4,
+      "sourceDraftPreserved": true
+    }
+  },
+  {
+    "id": "log-1789264325322-9cd03f",
+    "timestamp": "2026-09-13T01:52:05.322Z",
+    "action": "PROMOTE_DRAFT",
+    "status": "ERROR",
+    "summary": "Promotion rejected: Draft \"bad-frontmatter-draft.md\" failed Phase 3 validation",
+    "stats": null,
+    "details": {
+      "runId": null,
+      "inventoryScanTimestamp": "2026-09-13T01:52:05.312Z",
+      "selectedTopic": "bad-frontmatter-draft",
+      "selectedSlug": "bad-frontmatter-draft",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\drafts\\bad-frontmatter-draft.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\drafts\\bad-frontmatter-draft.md",
+      "exactPromotedDraftPath": null,
+      "finalResultState": "PROMOTION_VALIDATION_FAILED",
+      "sourceDraft": "bad-frontmatter-draft.md",
+      "errors": [
+        "Frontmatter field \"title\" is missing or does not meet minimum length (5 chars).",
+        "Frontmatter field \"description\" is missing or does not meet minimum length (20 chars).",
+        "Frontmatter field \"category\" is missing or does not meet minimum length (3 chars).",
+        "Frontmatter field \"heroImage\" is missing or does not meet minimum length (3 chars).",
+        "Frontmatter field \"heroImageAlt\" is missing or does not meet minimum length (5 chars).",
+        "Frontmatter field \"excerpt\" is missing or does not meet minimum length (20 chars).",
+        "Frontmatter \"pubDate\" is missing.",
+        "Word count (2) is below production minimum threshold of 1200 words.",
+        "Article body contains only 0 H2 section(s). Long-form articles require at least 4 H2 sections.",
+        "Article body is empty, missing, or trivially short.",
+        "Found 0 unique internal link(s). Minimum required is 4.",
+        "Frontmatter \"faqs\" must be an array of questions and answers."
+      ]
+    }
+  },
+  {
+    "id": "log-1789264325336-13362f",
+    "timestamp": "2026-09-13T01:52:05.336Z",
+    "action": "PROMOTE_DRAFT",
+    "status": "ERROR",
+    "summary": "Promotion rejected: Draft \"short-draft-article.md\" failed Phase 3 validation",
+    "stats": null,
+    "details": {
+      "runId": null,
+      "inventoryScanTimestamp": "2026-09-13T01:52:05.328Z",
+      "selectedTopic": "short-draft-article",
+      "selectedSlug": "short-draft-article",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\drafts\\short-draft-article.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\drafts\\short-draft-article.md",
+      "exactPromotedDraftPath": null,
+      "finalResultState": "PROMOTION_VALIDATION_FAILED",
+      "sourceDraft": "short-draft-article.md",
+      "errors": [
+        "Word count (30) is below production minimum threshold of 1200 words.",
+        "Article body contains only 2 H2 section(s). Long-form articles require at least 4 H2 sections.",
+        "Article body is empty, missing, or trivially short."
+      ]
+    }
+  },
+  {
+    "id": "log-1789264325351-847f7b",
+    "timestamp": "2026-09-13T01:52:05.352Z",
+    "action": "PROMOTE_DRAFT",
+    "status": "ERROR",
+    "summary": "Promotion rejected: Production article already exists for slug \"existing-blog-article\"",
+    "stats": null,
+    "details": {
+      "runId": null,
+      "inventoryScanTimestamp": "2026-09-13T01:52:05.344Z",
+      "selectedTopic": "existing-blog-article",
+      "selectedSlug": "existing-blog-article",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\drafts\\existing-blog-article.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\drafts\\existing-blog-article.md",
+      "exactPromotedDraftPath": null,
+      "finalResultState": "PRODUCTION_SLUG_EXISTS",
+      "sourceDraft": "existing-blog-article.md",
+      "destinationSlug": "existing-blog-article",
+      "reason": "PRODUCTION_SLUG_EXISTS"
+    }
+  },
+  {
+    "id": "log-1789264325368-0acbae",
+    "timestamp": "2026-09-13T01:52:05.368Z",
+    "action": "PROMOTE_DRAFT",
+    "status": "ERROR",
+    "summary": "Promotion rejected: Production article already exists for slug \"existing-blog-article\"",
+    "stats": null,
+    "details": {
+      "runId": null,
+      "inventoryScanTimestamp": "2026-09-13T01:52:05.362Z",
+      "selectedTopic": "existing-blog-article",
+      "selectedSlug": "existing-blog-article",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\drafts\\existing-blog-article.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\drafts\\existing-blog-article.md",
+      "exactPromotedDraftPath": null,
+      "finalResultState": "PRODUCTION_SLUG_EXISTS",
+      "sourceDraft": "existing-blog-article.md",
+      "destinationSlug": "existing-blog-article",
+      "reason": "PRODUCTION_SLUG_EXISTS"
+    }
+  },
+  {
+    "id": "log-1789264325388-09dba7",
+    "timestamp": "2026-09-13T01:52:05.388Z",
+    "action": "PROMOTE_DRAFT",
+    "status": "ERROR",
+    "summary": "Promotion rejected: Cannibalization conflict for \"Existing Blog Article\"",
+    "stats": null,
+    "details": {
+      "runId": null,
+      "inventoryScanTimestamp": "2026-09-13T01:52:05.379Z",
+      "selectedTopic": "Existing Blog Article",
+      "selectedSlug": "unique-slug-same-title",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\drafts\\unique-slug-same-title.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\drafts\\unique-slug-same-title.md",
+      "exactPromotedDraftPath": null,
+      "finalResultState": "PROMOTION_CANNIBALIZATION_REJECTED",
+      "sourceDraft": "unique-slug-same-title.md",
+      "reason": "Exact duplicate title matches existing article 'Existing Blog Article'",
+      "closestMatch": "Existing Blog Article"
+    }
+  },
+  {
+    "id": "log-1789264325404-4ccb8a",
+    "timestamp": "2026-09-13T01:52:05.404Z",
+    "action": "PROMOTE_DRAFT",
+    "status": "ERROR",
+    "summary": "Promotion rejected: Draft \"existing-blog-article-overlap.md\" failed Phase 3 validation",
+    "stats": null,
+    "details": {
+      "runId": null,
+      "inventoryScanTimestamp": "2026-09-13T01:52:05.395Z",
+      "selectedTopic": "existing-blog-article-overlap",
+      "selectedSlug": "existing-blog-article-overlap",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\drafts\\existing-blog-article-overlap.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\drafts\\existing-blog-article-overlap.md",
+      "exactPromotedDraftPath": null,
+      "finalResultState": "PROMOTION_VALIDATION_FAILED",
+      "sourceDraft": "existing-blog-article-overlap.md",
+      "errors": [
+        "Category \"Unapproved Category\" is not an approved category. Approved: Chinese Gender Predictor, Chinese Gender Calendar, Mayan Gender Predictor, Baby Gender Prediction Methods, Gender Prediction Myths, Gender Prediction."
+      ]
+    }
+  },
+  {
+    "id": "log-1789264325418-534e66",
+    "timestamp": "2026-09-13T01:52:05.418Z",
+    "action": "PROMOTE_DRAFT",
+    "status": "WARNING",
+    "summary": "Promotion blocked: CAUTION-level topical overlap for \"Chinese Gender Predictor Accuracy Rates Study\"",
+    "stats": null,
+    "details": {
+      "runId": null,
+      "inventoryScanTimestamp": "2026-09-13T01:52:05.409Z",
+      "selectedTopic": "Chinese Gender Predictor Accuracy Rates Study",
+      "selectedSlug": "chinese-gender-predictor-accuracy-rates",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\drafts\\chinese-gender-predictor-accuracy-rates.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\drafts\\chinese-gender-predictor-accuracy-rates.md",
+      "exactPromotedDraftPath": null,
+      "finalResultState": "PROMOTION_CANNIBALIZATION_REJECTED",
+      "sourceDraft": "chinese-gender-predictor-accuracy-rates.md",
+      "reason": "Moderate topical overlap with 'Chinese Gender Predictor Accuracy Analysis' (50% similarity) - requires distinct search angle"
+    }
+  },
+  {
+    "id": "log-1789264325441-050792",
+    "timestamp": "2026-09-13T01:52:05.441Z",
+    "action": "PROMOTE_DRAFT",
+    "status": "SUCCESS",
+    "summary": "Successfully promoted draft \"ancient-mayan-calendar-origins.md\" to production article \"ancient-mayan-calendar-origins\"",
+    "stats": null,
+    "details": {
+      "runId": null,
+      "inventoryScanTimestamp": "2026-09-13T01:52:05.422Z",
+      "selectedTopic": "Ancient Mayan Calendar Historical Origins",
+      "selectedSlug": "ancient-mayan-calendar-origins",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\drafts\\ancient-mayan-calendar-origins.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\drafts\\ancient-mayan-calendar-origins.md",
+      "exactPromotedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\blog\\ancient-mayan-calendar-origins.md",
+      "finalResultState": "PROMOTION_SUCCESS",
+      "sourceDraft": "ancient-mayan-calendar-origins.md",
+      "destinationSlug": "ancient-mayan-calendar-origins",
+      "productionPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\blog\\ancient-mayan-calendar-origins.md",
+      "wordCount": 1741,
+      "internalLinks": 5,
+      "faqCount": 4,
+      "sourceDraftPreserved": true
+    }
+  },
+  {
+    "id": "log-1789264325925-8a7f83",
+    "timestamp": "2026-09-13T01:52:05.925Z",
+    "action": "PROMOTE_DRAFT",
+    "status": "ERROR",
+    "summary": "Promotion rejected: Production article already exists for slug \"safe-lunar-calendar-guide\"",
+    "stats": null,
+    "details": {
+      "runId": null,
+      "inventoryScanTimestamp": "2026-09-13T01:52:05.920Z",
+      "selectedTopic": "safe-lunar-calendar-guide",
+      "selectedSlug": "safe-lunar-calendar-guide",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\drafts\\safe-lunar-calendar-guide.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\drafts\\safe-lunar-calendar-guide.md",
+      "exactPromotedDraftPath": null,
+      "finalResultState": "PRODUCTION_SLUG_EXISTS",
+      "sourceDraft": "safe-lunar-calendar-guide.md",
+      "destinationSlug": "safe-lunar-calendar-guide",
+      "reason": "PRODUCTION_SLUG_EXISTS"
+    }
+  },
+  {
+    "id": "log-1789264325937-45037d",
+    "timestamp": "2026-09-13T01:52:05.937Z",
+    "action": "PROMOTE_DRAFT",
+    "status": "ERROR",
+    "summary": "Promotion rejected: Draft \"malformed-article.md\" failed Phase 3 validation",
+    "stats": null,
+    "details": {
+      "runId": null,
+      "inventoryScanTimestamp": "2026-09-13T01:52:05.929Z",
+      "selectedTopic": "malformed-article",
+      "selectedSlug": "malformed-article",
+      "exactGeneratedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\drafts\\malformed-article.md",
+      "exactValidatedDraftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\test_phase4_temp\\drafts\\malformed-article.md",
+      "exactPromotedDraftPath": null,
+      "finalResultState": "PROMOTION_VALIDATION_FAILED",
+      "sourceDraft": "malformed-article.md",
+      "errors": [
+        "Frontmatter field \"title\" is missing or does not meet minimum length (5 chars).",
+        "Frontmatter field \"description\" is missing or does not meet minimum length (20 chars).",
+        "Frontmatter field \"category\" is missing or does not meet minimum length (3 chars).",
+        "Frontmatter field \"heroImage\" is missing or does not meet minimum length (3 chars).",
+        "Frontmatter field \"heroImageAlt\" is missing or does not meet minimum length (5 chars).",
+        "Frontmatter field \"excerpt\" is missing or does not meet minimum length (20 chars).",
+        "Frontmatter \"pubDate\" is missing.",
+        "Word count (0) is below production minimum threshold of 1200 words.",
+        "Article body contains only 0 H2 section(s). Long-form articles require at least 4 H2 sections.",
+        "Article body is empty, missing, or trivially short.",
+        "Found 0 unique internal link(s). Minimum required is 4.",
+        "Frontmatter \"faqs\" must be an array of questions and answers."
+      ]
+    }
+  },
+  {
+    "id": "log-1789264329268-ae1b69",
+    "timestamp": "2026-09-13T01:52:09.268Z",
+    "action": "TOPIC_SELECTION",
+    "status": "ERROR",
+    "summary": "Forced topic \"Chinese Gender Calendar\" REJECTED: Exact duplicate title or slug matches existing article 'Chinese Gender Calendar: History, Lunar Conversions & Guide'",
+    "stats": null,
+    "details": {
+      "runId": "run-2026-09-13T01-52-09-214Z-d5c2f2",
+      "inventoryScanTimestamp": "2026-09-13T01:52:09.218Z",
+      "selectedTopic": "Chinese Gender Calendar",
+      "selectedSlug": "chinese-gender-calendar",
+      "exactGeneratedDraftPath": null,
+      "exactValidatedDraftPath": null,
+      "exactPromotedDraftPath": null,
+      "finalResultState": "PROMOTION_CANNIBALIZATION_REJECTED",
+      "topic": {
+        "id": "forced-1789264329255",
         "title": "Chinese Gender Calendar",
         "category": "Chinese Gender Predictor",
         "suggestedSlug": "chinese-gender-calendar",

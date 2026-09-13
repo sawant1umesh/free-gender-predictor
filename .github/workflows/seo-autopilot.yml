@@ -104,15 +104,8 @@ jobs:
           echo "======================================================"
           echo "  📦 PROMOTING VALIDATED DRAFT TO PRODUCTION"
           echo "======================================================"
-          # Find the newest markdown draft file in scripts/autopilot/drafts/
-          LATEST_DRAFT=$(ls -t scripts/autopilot/drafts/*.md 2>/dev/null | head -n 1)
-          if [ -z "$LATEST_DRAFT" ]; then
-            echo "❌ No generated draft found in scripts/autopilot/drafts/ to promote."
-            exit 1
-          fi
-          DRAFT_FILENAME=$(basename "$LATEST_DRAFT")
-          echo "Promoting draft file: $DRAFT_FILENAME"
-          node scripts/autopilot/promote-draft.js --file="$DRAFT_FILENAME"
+          # Promote ONLY the exact validated draft generated during the CURRENT run via manifest handoff
+          node scripts/autopilot/promote-draft.js --manifest scripts/autopilot/.current-run.json
 
       - name: Post-Promotion Site Verification (Astro Check & Build)
         if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'publish') }}
