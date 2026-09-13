@@ -1,0 +1,91 @@
+{
+  "runId": "run-2026-09-13T04-03-32-744Z-7b5692",
+  "createdAt": "2026-09-13T04:03:32.888Z",
+  "mode": "generate",
+  "status": "VALIDATED",
+  "resultState": "VALIDATED_DRAFT_CREATED",
+  "inventoryScan": {
+    "timestamp": "2026-09-13T04:03:32.744Z",
+    "totalArticles": 9,
+    "productionSlugs": [
+      "chinese-gender-calendar-leap-month-rules",
+      "can-you-predict-babys-gender",
+      "chinese-vs-mayan-gender-predictor",
+      "chinese-gender-calendar-2026-2027",
+      "how-does-the-chinese-gender-predictor-work",
+      "chinese-gender-calendar",
+      "mayan-gender-predictor",
+      "baby-gender-prediction-methods",
+      "gender-prediction-myths"
+    ],
+    "productionTitles": [
+      "Chinese Gender Calendar Leap Month: How Lunar Leap Years Affect Predictions",
+      "Can You Really Predict Your Baby’s Gender? 7 Popular Methods Explained",
+      "Chinese Gender Predictor vs. Mayan Gender Predictor: What's the Difference?",
+      "Chinese Gender Calendar 2026–2027: How Does It Work?",
+      "How Does the Chinese Gender Predictor Work?",
+      "Chinese Gender Calendar: History, Lunar Conversions & Guide",
+      "Mayan Gender Predictor: How the Ancient Chart Works & Accuracy",
+      "Baby Gender Prediction Methods: Folk Traditions vs. Medical Facts",
+      "Gender Prediction Myths vs. Facts: What Science Really Says"
+    ]
+  },
+  "selectedTopic": {
+    "id": "val-test-01",
+    "title": "Phase Three Test Article Topic",
+    "category": "Chinese Gender Predictor",
+    "suggestedSlug": "phase-three-test-article-topic"
+  },
+  "draft": {
+    "runId": "run-2026-09-13T04-03-32-744Z-7b5692",
+    "attempt": 1,
+    "title": "Approved Validated Draft Title",
+    "slug": "phase-three-test-article-topic",
+    "filename": "phase-three-test-article-topic.md",
+    "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T04-03-32-744Z-7b5692\\attempt-1\\phase-three-test-article-topic.md",
+    "category": "Chinese Gender Predictor",
+    "generationTimestamp": "2026-09-13T04:03:32.964Z"
+  },
+  "validation": {
+    "valid": true,
+    "metrics": {
+      "wordCount": 2172,
+      "internalLinks": 31,
+      "uniqueInternalLinks": 5,
+      "externalLinks": 0,
+      "faqCount": 4,
+      "h2Count": 5,
+      "h3Count": 4
+    },
+    "errors": [],
+    "warnings": []
+  },
+  "promotion": null,
+  "errors": [],
+  "updatedAt": "2026-09-13T04:03:33.030Z",
+  "currentAttempt": 1,
+  "totalAttempts": 1,
+  "attempts": [
+    {
+      "attempt": 1,
+      "timestamp": "2026-09-13T04:03:33.026Z",
+      "provider": "gemini",
+      "model": "gemini-3.6-flash",
+      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-13T04-03-32-744Z-7b5692\\attempt-1\\phase-three-test-article-topic.md",
+      "validationStatus": "VALID",
+      "stage": "VALIDATION",
+      "metrics": {
+        "wordCount": 2172,
+        "internalLinks": 31,
+        "uniqueInternalLinks": 5,
+        "externalLinks": 0,
+        "faqCount": 4,
+        "h2Count": 5,
+        "h3Count": 4
+      },
+      "errors": [],
+      "warnings": []
+    }
+  ],
+  "isPromotable": true
+}

@@ -106,10 +106,19 @@ export async function callGemini({ prompt, systemInstruction, model = null }) {
     const rawText = candidate?.content?.parts?.[0]?.text;
 
     if (!rawText) {
+      // Surface the exact reason so the retry loop can log something actionable
+      const finishReason = candidate?.finishReason || data.promptFeedback?.blockReason || 'UNKNOWN';
+      const safetyInfo = candidate?.safetyRatings
+        ? ` Safety ratings: ${candidate.safetyRatings.map((r) => `${r.category}=${r.probability}`).join(', ')}`
+        : '';
+      const blockReason = data.promptFeedback?.blockReason
+        ? ` Prompt blocked: ${data.promptFeedback.blockReason}`
+        : '';
       return {
         success: false,
-        error: 'Gemini API response did not contain text candidates',
+        error: `Gemini returned no output text (finishReason: ${finishReason}).${blockReason}${safetyInfo} Prompt may be too long or violate safety filters.`,
         model: selectedModel,
+        finishReason,
       };
     }
 

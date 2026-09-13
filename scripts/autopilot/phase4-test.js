@@ -485,6 +485,12 @@ Just a quick sentence to finish the body.
   // Test 27: CLI failure returns non-zero exit code
   // -------------------------------------------------------------
   console.log('\nTest 27: CLI failure returns non-zero exit code');
+  // Temporarily hide the default manifest so the CLI finds no draft to promote
+  const defaultManifest = autopilotConfig.paths.currentRunManifest;
+  const hiddenManifest = defaultManifest + '.test-hidden';
+  if (fs.existsSync(defaultManifest)) {
+    fs.renameSync(defaultManifest, hiddenManifest);
+  }
   let cliFailCode = 0;
   try {
     execSync('node scripts/autopilot/promote-draft.js', {
@@ -493,6 +499,10 @@ Just a quick sentence to finish the body.
     });
   } catch (err) {
     cliFailCode = err.status || 1;
+  }
+  // Restore hidden manifest
+  if (fs.existsSync(hiddenManifest)) {
+    fs.renameSync(hiddenManifest, defaultManifest);
   }
   assert(cliFailCode !== 0, 'CLI exited with non-zero when run without arguments');
 

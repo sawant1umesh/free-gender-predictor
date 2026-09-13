@@ -107,10 +107,12 @@ export function sanitizeSlug(rawSlug) {
  * @param {string} params.markdownBody - Validated markdown body
  * @param {string} [params.suggestedSlug] - Preferred slug
  * @param {string} [params.runId] - Optional run identifier to isolate drafts inside drafts/<runId>/
+ * @param {number|string} [params.attempt] - Optional attempt number to isolate inside drafts/<runId>/attempt-<attempt>/
  * @param {string} [params.draftsDir] - Optional custom base drafts directory (for isolated testing)
  * @returns {{
  *   success: boolean,
  *   runId?: string|null,
+ *   attempt?: number|null,
  *   title?: string,
  *   draftPath?: string,
  *   slug?: string,
@@ -122,7 +124,7 @@ export function sanitizeSlug(rawSlug) {
  *   error?: string
  * }}
  */
-export function createDraft({ frontmatter, markdownBody, suggestedSlug = null, runId = null, draftsDir = null }) {
+export function createDraft({ frontmatter, markdownBody, suggestedSlug = null, runId = null, draftsDir = null, attempt = null }) {
   if (!frontmatter || !markdownBody) {
     return { success: false, error: 'Missing frontmatter or markdownBody' };
   }
@@ -142,9 +144,15 @@ export function createDraft({ frontmatter, markdownBody, suggestedSlug = null, r
 
   // 2. Resolve target staging directory (run-isolated when runId is provided)
   let targetDir = baseDraftsDir;
+  let runDir = null;
   if (runId && typeof runId === 'string') {
     const cleanRunId = runId.replace(/[\/\\]/g, '-').replace(/\.\./g, '').trim();
-    targetDir = path.resolve(baseDraftsDir, cleanRunId);
+    runDir = path.resolve(baseDraftsDir, cleanRunId);
+    targetDir = runDir;
+    if (attempt !== null && attempt !== undefined) {
+      const cleanAttempt = String(attempt).replace(/[\/\\]/g, '-').replace(/\.\./g, '').trim();
+      targetDir = path.resolve(runDir, `attempt-${cleanAttempt}`);
+    }
   }
 
   const draftPath = path.resolve(targetDir, filename);
@@ -161,11 +169,14 @@ export function createDraft({ frontmatter, markdownBody, suggestedSlug = null, r
     };
   }
 
-  if (runId && !normalizedDraftPath.startsWith(normalizedTargetDir) && normalizedDraftPath !== path.normalize(targetDir)) {
-    return {
-      success: false,
-      error: `Security violation: draft path "${draftPath}" escapes run directory "${targetDir}"`,
-    };
+  if (runDir) {
+    const normalizedRunDir = path.normalize(runDir) + path.sep;
+    if (!normalizedDraftPath.startsWith(normalizedRunDir) && normalizedDraftPath !== path.normalize(runDir)) {
+      return {
+        success: false,
+        error: `Security violation: draft path "${draftPath}" escapes run directory "${runDir}"`,
+      };
+    }
   }
 
   if (normalizedDraftPath.startsWith(path.normalize(productionBlogDir))) {
@@ -180,11 +191,12 @@ export function createDraft({ frontmatter, markdownBody, suggestedSlug = null, r
     fs.mkdirSync(targetDir, { recursive: true });
   }
 
-  // 5. Check if draft file already exists in current run location (never silently overwrite in same run)
+  // 5. Check if draft file already exists in current run location (never silently overwrite in same run/attempt)
   if (fs.existsSync(draftPath)) {
+    const contextLabel = runId ? 'run directory' : 'directory';
     return {
       success: false,
-      error: `Draft "${filename}" already exists in run directory "${targetDir}". Overwriting is blocked.`,
+      error: `Draft "${filename}" already exists in ${contextLabel} "${targetDir}". Overwriting is blocked.`,
     };
   }
 
@@ -199,6 +211,7 @@ export function createDraft({ frontmatter, markdownBody, suggestedSlug = null, r
   return {
     success: true,
     runId: runId || null,
+    attempt: attempt !== null && attempt !== undefined ? Number(attempt) : null,
     title: frontmatter.title || slug,
     slug,
     filename,

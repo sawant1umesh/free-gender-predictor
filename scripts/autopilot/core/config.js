@@ -18,6 +18,8 @@ export const RESULT_STATES = Object.freeze({
   DRAFT_CREATED: 'DRAFT_CREATED',
   VALIDATED_DRAFT_CREATED: 'VALIDATED_DRAFT_CREATED',
   VALIDATION_FAILED: 'VALIDATION_FAILED',
+  VALIDATION_RETRY_EXHAUSTED: 'VALIDATION_FAILED',
+  GENERATION_ATTEMPTS_EXHAUSTED: 'GENERATION_FAILED',
   PROMOTION_SUCCESS: 'PROMOTION_SUCCESS',
   PROMOTION_VALIDATION_FAILED: 'PROMOTION_VALIDATION_FAILED',
   PRODUCTION_SLUG_EXISTS: 'PRODUCTION_SLUG_EXISTS',
@@ -59,6 +61,7 @@ export const autopilotConfig = {
   ai: {
     primaryProvider: 'gemini',
     fallbackProvider: 'groq',
+    maxGenerationAttempts: 3,
     gemini: {
       model: process.env.GEMINI_MODEL || 'gemini-3.6-flash',
       apiVersion: 'v1beta',
@@ -69,8 +72,9 @@ export const autopilotConfig = {
     generationTarget: {
       wordCount: {
         min: 1800,
-        max: 2500,
+        max: 2300,
         target: 2000,
+        bufferCeiling: 2300,
       },
       minInternalLinks: 4,
       faqs: {

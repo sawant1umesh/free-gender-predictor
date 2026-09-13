@@ -33,7 +33,7 @@ import { createRunId, writeRunManifest, updateRunManifest, clearCurrentRunManife
  *   error?: string
  * }>}
  */
-export async function runAutopilot({ generate = false, overrideTopic = null, forceTopic = null, allowCaution = false, runId: customRunId = null } = {}) {
+export async function runAutopilot({ generate = false, overrideTopic = null, forceTopic = null, allowCaution = false, runId: customRunId = null, maxAttempts = null } = {}) {
   const isGenerateMode = Boolean(generate);
   const runId = (customRunId && typeof customRunId === 'string') ? customRunId : createRunId();
 
@@ -378,263 +378,365 @@ export async function runAutopilot({ generate = false, overrideTopic = null, for
     };
   }
 
-  // 5. Generate Mode: Call AI Provider Pipeline
-  console.log('🚀 [4/6] Invoking AI Provider Pipeline (Gemini with Groq Fallback)...');
-  const aiResult = await generateArticleContent({
-    prompt: promptData.prompt,
-    systemInstruction: promptData.systemInstruction,
-    dryRun: false,
-  });
+  // 5. Generate Mode: Robust Retry Loop with Validation Feedback
+  const effectiveMaxAttempts = Number.isInteger(maxAttempts) && maxAttempts > 0
+    ? maxAttempts
+    : (autopilotConfig.ai.maxGenerationAttempts || 3);
 
-  if (!aiResult.success || !aiResult.rawText) {
-    const errMsg = aiResult.error || 'Unknown AI generation failure';
-    console.error(`❌ AI Generation Failed: ${errMsg}`);
+  let attempt = 1;
+  let lastValidationErrors = [];
+  const attemptsRecord = [];
+  let successfulDraft = null;
+  let finalFailureState = RESULT_STATES.GENERATION_FAILED;
 
-    updateRunManifest({
-      status: 'GENERATION_FAILED',
-      resultState: RESULT_STATES.GENERATION_FAILED,
-      errors: [errMsg],
-    });
+  while (attempt <= effectiveMaxAttempts) {
+    console.log('\n' + '='.repeat(70));
+    console.log(`  🎯 GENERATION & VALIDATION ATTEMPT ${attempt} OF ${effectiveMaxAttempts}`);
+    console.log(`  Topic: "${selectedCandidate.title}"`);
+    if (attempt > 1 && lastValidationErrors.length > 0) {
+      console.log(`  ⚠️  Applying corrective feedback from attempt ${attempt - 1} (${lastValidationErrors.length} issues):`);
+      for (const err of lastValidationErrors) {
+        console.log(`     • ${err}`);
+      }
+    }
+    console.log('='.repeat(70) + '\n');
 
-    logEvent({
-      action: 'DRAFT_GENERATION',
-      status: 'ERROR',
-      summary: `Generation failed for "${selectedCandidate.title}": ${errMsg}`,
-      details: {
-        runId,
-        inventoryScanTimestamp,
-        selectedTopic: selectedCandidate.title,
-        selectedSlug: selectedCandidate.suggestedSlug,
-        exactGeneratedDraftPath: null,
-        exactValidatedDraftPath: null,
-        exactPromotedDraftPath: null,
-        finalResultState: RESULT_STATES.GENERATION_FAILED,
-        topicId: selectedCandidate.id,
-        error: errMsg,
-      },
-    });
-
-    return {
-      state: RESULT_STATES.GENERATION_FAILED,
-      success: false,
-      runId,
+    // [3/6] Construct editorial prompt with attempt feedback
+    console.log(`📝 [3/6] Constructing editorial prompt & safety guardrails (Attempt ${attempt}/${effectiveMaxAttempts})...`);
+    const promptData = buildArticlePrompt({
       topic: selectedCandidate,
-      error: errMsg,
-    };
-  }
-
-  console.log(`   ✓ Received response via ${(aiResult.provider || 'AI').toUpperCase()} (${aiResult.model || 'default'})`);
-  if (aiResult.fallbackUsed) {
-    console.log('   ℹ️  Note: Fallback provider was utilized due to primary provider issue.');
-  }
-
-  // 6. Parse and Validate AI Response Syntax
-  console.log('\n🔬 [5/6] Parsing AI response structure...');
-  const parsed = parseAIResponse(aiResult.rawText, {
-    whitelistedPaths,
-    minWords: autopilotConfig.articleRules.wordCount.min,
-  });
-
-  if (!parsed.valid || !parsed.data) {
-    const parseErr = parsed.error || 'AI output failed initial parsing/syntax check';
-    console.error(`❌ Invalid AI Response: ${parseErr}`);
-
-    updateRunManifest({
-      status: 'INVALID_AI_RESPONSE',
-      resultState: RESULT_STATES.INVALID_AI_RESPONSE,
-      errors: [parseErr],
+      inventory,
+      whitelistedRoutes: whitelistedPaths,
+      attempt,
+      maxAttempts: effectiveMaxAttempts,
+      previousErrors: lastValidationErrors,
     });
 
-    logEvent({
-      action: 'DRAFT_SYNTAX_PARSING',
-      status: 'ERROR',
-      summary: `Invalid AI output for "${selectedCandidate.title}": ${parseErr}`,
-      details: {
-        runId,
-        inventoryScanTimestamp,
-        selectedTopic: selectedCandidate.title,
-        selectedSlug: selectedCandidate.suggestedSlug,
-        exactGeneratedDraftPath: null,
-        exactValidatedDraftPath: null,
-        exactPromotedDraftPath: null,
-        finalResultState: RESULT_STATES.INVALID_AI_RESPONSE,
-        topicId: selectedCandidate.id,
-        error: parseErr,
-      },
+    // [4/6] Call AI Provider Pipeline
+    console.log(`🚀 [4/6] Invoking AI Provider Pipeline (Attempt ${attempt}/${effectiveMaxAttempts})...`);
+    const aiResult = await generateArticleContent({
+      prompt: promptData.prompt,
+      systemInstruction: promptData.systemInstruction,
+      dryRun: false,
     });
 
-    return {
-      state: RESULT_STATES.INVALID_AI_RESPONSE,
-      success: false,
+    if (!aiResult.success || !aiResult.rawText) {
+      const errMsg = aiResult.error || 'AI provider generation failure';
+      console.error(`❌ AI Generation Failed on attempt ${attempt}: ${errMsg}`);
+      finalFailureState = RESULT_STATES.GENERATION_FAILED;
+      lastValidationErrors = [errMsg];
+
+      attemptsRecord.push({
+        attempt,
+        timestamp: new Date().toISOString(),
+        provider: aiResult.provider || 'unknown',
+        model: aiResult.model || 'unknown',
+        draftPath: null,
+        validationStatus: 'FAILED',
+        stage: 'GENERATION',
+        errors: [errMsg],
+      });
+
+      updateRunManifest({
+        currentAttempt: attempt,
+        totalAttempts: attempt,
+        attempts: attemptsRecord,
+        status: 'GENERATING',
+        errors: [errMsg],
+      });
+
+      attempt++;
+      continue;
+    }
+
+    console.log(`   ✓ Received response via ${(aiResult.provider || 'AI').toUpperCase()} (${aiResult.model || 'default'})`);
+    if (aiResult.fallbackUsed) {
+      console.log('   ℹ️  Note: Fallback provider was utilized due to primary provider issue.');
+    }
+
+    // [5/6] Parse and validate AI response syntax
+    console.log(`\n🔬 [5/6] Parsing AI response structure (Attempt ${attempt}/${effectiveMaxAttempts})...`);
+    const parsed = parseAIResponse(aiResult.rawText, {
+      whitelistedPaths,
+      minWords: autopilotConfig.articleRules.wordCount.min,
+    });
+
+    if (!parsed.valid || !parsed.data) {
+      const parseErr = parsed.error || 'AI output failed initial parsing/syntax check';
+      console.error(`❌ Invalid AI Response on attempt ${attempt}: ${parseErr}`);
+      finalFailureState = RESULT_STATES.INVALID_AI_RESPONSE;
+      lastValidationErrors = [parseErr];
+
+      attemptsRecord.push({
+        attempt,
+        timestamp: new Date().toISOString(),
+        provider: aiResult.provider || 'unknown',
+        model: aiResult.model || 'unknown',
+        draftPath: null,
+        validationStatus: 'FAILED',
+        stage: 'PARSING',
+        errors: [parseErr],
+      });
+
+      updateRunManifest({
+        currentAttempt: attempt,
+        totalAttempts: attempt,
+        attempts: attemptsRecord,
+        status: 'PARSING_FAILED',
+        errors: [parseErr],
+      });
+
+      attempt++;
+      continue;
+    }
+
+    // Staging draft file into run-isolated drafts directory: scripts/autopilot/drafts/<run-id>/attempt-<attempt>/
+    console.log(`\n💾 Staging draft file for attempt ${attempt} into run-isolated drafts directory...`);
+    const draftResult = createDraft({
+      frontmatter: parsed.data.frontmatter,
+      markdownBody: parsed.data.markdownBody,
+      suggestedSlug: selectedCandidate.suggestedSlug,
       runId,
-      topic: selectedCandidate,
-      error: parseErr,
-    };
-  }
-
-  // 7. Write Staged Draft into run-isolated scripts/autopilot/drafts/<run-id>/
-  console.log('\n💾 Staging draft file into run-isolated drafts directory...');
-  const draftResult = createDraft({
-    frontmatter: parsed.data.frontmatter,
-    markdownBody: parsed.data.markdownBody,
-    suggestedSlug: selectedCandidate.suggestedSlug,
-    runId,
-  });
-
-  if (!draftResult.success) {
-    console.error(`❌ Draft File Creation Failed: ${draftResult.error}`);
-    updateRunManifest({
-      status: 'GENERATION_FAILED',
-      resultState: RESULT_STATES.GENERATION_FAILED,
-      errors: [draftResult.error],
+      attempt,
     });
 
-    logEvent({
-      action: 'DRAFT_FILE_WRITE',
-      status: 'ERROR',
-      summary: `Failed to write draft file: ${draftResult.error}`,
-      details: {
-        runId,
-        inventoryScanTimestamp,
-        selectedTopic: selectedCandidate.title,
-        selectedSlug: selectedCandidate.suggestedSlug,
-        exactGeneratedDraftPath: null,
-        exactValidatedDraftPath: null,
-        exactPromotedDraftPath: null,
-        finalResultState: RESULT_STATES.GENERATION_FAILED,
-        error: draftResult.error,
-      },
-    });
+    if (!draftResult.success) {
+      console.error(`❌ Draft File Creation Failed on attempt ${attempt}: ${draftResult.error}`);
+      finalFailureState = RESULT_STATES.GENERATION_FAILED;
+      lastValidationErrors = [draftResult.error];
 
-    return {
-      state: RESULT_STATES.GENERATION_FAILED,
-      success: false,
-      runId,
-      topic: selectedCandidate,
-      error: draftResult.error,
-    };
-  }
+      attemptsRecord.push({
+        attempt,
+        timestamp: new Date().toISOString(),
+        provider: aiResult.provider || 'unknown',
+        model: aiResult.model || 'unknown',
+        draftPath: null,
+        validationStatus: 'FAILED',
+        stage: 'FILE_CREATION',
+        errors: [draftResult.error],
+      });
 
-  // Record draft details in manifest
-  updateRunManifest({
-    status: 'DRAFT_CREATED',
-    resultState: RESULT_STATES.DRAFT_CREATED,
-    draft: {
-      runId,
-      title: draftResult.title,
-      slug: draftResult.slug,
-      filename: draftResult.filename,
+      attempt++;
+      continue;
+    }
+
+    // [6/6] Phase 3 Quality Gate Validation on exact attempt draft
+    console.log(`\n🛡️  [6/6] Running Phase 3 Quality Gate & Schema Validation (Attempt ${attempt}/${effectiveMaxAttempts})...`);
+    const draftContentOnDisk = fs.readFileSync(draftResult.draftPath, 'utf-8');
+    const validation = validateDraft(draftContentOnDisk, { whitelistedRoutes: whitelistedPaths });
+
+    console.log('\n' + '='.repeat(70));
+    console.log(`  📊 DRAFT VALIDATION REPORT (Attempt ${attempt}/${effectiveMaxAttempts})`);
+    console.log('='.repeat(70));
+    console.log(`  • Run ID:         ${runId}`);
+    console.log(`  • Attempt:        ${attempt} of ${effectiveMaxAttempts}`);
+    console.log(`  • Title:          ${parsed.data.frontmatter.title}`);
+    console.log(`  • Word Count:     ${validation.metrics.wordCount} words`);
+    console.log(`  • Internal Links: ${validation.metrics.uniqueInternalLinks} unique (${validation.metrics.internalLinks} total)`);
+    console.log(`  • FAQs:           ${validation.metrics.faqCount} items`);
+    console.log(`  • Headings:       ${validation.metrics.h2Count} H2s, ${validation.metrics.h3Count} H3s`);
+    console.log(`  • Draft File:     ${draftResult.draftPath}`);
+    console.log(`  • Validation:     ${validation.valid ? 'PASSED ✅ (Eligible for future promotion)' : 'FAILED ❌ (NOT eligible for promotion)'}`);
+
+    if (validation.warnings.length > 0) {
+      console.log('\n  ⚠️  VALIDATION WARNINGS:');
+      for (const w of validation.warnings) {
+        console.log(`     • ${w}`);
+      }
+    }
+
+    if (!validation.valid) {
+      console.log('\n  ❌ VALIDATION ERRORS:');
+      for (const err of validation.errors) {
+        console.log(`     • ${err}`);
+      }
+    }
+    console.log('='.repeat(70) + '\n');
+
+    attemptsRecord.push({
+      attempt,
+      timestamp: new Date().toISOString(),
+      provider: aiResult.provider || 'unknown',
+      model: aiResult.model || 'unknown',
       draftPath: draftResult.draftPath,
-      category: draftResult.category,
-      generationTimestamp: draftResult.generationTimestamp,
-    },
-  });
-
-  // 8. Phase 3 Quality Gate Validation - Validate ONLY the exact draft created during current run
-  console.log('\n🛡️  [6/6] Running Phase 3 Quality Gate & Schema Validation on CURRENT run draft...');
-  const draftContentOnDisk = fs.readFileSync(draftResult.draftPath, 'utf-8');
-  const validation = validateDraft(draftContentOnDisk, { whitelistedRoutes: whitelistedPaths });
-
-  console.log('\n' + '='.repeat(70));
-  console.log('  📊 DRAFT VALIDATION REPORT');
-  console.log('='.repeat(70));
-  console.log(`  • Run ID:         ${runId}`);
-  console.log(`  • Title:          ${parsed.data.frontmatter.title}`);
-  console.log(`  • Word Count:     ${validation.metrics.wordCount} words`);
-  console.log(`  • Internal Links: ${validation.metrics.uniqueInternalLinks} unique (${validation.metrics.internalLinks} total)`);
-  console.log(`  • FAQs:           ${validation.metrics.faqCount} items`);
-  console.log(`  • Headings:       ${validation.metrics.h2Count} H2s, ${validation.metrics.h3Count} H3s`);
-  console.log(`  • Draft File:     ${draftResult.draftPath}`);
-  console.log(`  • Validation:     ${validation.valid ? 'PASSED ✅ (Eligible for future promotion)' : 'FAILED ❌ (NOT eligible for promotion)'}`);
-
-  if (validation.warnings.length > 0) {
-    console.log('\n  ⚠️  VALIDATION WARNINGS:');
-    for (const w of validation.warnings) {
-      console.log(`     • ${w}`);
-    }
-  }
-
-  if (!validation.valid) {
-    console.log('\n  ❌ VALIDATION ERRORS:');
-    for (const err of validation.errors) {
-      console.log(`     • ${err}`);
-    }
-  }
-
-  console.log('='.repeat(70));
-  console.log('  🛡️  SAFETY CONFIRMATION:');
-  console.log('     • Production src/content/blog/ modified: 0');
-  console.log('     • Production pages modified: 0');
-  console.log('     • Live deployment triggered: 0');
-  console.log('='.repeat(70) + '\n');
-
-  // Update manifest with validation result
-  updateRunManifest({
-    status: validation.valid ? 'VALIDATED' : 'VALIDATION_FAILED',
-    resultState: validation.valid ? RESULT_STATES.VALIDATED_DRAFT_CREATED : RESULT_STATES.VALIDATION_FAILED,
-    validation: {
-      valid: validation.valid,
+      validationStatus: validation.valid ? 'VALID' : 'INVALID',
+      stage: 'VALIDATION',
       metrics: validation.metrics,
       errors: validation.errors,
       warnings: validation.warnings,
-    },
-    errors: validation.errors,
-  });
+    });
 
-  // Log validation audit event with required transaction metadata
-  logEvent({
-    action: validation.valid ? 'DRAFT_VALIDATION_PASSED' : 'DRAFT_VALIDATION_FAILED',
-    status: validation.valid ? 'SUCCESS' : 'WARNING',
-    summary: validation.valid
-      ? `Draft "${parsed.data.frontmatter.title}" PASSED all validation checks (${validation.metrics.wordCount} words).`
-      : `Draft "${parsed.data.frontmatter.title}" FAILED validation: ${validation.errors.join('; ')}`,
-    stats: {
-      wordCount: validation.metrics.wordCount,
-      internalLinks: validation.metrics.uniqueInternalLinks,
-      faqCount: validation.metrics.faqCount,
-      valid: validation.valid,
-    },
-    details: {
-      runId,
-      inventoryScanTimestamp,
-      selectedTopic: selectedCandidate.title,
-      selectedSlug: draftResult.slug,
-      exactGeneratedDraftPath: draftResult.draftPath,
-      exactValidatedDraftPath: draftResult.draftPath,
-      exactPromotedDraftPath: null,
-      finalResultState: validation.valid ? RESULT_STATES.VALIDATED_DRAFT_CREATED : RESULT_STATES.VALIDATION_FAILED,
-      topicId: selectedCandidate.id,
-      slug: draftResult.slug,
-      draftPath: draftResult.draftPath,
+    if (validation.valid) {
+      successfulDraft = {
+        draftResult,
+        parsed,
+        validation,
+        aiResult,
+        attempt,
+      };
+      break;
+    }
+
+    // Validation failed on this attempt
+    finalFailureState = RESULT_STATES.VALIDATION_FAILED;
+    lastValidationErrors = validation.errors;
+
+    updateRunManifest({
+      currentAttempt: attempt,
+      totalAttempts: attempt,
+      attempts: attemptsRecord,
+      status: 'VALIDATING',
       errors: validation.errors,
-      warnings: validation.warnings,
-      provider: aiResult.provider,
-      inventorySlugsAtScanTime: inventory.articles.map((a) => a.slug),
-    },
-  });
+    });
 
-  if (!validation.valid) {
+    logEvent({
+      action: 'DRAFT_VALIDATION_FAILED',
+      status: 'WARNING',
+      summary: `Attempt ${attempt}/${effectiveMaxAttempts} failed validation for "${selectedCandidate.title}": ${validation.errors.join('; ')}`,
+      stats: {
+        wordCount: validation.metrics.wordCount,
+        internalLinks: validation.metrics.uniqueInternalLinks,
+        faqCount: validation.metrics.faqCount,
+        attempt,
+        valid: false,
+      },
+      details: {
+        runId,
+        attempt,
+        maxAttempts: effectiveMaxAttempts,
+        selectedTopic: selectedCandidate.title,
+        draftPath: draftResult.draftPath,
+        errors: validation.errors,
+        warnings: validation.warnings,
+      },
+    });
+
+    attempt++;
+  }
+
+  // Handle final outcome after retry loop completes
+  if (successfulDraft) {
+    const { draftResult, parsed, validation, aiResult, attempt: successAttempt } = successfulDraft;
+
+    // Update manifest with verified success
+    updateRunManifest({
+      status: 'VALIDATED',
+      resultState: RESULT_STATES.VALIDATED_DRAFT_CREATED,
+      currentAttempt: successAttempt,
+      totalAttempts: attemptsRecord.length,
+      attempts: attemptsRecord,
+      draft: {
+        runId,
+        attempt: successAttempt,
+        title: draftResult.title,
+        slug: draftResult.slug,
+        filename: draftResult.filename,
+        draftPath: draftResult.draftPath,
+        category: draftResult.category,
+        generationTimestamp: draftResult.generationTimestamp,
+      },
+      validation: {
+        valid: true,
+        metrics: validation.metrics,
+        errors: [],
+        warnings: validation.warnings,
+      },
+      isPromotable: true,
+      errors: [],
+    });
+
+    logEvent({
+      action: 'DRAFT_VALIDATION_PASSED',
+      status: 'SUCCESS',
+      summary: `Draft "${parsed.data.frontmatter.title}" PASSED validation on attempt ${successAttempt}/${effectiveMaxAttempts} (${validation.metrics.wordCount} words).`,
+      stats: {
+        wordCount: validation.metrics.wordCount,
+        internalLinks: validation.metrics.uniqueInternalLinks,
+        faqCount: validation.metrics.faqCount,
+        attempts: attemptsRecord.length,
+        valid: true,
+      },
+      details: {
+        runId,
+        inventoryScanTimestamp,
+        selectedTopic: selectedCandidate.title,
+        selectedSlug: draftResult.slug,
+        exactGeneratedDraftPath: draftResult.draftPath,
+        exactValidatedDraftPath: draftResult.draftPath,
+        exactPromotedDraftPath: null,
+        finalResultState: RESULT_STATES.VALIDATED_DRAFT_CREATED,
+        currentAttempt: successAttempt,
+        totalAttempts: attemptsRecord.length,
+        topicId: selectedCandidate.id,
+        slug: draftResult.slug,
+        draftPath: draftResult.draftPath,
+        provider: aiResult.provider,
+        inventorySlugsAtScanTime: inventory.articles.map((a) => a.slug),
+      },
+    });
+
     return {
-      state: RESULT_STATES.VALIDATION_FAILED,
-      success: false,
+      state: RESULT_STATES.VALIDATED_DRAFT_CREATED,
+      success: true,
       runId,
       topic: selectedCandidate,
       draftPath: draftResult.draftPath,
       slug: draftResult.slug,
       validation,
+      attempts: attemptsRecord,
       manifestPath: autopilotConfig.paths.currentRunManifest,
     };
   }
 
+  // All attempts exhausted without achieving a valid draft
+  console.error(`\n❌ All ${effectiveMaxAttempts} generation/validation attempt(s) exhausted without success.`);
+  console.error(`   Final state: ${finalFailureState}`);
+  console.error(`   Errors: ${lastValidationErrors.join('; ')}\n`);
+
+  updateRunManifest({
+    status: finalFailureState === RESULT_STATES.GENERATION_FAILED ? 'GENERATION_FAILED' : 'VALIDATION_FAILED',
+    resultState: finalFailureState,
+    currentAttempt: attemptsRecord.length,
+    totalAttempts: attemptsRecord.length,
+    attempts: attemptsRecord,
+    draft: null, // NO draft marked eligible for promotion
+    validation: {
+      valid: false,
+      errors: lastValidationErrors,
+    },
+    isPromotable: false,
+    errors: lastValidationErrors,
+  });
+
+  logEvent({
+    action: 'DRAFT_VALIDATION_FAILED',
+    status: 'ERROR',
+    summary: `All ${effectiveMaxAttempts} generation/validation attempts exhausted for "${selectedCandidate.title}": ${lastValidationErrors.join('; ')}`,
+    details: {
+      runId,
+      inventoryScanTimestamp,
+      selectedTopic: selectedCandidate.title,
+      selectedSlug: selectedCandidate.suggestedSlug,
+      exactGeneratedDraftPath: null,
+      exactValidatedDraftPath: null,
+      exactPromotedDraftPath: null,
+      finalResultState: finalFailureState,
+      totalAttempts: attemptsRecord.length,
+      errors: lastValidationErrors,
+    },
+  });
+
   return {
-    state: RESULT_STATES.VALIDATED_DRAFT_CREATED,
-    success: true,
+    state: finalFailureState,
+    success: false,
     runId,
     topic: selectedCandidate,
-    draftPath: draftResult.draftPath,
-    slug: draftResult.slug,
-    validation,
+    draftPath: null,
+    slug: selectedCandidate.suggestedSlug,
+    errors: lastValidationErrors,
+    attempts: attemptsRecord,
     manifestPath: autopilotConfig.paths.currentRunManifest,
+    error: `Generation attempts exhausted (${attemptsRecord.length}/${effectiveMaxAttempts}): ${lastValidationErrors.join('; ')}`,
   };
 }
 
@@ -647,6 +749,7 @@ if (invokedFile && invokedFile === path.resolve(currentFile)) {
   const allowCaution = process.argv.includes('--allow-caution');
   let forceTopic = null;
   let cliRunId = null;
+  let maxAttemptsArg = null;
 
   for (let i = 2; i < process.argv.length; i++) {
     const arg = process.argv[i];
@@ -660,10 +763,21 @@ if (invokedFile && invokedFile === path.resolve(currentFile)) {
       i++;
     } else if (arg.startsWith('--run-id=')) {
       cliRunId = arg.slice('--run-id='.length);
+    } else if (arg === '--max-attempts') {
+      maxAttemptsArg = parseInt(process.argv[i + 1], 10);
+      i++;
+    } else if (arg.startsWith('--max-attempts=')) {
+      maxAttemptsArg = parseInt(arg.slice('--max-attempts='.length), 10);
     }
   }
 
-  runAutopilot({ generate: isGenerate, forceTopic, allowCaution, runId: cliRunId }).then((result) => {
+  runAutopilot({
+    generate: isGenerate,
+    forceTopic,
+    allowCaution,
+    runId: cliRunId,
+    maxAttempts: maxAttemptsArg,
+  }).then((result) => {
     console.log(`\nRUN_ID: ${result.runId}`);
     if (result.manifestPath) {
       console.log(`MANIFEST: ${result.manifestPath}`);

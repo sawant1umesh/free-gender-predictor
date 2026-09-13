@@ -1,0 +1,44 @@
+{
+  "runId": "run-2026-09-13T04-03-35-190Z-3e886a",
+  "createdAt": "2026-09-13T04:03:35.295Z",
+  "mode": "dry-run",
+  "status": "DRY_RUN_COMPLETE",
+  "resultState": "DRY_RUN_COMPLETE",
+  "inventoryScan": {
+    "timestamp": "2026-09-13T04:03:35.227Z",
+    "totalArticles": 9,
+    "productionSlugs": [
+      "chinese-gender-calendar-leap-month-rules",
+      "can-you-predict-babys-gender",
+      "chinese-vs-mayan-gender-predictor",
+      "chinese-gender-calendar-2026-2027",
+      "how-does-the-chinese-gender-predictor-work",
+      "chinese-gender-calendar",
+      "mayan-gender-predictor",
+      "baby-gender-prediction-methods",
+      "gender-prediction-myths"
+    ],
+    "productionTitles": [
+      "Chinese Gender Calendar Leap Month: How Lunar Leap Years Affect Predictions",
+      "Can You Really Predict Your Baby’s Gender? 7 Popular Methods Explained",
+      "Chinese Gender Predictor vs. Mayan Gender Predictor: What's the Difference?",
+      "Chinese Gender Calendar 2026–2027: How Does It Work?",
+      "How Does the Chinese Gender Predictor Work?",
+      "Chinese Gender Calendar: History, Lunar Conversions & Guide",
+      "Mayan Gender Predictor: How the Ancient Chart Works & Accuracy",
+      "Baby Gender Prediction Methods: Folk Traditions vs. Medical Facts",
+      "Gender Prediction Myths vs. Facts: What Science Really Says"
+    ]
+  },
+  "selectedTopic": {
+    "id": "seed-002",
+    "title": "How to Calculate Maternal Lunar Age for the Chinese Gender Predictor",
+    "category": "Chinese Gender Predictor",
+    "suggestedSlug": "how-to-calculate-maternal-lunar-age"
+  },
+  "draft": null,
+  "validation": null,
+  "promotion": null,
+  "errors": [],
+  "updatedAt": "2026-09-13T04:03:35.346Z"
+}

@@ -20,6 +20,9 @@ export function buildArticlePrompt({
   inventory: _inventory = null,
   whitelistedRoutes = [],
   heroImageMapping = null,
+  attempt = 1,
+  maxAttempts = 3,
+  previousErrors = [],
 }) {
   const finalCategory = category || topic.category || 'Chinese Gender Predictor';
   const primaryKw = targetKeyword || topic.primaryKeyword || topic.title;
@@ -27,7 +30,7 @@ export function buildArticlePrompt({
   const intent = searchIntent || topic.searchIntent || 'informational';
   const targetWords = autopilotConfig.ai.generationTarget.wordCount.target || 2000;
   const minWords = autopilotConfig.ai.generationTarget.wordCount.min || 1800;
-  const maxWords = autopilotConfig.ai.generationTarget.wordCount.max || 2500;
+  const maxWords = autopilotConfig.ai.generationTarget.wordCount.max || 2300;
   const minLinks = autopilotConfig.ai.generationTarget.minInternalLinks || 4;
 
   // Extract path strings from whitelistedRoutes
@@ -48,14 +51,15 @@ export function buildArticlePrompt({
 Your mission is to produce authoritative, fascinating, medically accurate, and empathetic pregnancy content.
 
 CRITICAL MEDICAL & EDITORIAL SAFETY GUIDELINES:
-1. Clear Cultural/Entertainment vs Medical Distinction:
-   - Always clearly state that traditional methods (Chinese Gender Chart, Mayan Gender Predictor, Ramzi Theory, Nub Theory, Skull Theory, cravings, fetal heart rate, baking soda, old wives' tales) are folk traditions and entertainment tools.
-   - None of these folk methods or unproven theories have scientific or medical accuracy beyond a 50% coin flip.
-   - Do NOT present myths or cultural traditions as medically proven facts.
-2. Clinical Accuracy:
-   - Accurately describe genuine medical fetal sex determination methods: NIPT (cell-free fetal DNA screening from 10 weeks) and mid-pregnancy ultrasound (18-20 weeks anatomy scan).
+1. Strict Folklore vs Medical Science Distinction:
+   - Always clearly state that traditional methods (Chinese Gender Predictor, Chinese Gender Calendar, Mayan Gender Predictor, Ramzi Theory, Nub Theory, Skull Theory, cravings, fetal heart rate, baking soda, old wives' tales) are cultural folklore, historical traditions, and entertainment tools.
+   - PROHIBITED MEDICAL CERTAINTY CLAIMS: You must NEVER state, suggest, or imply that Chinese gender prediction, lunar age methods, charts, calendars, or any folk traditions are guaranteed, certain, 100% accurate, foolproof, scientifically proven, or clinically reliable.
+   - Traditional charts perform at roughly a 50% coin-flip rate in scientific evaluations.
+   - When discussing accuracy, use evidence-based language: "traditional method", "folklore", "cultural belief", "entertainment use", "not a clinical diagnostic method", "cannot reliably determine an individual baby's sex".
+2. Clinical Accuracy & Boundaries:
+   - Genuine medical fetal sex determination relies exclusively on clinical diagnostics: cell-free fetal DNA screening (NIPT from 10 weeks) and mid-pregnancy ultrasound anatomy scans (18-20 weeks).
    - Never provide individualized medical advice, diagnoses, or clinical prescriptions.
-   - Always advise readers to consult certified OB/GYNs, midwives, or healthcare providers for prenatal health decisions.
+   - Always advise readers to consult certified OB/GYNs, midwives, or licensed healthcare professionals for prenatal medical guidance.
 3. Content & Tone:
    - Compassionate, engaging, culturally respectful, and grounded in evidence.
    - Avoid keyword stuffing. Write natural, flowing prose with clear headings.
@@ -66,8 +70,31 @@ CRITICAL MEDICAL & EDITORIAL SAFETY GUIDELINES:
 5. Output Format:
    - Output MUST be a single valid JSON object with no markdown fences, no surrounding commentary, and no introductory chatter.`;
 
+  // Feedback section if regenerating after validation failure
+  let feedbackSection = '';
+  if (attempt > 1 && Array.isArray(previousErrors) && previousErrors.length > 0) {
+    const errorBullets = previousErrors.map((err) => `  - ❌ ${err}`).join('\n');
+    const hasWordCountError = previousErrors.some((e) => /word count/i.test(e));
+    const hasMedicalError = previousErrors.some((e) => /medical safety|guaranteed|100%|proven|diagnosis|doctor/i.test(e));
+    const hasFaqError = previousErrors.some((e) => /faq/i.test(e));
+    const hasLinkError = previousErrors.some((e) => /internal link|whitelist|trailing slash/i.test(e));
+    const hasCategoryError = previousErrors.some((e) => /category/i.test(e));
+
+    feedbackSection = `
+======================================================================
+🚨 CRITICAL REVISION REQUIRED (Attempt ${attempt} of ${maxAttempts})
+The previous draft attempt failed automated Phase 3 validation for the following reason(s):
+${errorBullets}
+
+YOU MUST FULLY REVISE AND RESOLVE THESE ISSUES IN THIS NEW RESPONSE:
+${hasWordCountError ? '• WORD COUNT CORRECTION: Your previous draft was outside acceptable word count limits (1200-2500 words). Strictly write between 1800 and 2300 words. Do NOT exceed 2300 words under any circumstance.\n' : ''}${hasMedicalError ? '• MEDICAL SAFETY CORRECTION: Remove ANY claim or implication that folk gender prediction methods are guaranteed, certain, 100% accurate, foolproof, or scientifically/clinically proven. Strictly present them as folklore and entertainment, contrasting with medical ultrasound and NIPT.\n' : ''}${hasFaqError ? '• FAQ CORRECTION: Ensure between 4 and 8 structured FAQs with complete, non-empty question and answer fields. The FAQs in frontmatter MUST match the FAQ section in the markdown body.\n' : ''}${hasLinkError ? '• INTERNAL LINK CORRECTION: Use ONLY the approved whitelisted links below with root-relative paths starting with "/" and NO trailing slashes.\n' : ''}${hasCategoryError ? `• CATEGORY CORRECTION: Ensure frontmatter category is strictly "${finalCategory}".\n` : ''}
+IMPORTANT: Do not simply append or prefix corrections. Return a clean, complete, fully corrected article JSON object strictly adhering to all guidelines.
+======================================================================
+`;
+  }
+
   // User prompt detailing structure and schema
-  const prompt = `Write a comprehensive, publication-ready article on the following topic:
+  const prompt = `${feedbackSection ? feedbackSection + '\n' : ''}Write a comprehensive, publication-ready article on the following topic:
 
 TOPIC SPECIFICATIONS:
 - Title: "${topic.title}"
@@ -75,7 +102,8 @@ TOPIC SPECIFICATIONS:
 - Primary Target Keyword: "${primaryKw}"
 - Secondary Keywords: ${secondaryKws.map((k) => `"${k}"`).join(', ') || 'None specified'}
 - Search Intent: ${intent}
-- Word Count Target: Between ${minWords} and ${maxWords} words (Target: ${targetWords} words)
+- Word Count Target: Strictly between ${minWords} and ${maxWords} words (Target: ${targetWords} words).
+  CRITICAL: Do not exceed approximately 2300 words. Keeping the article under 2300 words provides an essential safety buffer below the hard 2500-word limit. Articles exceeding 2500 words or below 1200 words are rejected immediately by automated quality gates.
 - Configured Hero Image: "${heroImage}"
 - Configured Hero Image Alt: "${heroImageAlt}"
 
@@ -116,6 +144,8 @@ Respond with ONLY a valid JSON object strictly matching this schema:
     whitelistedPaths: allowedPaths,
     heroImage,
     heroImageAlt,
+    attempt,
+    maxAttempts,
   };
 }
 
