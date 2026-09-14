@@ -1,0 +1,91 @@
+{
+  "runId": "run-2026-09-14T02-07-12-290Z-65638e",
+  "createdAt": "2026-09-14T02:07:12.317Z",
+  "mode": "generate",
+  "status": "VALIDATED",
+  "resultState": "VALIDATED_DRAFT_CREATED",
+  "inventoryScan": {
+    "timestamp": "2026-09-14T02:07:12.290Z",
+    "totalArticles": 9,
+    "productionSlugs": [
+      "chinese-gender-calendar-leap-month-rules",
+      "can-you-predict-babys-gender",
+      "chinese-vs-mayan-gender-predictor",
+      "chinese-gender-calendar-2026-2027",
+      "how-does-the-chinese-gender-predictor-work",
+      "chinese-gender-calendar",
+      "mayan-gender-predictor",
+      "baby-gender-prediction-methods",
+      "gender-prediction-myths"
+    ],
+    "productionTitles": [
+      "Chinese Gender Calendar Leap Month: How Lunar Leap Years Affect Predictions",
+      "Can You Really Predict Your Baby’s Gender? 7 Popular Methods Explained",
+      "Chinese Gender Predictor vs. Mayan Gender Predictor: What's the Difference?",
+      "Chinese Gender Calendar 2026–2027: How Does It Work?",
+      "How Does the Chinese Gender Predictor Work?",
+      "Chinese Gender Calendar: History, Lunar Conversions & Guide",
+      "Mayan Gender Predictor: How the Ancient Chart Works & Accuracy",
+      "Baby Gender Prediction Methods: Folk Traditions vs. Medical Facts",
+      "Gender Prediction Myths vs. Facts: What Science Really Says"
+    ]
+  },
+  "selectedTopic": {
+    "id": "test-seed-001",
+    "title": "Automated Test Guide to Gender Calendars",
+    "category": "Chinese Gender Predictor",
+    "suggestedSlug": "automated-test-guide-gender-calendars"
+  },
+  "draft": {
+    "runId": "run-2026-09-14T02-07-12-290Z-65638e",
+    "attempt": 1,
+    "title": "Automated Test Guide to Gender Calendars",
+    "slug": "automated-test-guide-gender-calendars",
+    "filename": "automated-test-guide-gender-calendars.md",
+    "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-14T02-07-12-290Z-65638e\\attempt-1\\automated-test-guide-gender-calendars.md",
+    "category": "Chinese Gender Predictor",
+    "generationTimestamp": "2026-09-14T02:07:12.350Z"
+  },
+  "validation": {
+    "valid": true,
+    "metrics": {
+      "wordCount": 2065,
+      "internalLinks": 48,
+      "uniqueInternalLinks": 4,
+      "externalLinks": 0,
+      "faqCount": 4,
+      "h2Count": 4,
+      "h3Count": 4
+    },
+    "errors": [],
+    "warnings": []
+  },
+  "promotion": null,
+  "errors": [],
+  "updatedAt": "2026-09-14T02:07:12.364Z",
+  "currentAttempt": 1,
+  "totalAttempts": 1,
+  "attempts": [
+    {
+      "attempt": 1,
+      "timestamp": "2026-09-14T02:07:12.361Z",
+      "provider": "gemini",
+      "model": "gemini-3.6-flash",
+      "draftPath": "D:\\Demo\\free-gender-predictor\\scripts\\autopilot\\drafts\\run-2026-09-14T02-07-12-290Z-65638e\\attempt-1\\automated-test-guide-gender-calendars.md",
+      "validationStatus": "VALID",
+      "stage": "VALIDATION",
+      "metrics": {
+        "wordCount": 2065,
+        "internalLinks": 48,
+        "uniqueInternalLinks": 4,
+        "externalLinks": 0,
+        "faqCount": 4,
+        "h2Count": 4,
+        "h3Count": 4
+      },
+      "errors": [],
+      "warnings": []
+    }
+  ],
+  "isPromotable": true
+}

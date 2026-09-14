@@ -475,6 +475,7 @@ export async function runAutopilot({ generate = false, overrideTopic = null, for
         draftPath: null,
         validationStatus: 'FAILED',
         stage: 'PARSING',
+        classification: parsed.classification || 'PARSING_FAILED',
         errors: [parseErr],
       });
 
@@ -488,6 +489,10 @@ export async function runAutopilot({ generate = false, overrideTopic = null, for
 
       attempt++;
       continue;
+    }
+
+    if (parsed.repaired) {
+      console.log('   ℹ️  Note: AI response had JSON syntax irregularities but was safely repaired deterministically.');
     }
 
     // Staging draft file into run-isolated drafts directory: scripts/autopilot/drafts/<run-id>/attempt-<attempt>/
@@ -694,7 +699,11 @@ export async function runAutopilot({ generate = false, overrideTopic = null, for
   console.error(`   Errors: ${lastValidationErrors.join('; ')}\n`);
 
   updateRunManifest({
-    status: finalFailureState === RESULT_STATES.GENERATION_FAILED ? 'GENERATION_FAILED' : 'VALIDATION_FAILED',
+    status: finalFailureState === RESULT_STATES.GENERATION_FAILED
+      ? 'GENERATION_FAILED'
+      : finalFailureState === RESULT_STATES.INVALID_AI_RESPONSE
+        ? 'INVALID_AI_RESPONSE'
+        : 'VALIDATION_FAILED',
     resultState: finalFailureState,
     currentAttempt: attemptsRecord.length,
     totalAttempts: attemptsRecord.length,

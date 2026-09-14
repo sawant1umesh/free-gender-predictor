@@ -55,7 +55,7 @@ export function sanitizeErrorMessage(error) {
  * @param {string} [params.model]
  * @returns {Promise<{ success: boolean, rawText?: string, error?: string, model?: string }>}
  */
-export async function callGemini({ prompt, systemInstruction, model = null }) {
+export async function callGemini({ prompt, systemInstruction, model = null, jsonMode = false }) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey || !apiKey.trim()) {
     return { success: false, error: 'GEMINI_API_KEY environment variable is not configured' };
@@ -66,6 +66,14 @@ export async function callGemini({ prompt, systemInstruction, model = null }) {
   const url = `https://generativelanguage.googleapis.com/${apiVersion}/models/${selectedModel}:generateContent`;
 
   try {
+    const generationConfig = {
+      temperature: 0.7,
+      maxOutputTokens: 8192,
+    };
+    if (jsonMode) {
+      generationConfig.responseMimeType = 'application/json';
+    }
+
     const payload = {
       contents: [
         {
@@ -76,11 +84,7 @@ export async function callGemini({ prompt, systemInstruction, model = null }) {
       systemInstruction: {
         parts: [{ text: systemInstruction }],
       },
-      generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 8192,
-        responseMimeType: 'application/json',
-      },
+      generationConfig,
     };
 
     const res = await fetch(url, {
@@ -145,7 +149,7 @@ export async function callGemini({ prompt, systemInstruction, model = null }) {
  * @param {string} [params.model]
  * @returns {Promise<{ success: boolean, rawText?: string, error?: string, model?: string }>}
  */
-export async function callGroq({ prompt, systemInstruction, model = null }) {
+export async function callGroq({ prompt, systemInstruction, model = null, jsonMode = false }) {
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey || !apiKey.trim()) {
     return { success: false, error: 'GROQ_API_KEY environment variable is not configured' };
@@ -163,8 +167,10 @@ export async function callGroq({ prompt, systemInstruction, model = null }) {
       ],
       temperature: 0.7,
       max_completion_tokens: 8192,
-      response_format: { type: 'json_object' },
     };
+    if (jsonMode) {
+      payload.response_format = { type: 'json_object' };
+    }
 
     const res = await fetch(url, {
       method: 'POST',
@@ -226,7 +232,7 @@ export async function callGroq({ prompt, systemInstruction, model = null }) {
  *   fallbackUsed?: boolean
  * }>}
  */
-export async function generateArticleContent({ prompt, systemInstruction, dryRun = false }) {
+export async function generateArticleContent({ prompt, systemInstruction, dryRun = false, jsonMode = false }) {
   // Safety rule: Dry-run must NEVER make API calls
   if (dryRun) {
     return {
@@ -258,7 +264,7 @@ export async function generateArticleContent({ prompt, systemInstruction, dryRun
 
   // 1. Attempt Primary Provider: Google Gemini
   if (geminiAvailable) {
-    const geminiResult = await callGemini({ prompt, systemInstruction });
+    const geminiResult = await callGemini({ prompt, systemInstruction, jsonMode });
     if (geminiResult.success && geminiResult.rawText) {
       return {
         success: true,
@@ -274,7 +280,7 @@ export async function generateArticleContent({ prompt, systemInstruction, dryRun
 
     // 2. Attempt Fallback Provider: Groq
     if (groqAvailable) {
-      const groqResult = await callGroq({ prompt, systemInstruction });
+      const groqResult = await callGroq({ prompt, systemInstruction, jsonMode });
       if (groqResult.success && groqResult.rawText) {
         return {
           success: true,
@@ -302,7 +308,7 @@ export async function generateArticleContent({ prompt, systemInstruction, dryRun
 
   // Gemini not available, but Groq is available
   if (groqAvailable) {
-    const groqResult = await callGroq({ prompt, systemInstruction });
+    const groqResult = await callGroq({ prompt, systemInstruction, jsonMode });
     if (groqResult.success && groqResult.rawText) {
       return {
         success: true,

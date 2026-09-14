@@ -79,6 +79,7 @@ CRITICAL MEDICAL & EDITORIAL SAFETY GUIDELINES:
     const hasFaqError = previousErrors.some((e) => /faq/i.test(e));
     const hasLinkError = previousErrors.some((e) => /internal link|whitelist|trailing slash/i.test(e));
     const hasCategoryError = previousErrors.some((e) => /category/i.test(e));
+    const hasParsingError = previousErrors.some((e) => /malformed|json|parse|syntax|control character|unescaped|invalid ai response/i.test(e));
 
     feedbackSection = `
 ======================================================================
@@ -87,8 +88,8 @@ The previous draft attempt failed automated Phase 3 validation for the following
 ${errorBullets}
 
 YOU MUST FULLY REVISE AND RESOLVE THESE ISSUES IN THIS NEW RESPONSE:
-${hasWordCountError ? '• WORD COUNT CORRECTION: Your previous draft was outside acceptable word count limits (1200-2500 words). Strictly write between 1800 and 2300 words. Do NOT exceed 2300 words under any circumstance.\n' : ''}${hasMedicalError ? '• MEDICAL SAFETY CORRECTION: Remove ANY claim or implication that folk gender prediction methods are guaranteed, certain, 100% accurate, foolproof, or scientifically/clinically proven. Strictly present them as folklore and entertainment, contrasting with medical ultrasound and NIPT.\n' : ''}${hasFaqError ? '• FAQ CORRECTION: Ensure between 4 and 8 structured FAQs with complete, non-empty question and answer fields. The FAQs in frontmatter MUST match the FAQ section in the markdown body.\n' : ''}${hasLinkError ? '• INTERNAL LINK CORRECTION: Use ONLY the approved whitelisted links below with root-relative paths starting with "/" and NO trailing slashes.\n' : ''}${hasCategoryError ? `• CATEGORY CORRECTION: Ensure frontmatter category is strictly "${finalCategory}".\n` : ''}
-IMPORTANT: Do not simply append or prefix corrections. Return a clean, complete, fully corrected article JSON object strictly adhering to all guidelines.
+${hasParsingError ? '• OUTPUT FORMAT & DELIMITERS CORRECTION: Your previous response failed parsing due to syntax or malformed structure. You MUST strictly use the <<<METADATA>>> and <<<ARTICLE>>> delimiters. Place only the short JSON metadata between <<<METADATA>>> tags, and write the full article as clean Markdown between <<<ARTICLE>>> tags without JSON escaping.\n' : ''}${hasWordCountError ? '• WORD COUNT CORRECTION: Your previous draft was outside acceptable word count limits (1200-2500 words). Strictly write between 1800 and 2300 words. Do NOT exceed 2300 words under any circumstance.\n' : ''}${hasMedicalError ? '• MEDICAL SAFETY CORRECTION: Remove ANY claim or implication that folk gender prediction methods are guaranteed, certain, 100% accurate, foolproof, or scientifically/clinically proven. Strictly present them as folklore and entertainment, contrasting with medical ultrasound and NIPT.\n' : ''}${hasFaqError ? '• FAQ CORRECTION: Ensure between 4 and 8 structured FAQs with complete, non-empty question and answer fields. The FAQs in frontmatter MUST match the FAQ section in the markdown body.\n' : ''}${hasLinkError ? '• INTERNAL LINK CORRECTION: Use ONLY the approved whitelisted links below with root-relative paths starting with "/" and NO trailing slashes.\n' : ''}${hasCategoryError ? `• CATEGORY CORRECTION: Ensure frontmatter category is strictly "${finalCategory}".\n` : ''}
+IMPORTANT: Do not simply append or prefix corrections. Return a clean, complete, fully corrected article strictly adhering to all guidelines.
 ======================================================================
 `;
   }
@@ -115,8 +116,10 @@ FAQ REQUIREMENTS:
 - Provide between 4 and 8 comprehensive, non-redundant FAQs.
 - The FAQs in the structured frontmatter MUST match the FAQ section in the markdown body.
 
-MANDATORY JSON OUTPUT FORMAT:
-Respond with ONLY a valid JSON object strictly matching this schema:
+MANDATORY OUTPUT FORMAT:
+You MUST provide the structured frontmatter metadata and the complete markdown article using the exact delimiters below:
+
+<<<METADATA>>>
 {
   "frontmatter": {
     "title": "${topic.title}",
@@ -134,9 +137,17 @@ Respond with ONLY a valid JSON object strictly matching this schema:
         "answer": "Accurate, concise, 2-3 sentence answer."
       }
     ]
-  },
-  "markdownBody": "Complete article in GitHub Flavored Markdown (H2, H3, lists, comparisons, tables where helpful, natural internal links to whitelisted URLs, and an H2 ## Frequently Asked Questions section)."
-}`;
+  }
+}
+<<<METADATA>>>
+
+<<<ARTICLE>>>
+[Write the complete, publication-ready article here in GitHub Flavored Markdown]
+- Include H2 and H3 headings, lists, comparisons, tables where helpful
+- Include natural internal links to approved whitelisted URLs
+- Include an H2 ## Frequently Asked Questions section matching the frontmatter FAQs
+- Write clean, standard markdown directly. Do NOT JSON-escape quotation marks, quotes, or newlines in this section.
+<<<ARTICLE>>>`;
 
   return {
     systemInstruction,
@@ -150,62 +161,397 @@ Respond with ONLY a valid JSON object strictly matching this schema:
 }
 
 /**
- * Safely parses and validates the structured AI response.
+ * Safely unescapes escaped control characters and quotes from a markdown string
+ * while leaving raw unescaped newlines and quotes intact.
+ * @param {string} str
+ * @returns {string}
+ */
+export function cleanMarkdownString(str) {
+  if (typeof str !== 'string') return '';
+  return str
+    .replace(/\\r\\n/g, '\n')
+    .replace(/\\n/g, '\n')
+    .replace(/\\t/g, '\t')
+    .replace(/\\"/g, '"')
+    .replace(/\\\\/g, '\\')
+    .trim();
+}
+
+/**
+ * Parses delimited multi-part output (<<<METADATA>>> ... <<<ARTICLE>>>)
+ * or markdown code-fenced metadata blocks.
+ * @param {string} rawResponse
+ * @returns {{ frontmatter: object, markdownBody: string } | null}
+ */
+export function parseDelimitedResponse(rawResponse) {
+  if (!rawResponse || typeof rawResponse !== 'string') return null;
+
+  // 1. Tag delimited format: <<<METADATA>>> ... <<<METADATA>>> and <<<ARTICLE>>> ... <<<ARTICLE>>>
+  const metadataTagMatch = rawResponse.match(/<<<METADATA>>>([\s\S]*?)<<<METADATA>>>/i);
+  const articleTagMatch = rawResponse.match(/<<<ARTICLE>>>([\s\S]*?)(?:<<<ARTICLE>>>|$)/i);
+
+  if (metadataTagMatch && articleTagMatch) {
+    const metaText = metadataTagMatch[1].trim();
+    const articleText = articleTagMatch[1].trim();
+
+    let metaObj;
+    try {
+      metaObj = JSON.parse(metaText);
+    } catch (_) {
+      const b1 = metaText.indexOf('{');
+      const b2 = metaText.lastIndexOf('}');
+      if (b1 !== -1 && b2 > b1) {
+        try {
+          metaObj = JSON.parse(metaText.substring(b1, b2 + 1));
+        } catch (__) {
+          return null;
+        }
+      } else {
+        return null;
+      }
+    }
+
+    const frontmatter = metaObj?.frontmatter && typeof metaObj.frontmatter === 'object'
+      ? metaObj.frontmatter
+      : metaObj;
+
+    return {
+      frontmatter,
+      markdownBody: articleText,
+    };
+  }
+
+  // 2. Code fence metadata followed by article: ```json { ... } ``` followed by # or ##
+  const fenceMatch = rawResponse.match(/```(?:json)?\s*(\{[\s\S]*?\})\s*```([\s\S]*)$/i);
+  if (fenceMatch) {
+    const jsonText = fenceMatch[1].trim();
+    const bodyText = fenceMatch[2].trim();
+
+    if (bodyText.length > 100 && /(?:^|\n)#{1,3}\s+/m.test(bodyText)) {
+      try {
+        const metaObj = JSON.parse(jsonText);
+        const frontmatter = metaObj?.frontmatter && typeof metaObj.frontmatter === 'object'
+          ? metaObj.frontmatter
+          : metaObj;
+        return {
+          frontmatter,
+          markdownBody: bodyText,
+        };
+      } catch (_) {}
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Deterministically repairs malformed JSON responses where long article content
+ * inside "markdownBody" broke standard JSON.parse due to unescaped quotes,
+ * raw control characters (literal newlines/tabs), or trailing commas.
+ * 
+ * Never fabricates or guesses missing structured fields.
+ * 
+ * @param {string} rawText
+ * @returns {{ frontmatter: object, markdownBody: string } | null}
+ */
+export function repairMalformedJsonArticle(rawText) {
+  if (!rawText || typeof rawText !== 'string') return null;
+
+  // Check if this looks like an attempted JSON article with frontmatter and markdownBody
+  const hasFm = rawText.includes('"frontmatter"') || rawText.includes('"title"');
+  const hasMb = rawText.includes('"markdownBody"');
+  if (!hasFm || !hasMb) return null;
+
+  // 1. Extract frontmatter object by tracking balanced braces
+  let frontmatter = null;
+  const fmKeyMatch = rawText.match(/"frontmatter"\s*:\s*\{/);
+  if (fmKeyMatch) {
+    const fmStartIndex = fmKeyMatch.index + fmKeyMatch[0].length - 1;
+    let braceCount = 0;
+    let inString = false;
+    let escaped = false;
+    let fmEndIndex = -1;
+
+    for (let i = fmStartIndex; i < rawText.length; i++) {
+      const ch = rawText[i];
+      if (escaped) {
+        escaped = false;
+        continue;
+      }
+      if (ch === '\\') {
+        escaped = true;
+        continue;
+      }
+      if (ch === '"') {
+        inString = !inString;
+        continue;
+      }
+      if (!inString) {
+        if (ch === '{') braceCount++;
+        else if (ch === '}') {
+          braceCount--;
+          if (braceCount === 0) {
+            fmEndIndex = i;
+            break;
+          }
+        }
+      }
+    }
+
+    if (fmEndIndex !== -1) {
+      const fmJsonStr = rawText.substring(fmStartIndex, fmEndIndex + 1);
+      try {
+        frontmatter = JSON.parse(fmJsonStr);
+      } catch (_) {
+        // Safe cleanup of trailing commas or control characters within frontmatter
+        try {
+          const sanitized = fmJsonStr
+            .replace(/,\s*([\}\]])/g, '$1')
+            .replace(/[\x00-\x1F\x7F-\x9F]/g, (c) => (c === '\n' || c === '\r' || c === '\t' ? ' ' : ''));
+          frontmatter = JSON.parse(sanitized);
+        } catch (__) {}
+      }
+    }
+  }
+
+  // If "frontmatter" key was not found, check if frontmatter fields are top-level before "markdownBody"
+  if (!frontmatter) {
+    const mbKeyIdx = rawText.indexOf('"markdownBody"');
+    if (mbKeyIdx !== -1) {
+      const textBeforeMb = rawText.substring(0, mbKeyIdx).trim().replace(/,\s*$/, '') + '}';
+      const firstBrace = textBeforeMb.indexOf('{');
+      if (firstBrace !== -1) {
+        try {
+          const topObj = JSON.parse(textBeforeMb.substring(firstBrace));
+          if (topObj && topObj.title && topObj.description) {
+            frontmatter = topObj;
+          }
+        } catch (_) {}
+      }
+    }
+  }
+
+  if (!frontmatter || typeof frontmatter !== 'object') return null;
+
+  // 2. Extract markdownBody from the remainder
+  const mbKeyMatch = rawText.match(/"markdownBody"\s*:\s*"?/);
+  if (!mbKeyMatch) return null;
+
+  const mbStartIndex = mbKeyMatch.index + mbKeyMatch[0].length;
+  const lastBrace = rawText.lastIndexOf('}');
+  if (lastBrace <= mbStartIndex) return null;
+
+  let rawBody = rawText.substring(mbStartIndex, lastBrace).trim();
+
+  // Strip trailing quote if present before the last brace
+  if (rawBody.endsWith('"')) {
+    rawBody = rawBody.slice(0, -1).trim();
+  }
+
+  const markdownBody = cleanMarkdownString(rawBody);
+  if (!markdownBody || markdownBody.length < 200) return null;
+
+  return {
+    frontmatter,
+    markdownBody,
+  };
+}
+
+/**
+ * Parses basic YAML frontmatter if returned directly as Astro markdown.
+ * @param {string} content
+ * @returns {{ frontmatter: object, markdownBody: string } | null}
+ */
+export function parseYamlFrontmatter(content) {
+  if (!content || !content.startsWith('---')) return null;
+  const endMatch = content.slice(3).indexOf('---');
+  if (endMatch === -1) return null;
+
+  const fmText = content.slice(3, endMatch + 3).trim();
+  const body = content.slice(endMatch + 6).trim();
+
+  const frontmatter = {};
+  const lines = fmText.split(/\r?\n/);
+  let inFaqs = false;
+  let currentFaq = null;
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#')) continue;
+
+    if (trimmed.startsWith('faqs:')) {
+      inFaqs = true;
+      frontmatter.faqs = [];
+      continue;
+    }
+
+    if (inFaqs) {
+      if (line.startsWith('  - question:') || line.startsWith('- question:')) {
+        currentFaq = { question: trimmed.replace(/^-?\s*question:\s*/, '').replace(/^["']|["']$/g, ''), answer: '' };
+        frontmatter.faqs.push(currentFaq);
+        continue;
+      }
+      if (currentFaq && (line.startsWith('    answer:') || line.startsWith('  answer:'))) {
+        currentFaq.answer = trimmed.replace(/^answer:\s*/, '').replace(/^["']|["']$/g, '');
+        continue;
+      }
+      if (!line.startsWith(' ') && !line.startsWith('\t')) {
+        inFaqs = false;
+      }
+    }
+
+    if (!inFaqs) {
+      const colonIdx = trimmed.indexOf(':');
+      if (colonIdx !== -1) {
+        const key = trimmed.substring(0, colonIdx).trim();
+        let val = trimmed.substring(colonIdx + 1).trim();
+        if (val.startsWith('[') && val.endsWith(']')) {
+          try {
+            val = JSON.parse(val);
+          } catch (_) {
+            val = val.slice(1, -1).split(',').map((s) => s.trim().replace(/^["']|["']$/g, ''));
+          }
+        } else {
+          val = val.replace(/^["']|["']$/g, '');
+          if (val === 'true') val = true;
+          else if (val === 'false') val = false;
+        }
+        frontmatter[key] = val;
+      }
+    }
+  }
+
+  return { frontmatter, markdownBody: body };
+}
+
+/**
+ * Safely parses and validates the structured AI response across multiple formats:
+ * 1. Delimited multi-part format (<<<METADATA>>> + <<<ARTICLE>>>)
+ * 2. YAML frontmatter format (--- ... ---)
+ * 3. Standard JSON ({ frontmatter, markdownBody })
+ * 4. Deterministic repair of malformed JSON (bad control characters, unescaped quotes)
+ * 
  * @param {string} rawResponse - Raw string returned from AI model
  * @param {object} [options] - Validation options
  * @param {string[]} [options.whitelistedPaths] - Whitelisted internal paths
  * @param {number} [options.minWords] - Minimum word count (default: 1200)
- * @returns {{ valid: boolean, data?: { frontmatter: object, markdownBody: string, wordCount: number }, error?: string }}
+ * @returns {{
+ *   valid: boolean,
+ *   data?: { frontmatter: object, markdownBody: string, wordCount: number },
+ *   repaired?: boolean,
+ *   classification?: string,
+ *   recoverable?: boolean,
+ *   error?: string
+ * }}
  */
 export function parseAIResponse(rawResponse, options = {}) {
   if (!rawResponse || typeof rawResponse !== 'string') {
-    return { valid: false, error: 'Empty or non-string AI response' };
+    return {
+      valid: false,
+      error: 'Empty or non-string AI response',
+      classification: 'EMPTY_RESPONSE',
+      recoverable: false,
+    };
   }
 
-  // Strip code fences (```json ... ``` or ``` ...)
   let cleaned = rawResponse.trim();
-  if (cleaned.startsWith('```')) {
-    cleaned = cleaned.replace(/^```(?:json)?\r?\n/, '').replace(/\r?\n```$/, '').trim();
+  let frontmatter = null;
+  let markdownBody = null;
+  let repaired = false;
+
+  // Strategy 1: Check delimited <<<METADATA>>> and <<<ARTICLE>>> format
+  const delimited = parseDelimitedResponse(cleaned);
+  if (delimited && delimited.frontmatter && delimited.markdownBody) {
+    frontmatter = delimited.frontmatter;
+    markdownBody = delimited.markdownBody;
   }
 
-  // Attempt JSON parse
-  let parsed;
-  try {
-    parsed = JSON.parse(cleaned);
-  } catch (err) {
-    // Attempt to isolate first { to last }
-    const firstBrace = cleaned.indexOf('{');
-    const lastBrace = cleaned.lastIndexOf('}');
-    if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
-      try {
-        parsed = JSON.parse(cleaned.substring(firstBrace, lastBrace + 1));
-      } catch (innerErr) {
-        return { valid: false, error: `Malformed JSON from AI model: ${innerErr.message}` };
-      }
-    } else {
-      return { valid: false, error: `No JSON object detected in AI response: ${err.message}` };
+  // Strategy 2: Check YAML frontmatter (--- ... ---)
+  if (!frontmatter && cleaned.startsWith('---')) {
+    const yamlParsed = parseYamlFrontmatter(cleaned);
+    if (yamlParsed && yamlParsed.frontmatter && yamlParsed.markdownBody) {
+      frontmatter = yamlParsed.frontmatter;
+      markdownBody = yamlParsed.markdownBody;
     }
   }
 
-  if (!parsed || typeof parsed !== 'object') {
-    return { valid: false, error: 'AI output parsed as non-object' };
+  // Strategy 3: Standard JSON parse
+  if (!frontmatter) {
+    let jsonCandidate = cleaned;
+    if (jsonCandidate.startsWith('```')) {
+      jsonCandidate = jsonCandidate.replace(/^```(?:json)?\r?\n/, '').replace(/\r?\n```$/, '').trim();
+    }
+
+    let parsed = null;
+    let jsonParseError = null;
+    try {
+      parsed = JSON.parse(jsonCandidate);
+    } catch (err) {
+      jsonParseError = err;
+      const firstBrace = jsonCandidate.indexOf('{');
+      const lastBrace = jsonCandidate.lastIndexOf('}');
+      if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+        try {
+          parsed = JSON.parse(jsonCandidate.substring(firstBrace, lastBrace + 1));
+          jsonParseError = null;
+        } catch (innerErr) {
+          jsonParseError = innerErr;
+        }
+      }
+    }
+
+    if (parsed && typeof parsed === 'object') {
+      frontmatter = parsed.frontmatter || parsed;
+      markdownBody = parsed.markdownBody;
+    }
+
+    // Strategy 4: Deterministic JSON Repair if standard parse failed or had syntax issues
+    if ((!frontmatter || !markdownBody) && (jsonParseError || jsonCandidate.includes('"markdownBody"'))) {
+      const repairedData = repairMalformedJsonArticle(cleaned);
+      if (repairedData && repairedData.frontmatter && repairedData.markdownBody) {
+        frontmatter = repairedData.frontmatter;
+        markdownBody = repairedData.markdownBody;
+        repaired = true;
+      } else if (jsonParseError) {
+        return {
+          valid: false,
+          error: `Malformed JSON from AI model: ${jsonParseError.message}`,
+          classification: 'MALFORMED_JSON_SYNTAX',
+          recoverable: false,
+        };
+      }
+    }
   }
 
-  const { frontmatter, markdownBody } = parsed;
-
+  // Classification check if extraction still failed
   if (!frontmatter || typeof frontmatter !== 'object') {
-    return { valid: false, error: 'Missing or invalid "frontmatter" object in AI output' };
+    return {
+      valid: false,
+      error: 'Missing or invalid "frontmatter" object in AI output',
+      classification: 'MISSING_STRUCTURED_METADATA',
+      recoverable: false,
+    };
   }
 
   if (!markdownBody || typeof markdownBody !== 'string' || markdownBody.trim().length < 200) {
-    return { valid: false, error: 'Missing, empty, or too short "markdownBody" in AI output' };
+    return {
+      valid: false,
+      error: 'Missing, empty, or too short "markdownBody" in AI output',
+      classification: 'ARTICLE_BODY_EMPTY',
+      recoverable: false,
+    };
   }
 
   // Validate required frontmatter fields
   const requiredFields = ['title', 'description', 'category', 'heroImage', 'heroImageAlt', 'excerpt'];
   for (const field of requiredFields) {
     if (!frontmatter[field] || typeof frontmatter[field] !== 'string' || !frontmatter[field].trim()) {
-      return { valid: false, error: `Missing or invalid required frontmatter field: "${field}"` };
+      return {
+        valid: false,
+        error: `Missing or invalid required frontmatter field: "${field}"`,
+        classification: 'MISSING_REQUIRED_FIELDS',
+        recoverable: false,
+      };
     }
   }
 
@@ -214,12 +560,19 @@ export function parseAIResponse(rawResponse, options = {}) {
     return {
       valid: false,
       error: `Invalid FAQs: Expected between 4 and 8 items, received ${Array.isArray(frontmatter.faqs) ? frontmatter.faqs.length : 0}`,
+      classification: 'INVALID_FAQS',
+      recoverable: false,
     };
   }
 
   for (const faq of frontmatter.faqs) {
-    if (!faq || !faq.question || !faq.answer) {
-      return { valid: false, error: 'One or more FAQs are missing question or answer fields' };
+    if (!faq || typeof faq !== 'object' || !faq.question || !faq.answer) {
+      return {
+        valid: false,
+        error: 'One or more FAQs are missing question or answer fields',
+        classification: 'INVALID_FAQS',
+        recoverable: false,
+      };
     }
   }
 
@@ -232,6 +585,8 @@ export function parseAIResponse(rawResponse, options = {}) {
     return {
       valid: false,
       error: `Article word count (${wordCount}) is below project minimum (${minRequired} words)`,
+      classification: 'WORD_COUNT_TOO_LOW',
+      recoverable: false,
     };
   }
 
@@ -245,10 +600,9 @@ export function parseAIResponse(rawResponse, options = {}) {
     // Check for trailing slashes on internal links
     const linksWithTrailingSlash = internalLinks.filter((url) => url.length > 1 && url.endsWith('/'));
     if (linksWithTrailingSlash.length > 0) {
-      // Auto-sanitize trailing slashes rather than rejecting
       for (const badUrl of linksWithTrailingSlash) {
         const cleanUrl = badUrl.replace(/\/+$/, '');
-        parsed.markdownBody = parsed.markdownBody.replaceAll(`](${badUrl})`, `](${cleanUrl})`);
+        markdownBody = markdownBody.replaceAll(`](${badUrl})`, `](${cleanUrl})`);
       }
     }
   }
@@ -267,13 +621,18 @@ export function parseAIResponse(rawResponse, options = {}) {
     valid: true,
     data: {
       frontmatter,
-      markdownBody: parsed.markdownBody,
+      markdownBody,
       wordCount,
     },
+    repaired,
   };
 }
 
 export default {
   buildArticlePrompt,
   parseAIResponse,
+  parseDelimitedResponse,
+  repairMalformedJsonArticle,
+  parseYamlFrontmatter,
+  cleanMarkdownString,
 };

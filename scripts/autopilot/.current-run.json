@@ -1,11 +1,11 @@
 {
-  "runId": "run-2026-09-13T04-03-35-190Z-3e886a",
-  "createdAt": "2026-09-13T04:03:35.295Z",
+  "runId": "run-2026-09-14T02-07-36-238Z-392a46",
+  "createdAt": "2026-09-14T02:07:36.282Z",
   "mode": "dry-run",
   "status": "DRY_RUN_COMPLETE",
   "resultState": "DRY_RUN_COMPLETE",
   "inventoryScan": {
-    "timestamp": "2026-09-13T04:03:35.227Z",
+    "timestamp": "2026-09-14T02:07:36.249Z",
     "totalArticles": 9,
     "productionSlugs": [
       "chinese-gender-calendar-leap-month-rules",
@@ -40,5 +40,5 @@
   "validation": null,
   "promotion": null,
   "errors": [],
-  "updatedAt": "2026-09-13T04:03:35.346Z"
+  "updatedAt": "2026-09-14T02:07:36.316Z"
 }
