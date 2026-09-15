@@ -13,6 +13,14 @@ import { validateDraft } from './core/validator.js';
 import { logEvent } from './core/audit-logger.js';
 import { createRunId, writeRunManifest, updateRunManifest, clearCurrentRunManifest } from './core/manifest.js';
 
+// Normalize environment variable aliases for AI provider credentials
+if (!process.env.GEMINI_API_KEY && process.env.GENDER_GEMINI_KEY) {
+  process.env.GEMINI_API_KEY = process.env.GENDER_GEMINI_KEY;
+}
+if (!process.env.GROQ_API_KEY && process.env.GENDER_GROQ_API_KEY) {
+  process.env.GROQ_API_KEY = process.env.GENDER_GROQ_API_KEY;
+}
+
 /**
  * Main orchestrator for SEO Autopilot
  * @param {object} [options]

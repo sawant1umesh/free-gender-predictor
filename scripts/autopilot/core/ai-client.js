@@ -12,13 +12,31 @@ export function setMockHandler(handler) {
 }
 
 /**
+ * Resolve Google Gemini API key with fallback to alias name
+ * @returns {string}
+ */
+export function getGeminiApiKey() {
+  return (process.env.GEMINI_API_KEY || process.env.GENDER_GEMINI_KEY || '').trim();
+}
+
+/**
+ * Resolve Groq API key with fallback to alias name
+ * @returns {string}
+ */
+export function getGroqApiKey() {
+  return (process.env.GROQ_API_KEY || process.env.GENDER_GROQ_API_KEY || '').trim();
+}
+
+/**
  * Check provider credentials availability without logging or exposing secrets.
  * @returns {{ geminiAvailable: boolean, groqAvailable: boolean }}
  */
 export function getProviderAvailability() {
+  const geminiKey = getGeminiApiKey();
+  const groqKey = getGroqApiKey();
   return {
-    geminiAvailable: Boolean(process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.trim().length > 0),
-    groqAvailable: Boolean(process.env.GROQ_API_KEY && process.env.GROQ_API_KEY.trim().length > 0),
+    geminiAvailable: Boolean(geminiKey.length > 0),
+    groqAvailable: Boolean(groqKey.length > 0),
   };
 }
 
@@ -29,8 +47,8 @@ export function getProviderAvailability() {
  */
 export function sanitizeErrorMessage(error) {
   const msg = error instanceof Error ? error.message : String(error || '');
-  const geminiKey = process.env.GEMINI_API_KEY;
-  const groqKey = process.env.GROQ_API_KEY;
+  const geminiKey = getGeminiApiKey();
+  const groqKey = getGroqApiKey();
 
   let sanitized = msg;
   if (geminiKey && geminiKey.length > 5) {
@@ -56,8 +74,8 @@ export function sanitizeErrorMessage(error) {
  * @returns {Promise<{ success: boolean, rawText?: string, error?: string, model?: string }>}
  */
 export async function callGemini({ prompt, systemInstruction, model = null, jsonMode = false }) {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || !apiKey.trim()) {
+  const apiKey = getGeminiApiKey();
+  if (!apiKey) {
     return { success: false, error: 'GEMINI_API_KEY environment variable is not configured' };
   }
 
@@ -150,8 +168,8 @@ export async function callGemini({ prompt, systemInstruction, model = null, json
  * @returns {Promise<{ success: boolean, rawText?: string, error?: string, model?: string }>}
  */
 export async function callGroq({ prompt, systemInstruction, model = null, jsonMode = false }) {
-  const apiKey = process.env.GROQ_API_KEY;
-  if (!apiKey || !apiKey.trim()) {
+  const apiKey = getGroqApiKey();
+  if (!apiKey) {
     return { success: false, error: 'GROQ_API_KEY environment variable is not configured' };
   }
 

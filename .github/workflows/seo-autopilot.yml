@@ -36,6 +36,11 @@ jobs:
   seo-autopilot:
     name: SEO Autopilot Pipeline
     runs-on: ubuntu-latest
+    env:
+      GEMINI_API_KEY: ${{ secrets.GENDER_GEMINI_KEY }}
+      GROQ_API_KEY: ${{ secrets.GENDER_GROQ_API_KEY }}
+      GENDER_GEMINI_KEY: ${{ secrets.GENDER_GEMINI_KEY }}
+      GENDER_GROQ_API_KEY: ${{ secrets.GENDER_GROQ_API_KEY }}
 
     steps:
       # 1. Check out repository
@@ -61,6 +66,9 @@ jobs:
       # -------------------------------------------------------------
       - name: Execute Autopilot (Dry-Run Mode)
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'dry-run' }}
+        env:
+          GEMINI_API_KEY: ${{ secrets.GENDER_GEMINI_KEY }}
+          GROQ_API_KEY: ${{ secrets.GENDER_GROQ_API_KEY }}
         run: |
           echo "======================================================"
           echo "  🛡️  RUNNING SEO AUTOPILOT IN DRY-RUN MODE"
@@ -100,6 +108,9 @@ jobs:
 
       - name: Promote Validated Draft to Production Blog
         if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'publish') }}
+        env:
+          GEMINI_API_KEY: ${{ secrets.GENDER_GEMINI_KEY }}
+          GROQ_API_KEY: ${{ secrets.GENDER_GROQ_API_KEY }}
         run: |
           echo "======================================================"
           echo "  📦 PROMOTING VALIDATED DRAFT TO PRODUCTION"
