@@ -250,10 +250,151 @@ export function analyzeSeeds(seeds, inventory) {
   return seeds.map((seed) => analyzeTopicCandidate(seed, inventory));
 }
 
+/**
+ * Select the next SAFE topic candidate from a list of candidates against the current inventory.
+ * Automatically evaluates candidates in order, skipping duplicates, REJECTs, and CAUTIONs.
+ * 
+ * @param {Array<object>} candidates - List of candidate seeds/topics
+ * @param {object} inventory - Current production blog inventory
+ * @param {object} [options]
+ * @param {boolean} [options.allowCaution=false] - Whether CAUTION topics are eligible (default false)
+ * @param {Set<string>|Array<string>} [options.excludedSlugs] - Slugs to exclude
+ * @param {Set<string>|Array<string>} [options.excludedTitles] - Titles to exclude
+ * @param {Set<string>|Array<string>} [options.excludedTopicIds] - Topic IDs to exclude
+ * @param {boolean} [options.includeTestPriority=false] - Whether to allow priority: 'test'
+ * @returns {{
+ *   selectedTopic: object|null,
+ *   analysis: object|null,
+ *   skippedCandidates: Array<{ candidate: object, decision: string, reason: string, score: number, closestMatch?: string }>,
+ *   allEvaluations: Array<object>
+ * }}
+ */
+export function selectNextSafeCandidate(candidates = [], inventory, options = {}) {
+  const allowCaution = options.allowCaution ?? false;
+  const excludedSlugs = new Set(Array.from(options.excludedSlugs || []).map((s) => s.toLowerCase()));
+  const excludedTitles = new Set(Array.from(options.excludedTitles || []).map((t) => t.toLowerCase().trim()));
+  const excludedTopicIds = new Set(options.excludedTopicIds || []);
+  const includeTestPriority = options.includeTestPriority ?? false;
+
+  const skippedCandidates = [];
+  const allEvaluations = [];
+  let selectedTopic = null;
+  let selectedAnalysis = null;
+
+  for (const cand of candidates) {
+    if (!cand || typeof cand !== 'object') continue;
+
+    const candId = cand.id || '';
+    const candTitle = (cand.title || '').trim();
+    const rawSlug = (cand.suggestedSlug || cand.slug || candTitle).replace(/\.(md|mdx)$/i, '');
+    const candSlug = slugify(rawSlug);
+
+    // Check exclusion sets
+    if (candId && excludedTopicIds.has(candId)) {
+      skippedCandidates.push({
+        candidate: cand,
+        decision: 'EXCLUDED',
+        reason: `Topic ID "${candId}" previously attempted or excluded in this run`,
+        score: 1.0,
+      });
+      continue;
+    }
+
+    if (candSlug && excludedSlugs.has(candSlug)) {
+      skippedCandidates.push({
+        candidate: cand,
+        decision: 'EXCLUDED',
+        reason: `Slug "${candSlug}" previously attempted or excluded in this run`,
+        score: 1.0,
+      });
+      continue;
+    }
+
+    if (candTitle && excludedTitles.has(candTitle.toLowerCase())) {
+      skippedCandidates.push({
+        candidate: cand,
+        decision: 'EXCLUDED',
+        reason: `Title "${candTitle}" previously attempted or excluded in this run`,
+        score: 1.0,
+      });
+      continue;
+    }
+
+    // Skip test priority unless explicitly permitted
+    if (cand.priority === 'test' && !includeTestPriority) {
+      continue;
+    }
+
+    // Direct lookup check against production sets
+    if (inventory.existingSlugs && inventory.existingSlugs.has(candSlug)) {
+      skippedCandidates.push({
+        candidate: cand,
+        decision: 'REJECT',
+        reason: `Duplicate slug "${candSlug}" matches existing article in production inventory`,
+        score: 1.0,
+        closestMatch: candSlug,
+      });
+      continue;
+    }
+
+    if (inventory.existingTitles && inventory.existingTitles.has(candTitle.toLowerCase())) {
+      skippedCandidates.push({
+        candidate: cand,
+        decision: 'REJECT',
+        reason: `Exact duplicate title "${candTitle}" matches existing article in production inventory`,
+        score: 1.0,
+        closestMatch: candTitle,
+      });
+      continue;
+    }
+
+    // Analyze candidate against complete production inventory
+    const analysis = analyzeTopicCandidate(cand, inventory);
+    allEvaluations.push(analysis);
+
+    if (analysis.decision === 'REJECT') {
+      skippedCandidates.push({
+        candidate: cand,
+        decision: 'REJECT',
+        reason: analysis.reason,
+        score: analysis.score,
+        closestMatch: analysis.closestMatch,
+      });
+      continue;
+    }
+
+    if (analysis.decision === 'CAUTION') {
+      if (!allowCaution) {
+        skippedCandidates.push({
+          candidate: cand,
+          decision: 'CAUTION',
+          reason: analysis.reason,
+          score: analysis.score,
+          closestMatch: analysis.closestMatch,
+        });
+        continue;
+      }
+    }
+
+    // Candidate is SAFE (or CAUTION with allowCaution: true)
+    selectedTopic = cand;
+    selectedAnalysis = analysis;
+    break;
+  }
+
+  return {
+    selectedTopic,
+    analysis: selectedAnalysis,
+    skippedCandidates,
+    allEvaluations,
+  };
+}
+
 export default {
   tokenize,
   jaccardSimilarity,
   overlapCoefficient,
   analyzeTopicCandidate,
   analyzeSeeds,
+  selectNextSafeCandidate,
 };

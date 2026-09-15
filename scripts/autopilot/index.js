@@ -5,7 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { autopilotConfig, RESULT_STATES } from './core/config.js';
 import { scanInventory, slugify } from './core/inventory.js';
-import { analyzeSeeds, analyzeTopicCandidate } from './core/gap-analyzer.js';
+import { analyzeSeeds, analyzeTopicCandidate, selectNextSafeCandidate } from './core/gap-analyzer.js';
 import { buildArticlePrompt, parseAIResponse } from './core/prompt-builder.js';
 import { generateArticleContent, getProviderAvailability } from './core/ai-client.js';
 import { createDraft } from './core/draft-generator.js';
@@ -21,6 +21,13 @@ import { createRunId, writeRunManifest, updateRunManifest, clearCurrentRunManife
  * @param {object|string} [options.forceTopic] - Optional specific topic candidate to run with safety checks.
  * @param {boolean} [options.allowCaution] - Whether to allow CAUTION-level topic selection.
  * @param {string} [options.runId] - Optional explicit run identifier for transaction tracking.
+ * @param {number} [options.maxAttempts] - Max AI retry attempts per topic.
+ * @param {Array<object>} [options.candidates] - Optional candidate pool to select from.
+ * @param {number} [options.maxTopicReselections] - Max topic reselections on collision.
+ * @param {Array<string>} [options.excludedSlugs] - Slugs excluded from selection.
+ * @param {Array<string>} [options.excludedTitles] - Titles excluded from selection.
+ * @param {Array<string>} [options.excludedTopicIds] - Topic IDs excluded from selection.
+ * @param {number} [options.reselectionCount] - Current reselection index.
  * @returns {Promise<{
  *   state: string,
  *   success: boolean,
@@ -33,37 +40,55 @@ import { createRunId, writeRunManifest, updateRunManifest, clearCurrentRunManife
  *   error?: string
  * }>}
  */
-export async function runAutopilot({ generate = false, overrideTopic = null, forceTopic = null, allowCaution = false, runId: customRunId = null, maxAttempts = null } = {}) {
+export async function runAutopilot({
+  generate = false,
+  overrideTopic = null,
+  forceTopic = null,
+  allowCaution = false,
+  runId: customRunId = null,
+  maxAttempts = null,
+  candidates = null,
+  maxTopicReselections = null,
+  excludedSlugs = [],
+  excludedTitles = [],
+  excludedTopicIds = [],
+  reselectionCount = 0,
+} = {}) {
   const isGenerateMode = Boolean(generate);
   const runId = (customRunId && typeof customRunId === 'string') ? customRunId : createRunId();
 
-  // Reset/clean previous run state safely
-  clearCurrentRunManifest();
+  // Reset/clean previous run state safely on fresh runs
+  if (reselectionCount === 0) {
+    clearCurrentRunManifest();
+  }
 
   console.log('\n' + '='.repeat(70));
   console.log('  🎯 SEO AUTOPILOT - PHASE 3: QUALITY GATE & DRAFT VALIDATION');
   console.log('  Site: Free Gender Predictor (https://freegenderpredictor.com)');
   console.log(`  Run ID: ${runId}`);
+  if (reselectionCount > 0) {
+    console.log(`  Reselection Cycle: ${reselectionCount} (Collision Recovery)`);
+  }
   console.log(`  Mode: ${isGenerateMode ? '🚀 GENERATE (Draft staging & validation)' : '🛡️  DRY-RUN / READ-ONLY (No drafts created)'}`);
   console.log('='.repeat(70) + '\n');
 
   // 1. Scan Content Inventory & Whitelist Routes (Fresh Runtime Scan)
-  // IMPORTANT: This scan reads the CURRENT filesystem state at runtime.
-  // All topic-selection safety decisions are made against this exact snapshot.
+  // THE FIRST JOB OF EVERY AUTOPILOT RUN MUST BE TO SCAN ALL CURRENT PRODUCTION BLOG ARTICLES.
   const inventoryScanTimestamp = new Date().toISOString();
   console.log('🔍 [1/6] Scanning production blog inventory & internal routes...');
-  console.log(`   • Run ID:         ${runId}`);
-  console.log(`   • Scan timestamp: ${inventoryScanTimestamp}`);
+  console.log(`   • Run ID:                 ${runId}`);
+  console.log(`   • Full scan timestamp:    ${inventoryScanTimestamp}`);
   const inventory = await scanInventory();
   const whitelistedPaths = inventory.routes.map((r) => r.path);
 
-  // Initialize current run manifest
+  // Initialize or update current run manifest
   const manifestData = {
     runId,
     createdAt: new Date().toISOString(),
     mode: isGenerateMode ? 'generate' : 'dry-run',
     status: 'INITIALIZING',
     resultState: null,
+    reselectionCount,
     inventoryScan: {
       timestamp: inventoryScanTimestamp,
       totalArticles: inventory.stats.totalArticles,
@@ -211,22 +236,33 @@ export async function runAutopilot({ generate = false, overrideTopic = null, for
       selectedCandidate = candidateToTest;
     }
   } else {
-    // Autonomous topic selection:
-    // Exclude test seeds (priority: 'test')
-    // Exclude any seed whose slug, title, or filename exists in current production inventory
-    const eligibleSafe = safeTopics.filter((r) => {
-      const cand = r.candidate;
-      if (cand.priority === 'test') return false;
-      const cSlug = slugify((cand.suggestedSlug || cand.slug || cand.title || '').replace(/\.(md|mdx)$/i, ''));
-      const cTitle = (cand.title || '').trim().toLowerCase();
-      if (inventory.existingSlugs && inventory.existingSlugs.has(cSlug)) return false;
-      if (inventory.existingFilenames && inventory.existingFilenames.has(`${cSlug}.md`)) return false;
-      if (inventory.existingTitles && inventory.existingTitles.has(cTitle)) return false;
-      return true;
+    // Autonomous topic selection using selectNextSafeCandidate:
+    // Sequentially evaluates all candidates against the complete current production inventory.
+    // Automatically skips:
+    //   - exact duplicate titles
+    //   - duplicate slugs
+    //   - high topical overlap (REJECT >= 75%)
+    //   - moderate topical overlap (CAUTION >= 50%)
+    // Continues through candidate list until the next genuinely SAFE topic is found.
+    const candidatePool = candidates || seeds;
+    const selection = selectNextSafeCandidate(candidatePool, inventory, {
+      allowCaution,
+      excludedSlugs,
+      excludedTitles,
+      excludedTopicIds,
+      includeTestPriority: Boolean(candidates),
     });
 
-    if (eligibleSafe.length > 0) {
-      selectedCandidate = eligibleSafe[0].candidate;
+    if (selection.skippedCandidates.length > 0) {
+      console.log(`   ⏭️  Evaluated and skipped ${selection.skippedCandidates.length} candidate topic(s):`);
+      for (const s of selection.skippedCandidates) {
+        console.log(`       [${s.decision}] "${s.candidate.title}" — ${s.reason}`);
+      }
+    }
+
+    if (selection.selectedTopic) {
+      selectedCandidate = selection.selectedTopic;
+      console.log(`   ✓ Selected first available SAFE topic: "${selectedCandidate.title}"`);
     }
   }
 

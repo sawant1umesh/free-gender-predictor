@@ -129,6 +129,11 @@ export async function promoteDraft(draftPathOrOptions, options = {}) {
   const allowCaution = mergedOptions.allowCaution ?? false;
   const logToAudit = mergedOptions.logToAudit ?? true;
   const effectiveRunId = mergedOptions.runId || manifestData?.runId || null;
+  const isDefaultManifest = Boolean(targetManifestPath && path.resolve(targetManifestPath) === path.resolve(autopilotConfig.paths.currentRunManifest));
+  const isDefaultProdDir = productionBlogDir === path.resolve(autopilotConfig.paths.productionBlogDir);
+  const reselectOnCollision = mergedOptions.reselectOnCollision ?? (isDefaultManifest && isDefaultProdDir);
+  const currentReselectionCount = mergedOptions.reselectionCount ?? manifestData?.reselectionCount ?? 0;
+  const maxReselections = mergedOptions.maxReselections ?? autopilotConfig.ai.maxTopicReselections ?? 3;
 
   // 1. Resolve and Validate Source Path Safety
   if (!draftPath || typeof draftPath !== 'string') {
@@ -241,6 +246,84 @@ export async function promoteDraft(draftPathOrOptions, options = {}) {
 
   // Check for existing production slug collision against fresh inventory
   if (fs.existsSync(destinationPath) || (inventory.existingSlugs && inventory.existingSlugs.has(slug))) {
+    if (reselectOnCollision) {
+      if (manifestData && targetManifestPath) {
+        updateRunManifest({
+          status: 'DRAFT_ABANDONED_COLLISION',
+          resultState: RESULT_STATES.DRAFT_ABANDONED_COLLISION,
+          isPromotable: false,
+          abandonedDraft: {
+            slug,
+            draftPath: resolvedDraftPath,
+            reason: RESULT_STATES.PRODUCTION_SLUG_EXISTS,
+          },
+          promotion: {
+            status: 'COLLISION_ABANDONED',
+            reason: RESULT_STATES.PRODUCTION_SLUG_EXISTS,
+            timestamp: new Date().toISOString(),
+          },
+          errors: [`Production slug collision: "${slug}" already published. Draft safely abandoned.`],
+        }, targetManifestPath);
+      }
+
+      console.warn(`\n⚠️  Promotion collision detected: Production article already exists for slug "${slug}".`);
+      console.warn(`🗑️  Safely abandoning conflicting current draft: ${resolvedDraftPath}`);
+
+      if (currentReselectionCount >= maxReselections) {
+        console.error(`❌ Bounded reselection limit reached (${currentReselectionCount}/${maxReselections}). Halting to prevent infinite loops.`);
+        return {
+          success: false,
+          state: RESULT_STATES.PRODUCTION_SLUG_EXISTS,
+          message: `Promotion rejected: A production article with slug "${slug}" already exists in ${productionBlogDir}. Maximum reselection limit reached.`,
+          slug,
+          runId: effectiveRunId,
+          errors: [`Production slug collision: "${slug}" already published. Reselection limit reached.`],
+        };
+      }
+
+      console.log(`🔄 Re-scanning fresh inventory and automatically selecting another SAFE topic (reselection ${currentReselectionCount + 1}/${maxReselections})...\n`);
+
+      const { runAutopilot } = await import('./index.js');
+      const newRunResult = await runAutopilot({
+        generate: true,
+        runId: effectiveRunId,
+        allowCaution,
+        candidates: mergedOptions.candidates,
+        maxTopicReselections: maxReselections,
+        reselectionCount: currentReselectionCount + 1,
+        excludedSlugs: [slug, ...(manifestData?.excludedSlugs || [])],
+        excludedTitles: [slug, manifestData?.selectedTopic?.title || '', ...(manifestData?.excludedTitles || [])].filter(Boolean),
+        excludedTopicIds: [manifestData?.selectedTopic?.id || ''].filter(Boolean),
+      });
+
+      if (newRunResult.success && newRunResult.state === RESULT_STATES.VALIDATED_DRAFT_CREATED) {
+        console.log(`🎯 Promoting newly generated SAFE topic: "${newRunResult.topic?.title || newRunResult.slug}"...`);
+        return await promoteDraft(null, {
+          ...mergedOptions,
+          manifest: targetManifestPath || autopilotConfig.paths.currentRunManifest,
+          reselectionCount: currentReselectionCount + 1,
+          reselectOnCollision: true,
+        });
+      }
+
+      if (newRunResult.state === RESULT_STATES.NO_STRONG_TOPIC_FOUND) {
+        return {
+          success: true,
+          state: RESULT_STATES.NO_PROMOTION_REQUIRED,
+          message: 'No further SAFE topic candidates available after collision. Zero drafts to promote.',
+          runId: effectiveRunId,
+        };
+      }
+
+      return {
+        success: false,
+        state: newRunResult.state || RESULT_STATES.PROMOTION_VALIDATION_FAILED,
+        message: `Reselected topic generation failed with state: ${newRunResult.state}`,
+        runId: effectiveRunId,
+        errors: [newRunResult.error || 'Reselection generation failed.'],
+      };
+    }
+
     if (manifestData && targetManifestPath) {
       updateRunManifest({
         status: 'PROMOTION_FAILED',
@@ -371,6 +454,86 @@ export async function promoteDraft(draftPathOrOptions, options = {}) {
   const cannibalizationAnalysis = analyzeTopicCandidate(candidate, inventory);
 
   if (cannibalizationAnalysis.decision === 'REJECT') {
+    if (reselectOnCollision) {
+      const collisionReason = cannibalizationAnalysis.reason;
+      if (manifestData && targetManifestPath) {
+        updateRunManifest({
+          status: 'DRAFT_ABANDONED_COLLISION',
+          resultState: RESULT_STATES.DRAFT_ABANDONED_COLLISION,
+          isPromotable: false,
+          abandonedDraft: {
+            slug,
+            draftPath: resolvedDraftPath,
+            reason: collisionReason,
+          },
+          promotion: {
+            status: 'COLLISION_ABANDONED',
+            reason: collisionReason,
+            timestamp: new Date().toISOString(),
+          },
+          errors: [`Promotion cannibalization collision for "${parsedTitle}": ${collisionReason}. Draft safely abandoned.`],
+        }, targetManifestPath);
+      }
+
+      console.warn(`\n⚠️  Promotion collision detected: Cannibalization conflict for "${parsedTitle}": ${collisionReason}`);
+      console.warn(`🗑️  Safely abandoning conflicting current draft: ${resolvedDraftPath}`);
+
+      if (currentReselectionCount >= maxReselections) {
+        console.error(`❌ Bounded reselection limit reached (${currentReselectionCount}/${maxReselections}). Halting to prevent infinite loops.`);
+        return {
+          success: false,
+          state: RESULT_STATES.PROMOTION_CANNIBALIZATION_REJECTED,
+          message: `Promotion rejected due to content cannibalization: ${collisionReason}. Maximum reselection limit reached.`,
+          slug,
+          runId: effectiveRunId,
+          cannibalization: cannibalizationAnalysis,
+          errors: [collisionReason],
+        };
+      }
+
+      console.log(`🔄 Re-scanning fresh inventory and automatically selecting another SAFE topic (reselection ${currentReselectionCount + 1}/${maxReselections})...\n`);
+
+      const { runAutopilot } = await import('./index.js');
+      const newRunResult = await runAutopilot({
+        generate: true,
+        runId: effectiveRunId,
+        allowCaution,
+        candidates: mergedOptions.candidates,
+        maxTopicReselections: maxReselections,
+        reselectionCount: currentReselectionCount + 1,
+        excludedSlugs: [slug, ...(manifestData?.excludedSlugs || [])],
+        excludedTitles: [parsedTitle, slug, manifestData?.selectedTopic?.title || '', ...(manifestData?.excludedTitles || [])].filter(Boolean),
+        excludedTopicIds: [manifestData?.selectedTopic?.id || ''].filter(Boolean),
+      });
+
+      if (newRunResult.success && newRunResult.state === RESULT_STATES.VALIDATED_DRAFT_CREATED) {
+        console.log(`🎯 Promoting newly generated SAFE topic: "${newRunResult.topic?.title || newRunResult.slug}"...`);
+        return await promoteDraft(null, {
+          ...mergedOptions,
+          manifest: targetManifestPath || autopilotConfig.paths.currentRunManifest,
+          reselectionCount: currentReselectionCount + 1,
+          reselectOnCollision: true,
+        });
+      }
+
+      if (newRunResult.state === RESULT_STATES.NO_STRONG_TOPIC_FOUND) {
+        return {
+          success: true,
+          state: RESULT_STATES.NO_PROMOTION_REQUIRED,
+          message: 'No further SAFE topic candidates available after collision. Zero drafts to promote.',
+          runId: effectiveRunId,
+        };
+      }
+
+      return {
+        success: false,
+        state: newRunResult.state || RESULT_STATES.PROMOTION_VALIDATION_FAILED,
+        message: `Reselected topic generation failed with state: ${newRunResult.state}`,
+        runId: effectiveRunId,
+        errors: [newRunResult.error || 'Reselection generation failed.'],
+      };
+    }
+
     if (manifestData && targetManifestPath) {
       updateRunManifest({
         status: 'PROMOTION_FAILED',
@@ -411,6 +574,86 @@ export async function promoteDraft(draftPathOrOptions, options = {}) {
   }
 
   if (cannibalizationAnalysis.decision === 'CAUTION' && !allowCaution) {
+    if (reselectOnCollision) {
+      const collisionReason = cannibalizationAnalysis.reason;
+      if (manifestData && targetManifestPath) {
+        updateRunManifest({
+          status: 'DRAFT_ABANDONED_COLLISION',
+          resultState: RESULT_STATES.DRAFT_ABANDONED_COLLISION,
+          isPromotable: false,
+          abandonedDraft: {
+            slug,
+            draftPath: resolvedDraftPath,
+            reason: collisionReason,
+          },
+          promotion: {
+            status: 'COLLISION_ABANDONED',
+            reason: collisionReason,
+            timestamp: new Date().toISOString(),
+          },
+          errors: [`Promotion CAUTION collision for "${parsedTitle}": ${collisionReason}. Draft safely abandoned.`],
+        }, targetManifestPath);
+      }
+
+      console.warn(`\n⚠️  Promotion collision detected: CAUTION overlap for "${parsedTitle}": ${collisionReason}`);
+      console.warn(`🗑️  Safely abandoning conflicting current draft: ${resolvedDraftPath}`);
+
+      if (currentReselectionCount >= maxReselections) {
+        console.error(`❌ Bounded reselection limit reached (${currentReselectionCount}/${maxReselections}). Halting to prevent infinite loops.`);
+        return {
+          success: false,
+          state: RESULT_STATES.PROMOTION_CANNIBALIZATION_REJECTED,
+          message: `Promotion blocked by default on CAUTION-level overlap: ${collisionReason}. Maximum reselection limit reached.`,
+          slug,
+          runId: effectiveRunId,
+          cannibalization: cannibalizationAnalysis,
+          errors: [collisionReason],
+        };
+      }
+
+      console.log(`🔄 Re-scanning fresh inventory and automatically selecting another SAFE topic (reselection ${currentReselectionCount + 1}/${maxReselections})...\n`);
+
+      const { runAutopilot } = await import('./index.js');
+      const newRunResult = await runAutopilot({
+        generate: true,
+        runId: effectiveRunId,
+        allowCaution,
+        candidates: mergedOptions.candidates,
+        maxTopicReselections: maxReselections,
+        reselectionCount: currentReselectionCount + 1,
+        excludedSlugs: [slug, ...(manifestData?.excludedSlugs || [])],
+        excludedTitles: [parsedTitle, slug, manifestData?.selectedTopic?.title || '', ...(manifestData?.excludedTitles || [])].filter(Boolean),
+        excludedTopicIds: [manifestData?.selectedTopic?.id || ''].filter(Boolean),
+      });
+
+      if (newRunResult.success && newRunResult.state === RESULT_STATES.VALIDATED_DRAFT_CREATED) {
+        console.log(`🎯 Promoting newly generated SAFE topic: "${newRunResult.topic?.title || newRunResult.slug}"...`);
+        return await promoteDraft(null, {
+          ...mergedOptions,
+          manifest: targetManifestPath || autopilotConfig.paths.currentRunManifest,
+          reselectionCount: currentReselectionCount + 1,
+          reselectOnCollision: true,
+        });
+      }
+
+      if (newRunResult.state === RESULT_STATES.NO_STRONG_TOPIC_FOUND) {
+        return {
+          success: true,
+          state: RESULT_STATES.NO_PROMOTION_REQUIRED,
+          message: 'No further SAFE topic candidates available after collision. Zero drafts to promote.',
+          runId: effectiveRunId,
+        };
+      }
+
+      return {
+        success: false,
+        state: newRunResult.state || RESULT_STATES.PROMOTION_VALIDATION_FAILED,
+        message: `Reselected topic generation failed with state: ${newRunResult.state}`,
+        runId: effectiveRunId,
+        errors: [newRunResult.error || 'Reselection generation failed.'],
+      };
+    }
+
     if (manifestData && targetManifestPath) {
       updateRunManifest({
         status: 'PROMOTION_FAILED',

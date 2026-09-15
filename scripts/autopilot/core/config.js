@@ -31,6 +31,7 @@ export const RESULT_STATES = Object.freeze({
   NO_PROMOTION_REQUIRED: 'NO_PROMOTION_REQUIRED',
   TOPIC_ALREADY_EXISTS: 'TOPIC_ALREADY_EXISTS',
   CURRENT_RUN_DRAFT_INVALID: 'CURRENT_RUN_DRAFT_INVALID',
+  DRAFT_ABANDONED_COLLISION: 'DRAFT_ABANDONED_COLLISION',
 });
 
 /**
@@ -62,6 +63,7 @@ export const autopilotConfig = {
     primaryProvider: 'gemini',
     fallbackProvider: 'groq',
     maxGenerationAttempts: 3,
+    maxTopicReselections: 3,
     gemini: {
       model: process.env.GEMINI_MODEL || 'gemini-3.6-flash',
       apiVersion: 'v1beta',
