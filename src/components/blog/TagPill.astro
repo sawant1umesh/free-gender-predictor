@@ -1,0 +1,17 @@
+---
+import { slugify } from '../../lib/blog/utils';
+
+interface Props {
+  tag: string;
+}
+
+const { tag } = Astro.props;
+const tagSlug = slugify(tag);
+---
+
+<a
+  href={`/blog/tag/${tagSlug}`}
+  class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-pink-50 hover:text-pink-600 transition-colors duration-150"
+>
+  #{tag}
+</a>

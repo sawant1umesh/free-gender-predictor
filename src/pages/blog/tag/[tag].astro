@@ -1,0 +1,61 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BlogCard from '../../../components/blog/BlogCard.astro';
+import Breadcrumbs from '../../../components/blog/Breadcrumbs.astro';
+import { getAllTags, getPostsByTag, unslugify } from '../../../lib/blog/utils';
+
+export async function getStaticPaths() {
+  const tags = await getAllTags();
+  return tags.map((t) => ({
+    params: { tag: t.slug },
+    props: { tagName: t.name },
+  }));
+}
+
+const { tag } = Astro.params;
+const { tagName } = Astro.props;
+const tagTitle = tagName || unslugify(tag || '');
+const posts = await getPostsByTag(tag || '');
+
+const breadcrumbItems = [
+  { name: 'Blog', url: '/blog' },
+  { name: `#${tagTitle}`, url: `/blog/tag/${tag}` },
+];
+---
+
+<BaseLayout
+  title={`#${tagTitle} Tag Archive | Free Gender Predictor Blog`}
+  description={`Explore all blog posts tagged with #${tagTitle} on Free Gender Predictor.`}
+  breadcrumbItems={breadcrumbItems}
+>
+  <main class="py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-10">
+    <Breadcrumbs items={breadcrumbItems} />
+
+    <div class="text-center space-y-3 max-w-2xl mx-auto">
+      <span class="inline-flex items-center px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full bg-gray-100 text-gray-700">
+        Tag Archive
+      </span>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900">
+        #{tagTitle}
+      </h1>
+      <p class="text-base text-gray-600">
+        {posts.length} {posts.length === 1 ? 'article' : 'articles'} tagged with #{tagTitle}.
+      </p>
+    </div>
+
+    {posts.length > 0 ? (
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {posts.map((post) => (
+          <BlogCard post={post} />
+        ))}
+      </div>
+    ) : (
+      <div class="text-center py-16 bg-gray-50 rounded-2xl border border-gray-200">
+        <p class="text-gray-500 text-base">No articles found with this tag.</p>
+        <a href="/blog" class="mt-4 inline-block text-sm font-semibold text-pink-600 hover:text-pink-700">
+          Back to Blog Home &rarr;
+        </a>
+      </div>
+    )}
+  </main>
+</BaseLayout>

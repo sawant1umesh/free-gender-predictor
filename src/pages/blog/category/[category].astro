@@ -1,0 +1,61 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BlogCard from '../../../components/blog/BlogCard.astro';
+import Breadcrumbs from '../../../components/blog/Breadcrumbs.astro';
+import { getAllCategories, getPostsByCategory, unslugify } from '../../../lib/blog/utils';
+
+export async function getStaticPaths() {
+  const categories = await getAllCategories();
+  return categories.map((cat) => ({
+    params: { category: cat.slug },
+    props: { categoryName: cat.name },
+  }));
+}
+
+const { category } = Astro.params;
+const { categoryName } = Astro.props;
+const categoryTitle = categoryName || unslugify(category || '');
+const posts = await getPostsByCategory(category || '');
+
+const breadcrumbItems = [
+  { name: 'Blog', url: '/blog' },
+  { name: categoryTitle, url: `/blog/category/${category}` },
+];
+---
+
+<BaseLayout
+  title={`${categoryTitle} Articles & Guides | Free Gender Predictor`}
+  description={`Browse educational articles and guides under the ${categoryTitle} category on Free Gender Predictor.`}
+  breadcrumbItems={breadcrumbItems}
+>
+  <main class="py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-10">
+    <Breadcrumbs items={breadcrumbItems} />
+
+    <div class="text-center space-y-3 max-w-2xl mx-auto">
+      <span class="inline-flex items-center px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full bg-pink-100 text-pink-700">
+        Category Archive
+      </span>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900">
+        {categoryTitle}
+      </h1>
+      <p class="text-base text-gray-600">
+        {posts.length} {posts.length === 1 ? 'article' : 'articles'} available in this category.
+      </p>
+    </div>
+
+    {posts.length > 0 ? (
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {posts.map((post) => (
+          <BlogCard post={post} />
+        ))}
+      </div>
+    ) : (
+      <div class="text-center py-16 bg-gray-50 rounded-2xl border border-gray-200">
+        <p class="text-gray-500 text-base">No articles found in this category.</p>
+        <a href="/blog" class="mt-4 inline-block text-sm font-semibold text-pink-600 hover:text-pink-700">
+          Back to Blog Home &rarr;
+        </a>
+      </div>
+    )}
+  </main>
+</BaseLayout>

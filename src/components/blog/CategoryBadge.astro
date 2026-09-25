@@ -1,0 +1,21 @@
+---
+import { slugify } from '../../lib/blog/utils';
+
+interface Props {
+  category: string;
+  size?: 'sm' | 'md';
+}
+
+const { category, size = 'md' } = Astro.props;
+const categorySlug = slugify(category);
+---
+
+<a
+  href={`/blog/category/${categorySlug}`}
+  class:list={[
+    'inline-flex items-center font-semibold rounded-full bg-pink-100 text-pink-700 hover:bg-pink-200 transition-colors duration-150 shrink-0',
+    size === 'sm' ? 'px-2.5 py-0.5 text-xs' : 'px-3 py-1 text-xs sm:text-sm',
+  ]}
+>
+  {category}
+</a>

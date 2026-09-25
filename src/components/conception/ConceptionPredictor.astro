@@ -1,6 +1,11 @@
 ---
 // ConceptionPredictor.astro
-// Reuses existing prediction engine helpers without duplicating business logic
+// Cleanly integrates with the Phase 1 Conception Calculation Engine (predictGenderByConception)
+// Phase 2: Form Validation, Detailed Result Card, Responsive Design, Reset
+// Phase 3: SEO Content & Privacy-Friendly Sharing
+// Change 1: Exciting Loading / Suspense Result Reveal Experience
+// Change 2: Improved Social Sharing (WhatsApp, Facebook, Instagram fallback, Copy Result, Native Share)
+// Change 3: Fun Game-Style Result Experience & Themed Celebration
 ---
 
 <section
@@ -11,29 +16,29 @@
   <div class="space-y-10">
     <!-- Section Header -->
     <div class="text-center max-w-2xl mx-auto space-y-4">
-      <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full text-xs font-semibold tracking-wide bg-pink-50 border border-pink-200 text-pink-700">
-        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide bg-pink-50 border border-pink-200 text-pink-700">
+        <svg class="w-4 h-4 shrink-0 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
         </svg>
-        <span>Quick Single Month Prediction</span>
+        <span>Instant Conception Prediction</span>
       </div>
 
       <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
-        Chinese Gender Predictor
+        Chinese Gender Predictor by Conception Date
       </h2>
 
-      <p class="text-sm text-gray-500 max-w-xl mx-auto leading-relaxed">
-        Enter the mother's date of birth and the estimated conception date for an instant prediction based on the traditional Qing Gong Biao chart.
+      <p class="text-sm sm:text-base text-gray-600 max-w-xl mx-auto leading-relaxed">
+        Enter the mother's date of birth and estimated conception date to calculate the mother's traditional Chinese lunar age and lunar conception month on the authentic Qing Gong Biao chart.
       </p>
     </div>
 
     <!-- Calculator Form Card -->
-    <div class="card-light-elevated rounded-2xl p-6 sm:p-8 w-full max-w-lg mx-auto">
-      <form id="conception-form" novalidate class="space-y-5">
-        <!-- Mother's DOB -->
-        <div>
-          <label for="conception-mother-dob" class="block text-sm font-semibold text-gray-700 mb-2.5">
-            Mother's Date of Birth <span class="text-pink-500" aria-hidden="true">*</span>
+    <div class="card-light-elevated rounded-2xl p-6 sm:p-8 w-full max-w-xl mx-auto">
+      <form id="conception-form" novalidate class="space-y-6">
+        <!-- Mother's Date of Birth -->
+        <div class="space-y-2">
+          <label for="conception-mother-dob" class="block text-sm font-semibold text-gray-800">
+            Mother's Date of Birth <span class="text-pink-600" aria-hidden="true">*</span>
           </label>
           <div class="relative rounded-xl">
             <input
@@ -43,35 +48,41 @@
               required
               aria-required="true"
               aria-invalid="false"
-              aria-describedby="conception-dob-error-msg"
+              aria-describedby="conception-dob-error-msg conception-age-error-msg"
               class="w-full bg-white border border-gray-200 text-gray-900 text-base rounded-xl px-4 py-3.5 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500/40 focus:border-pink-400 transition-all duration-200 hover:border-gray-300"
             />
           </div>
-          <p id="conception-dob-error-msg" aria-live="polite" class="hidden mt-2 text-xs font-medium text-red-500 flex items-center gap-1.5">
-            <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+
+          <!-- DOB Inline Error -->
+          <p id="conception-dob-error-msg" aria-live="polite" class="hidden text-xs font-medium text-red-600 flex items-center gap-1.5 pt-1">
+            <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
-            <span id="conception-dob-error-text">Please enter a valid birth date.</span>
+            <span id="conception-dob-error-text">Please enter a valid date of birth.</span>
           </p>
-          <div id="conception-age-error-msg" aria-live="polite" class="hidden mt-3 rounded-xl bg-amber-50 border border-amber-200 p-4">
+
+          <!-- Underage Mother Callout -->
+          <div id="conception-age-error-msg" aria-live="polite" class="hidden rounded-xl bg-amber-50 border border-amber-200 p-4 mt-2">
             <div class="flex items-start gap-3">
-              <div class="p-1.5 rounded-full bg-amber-100 text-amber-600 shrink-0 mt-0.5">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <div class="p-1.5 rounded-full bg-amber-100 text-amber-700 shrink-0 mt-0.5">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
               </div>
               <div>
-                <h3 class="text-sm font-semibold text-amber-800">You must be at least 18 years old.</h3>
-                <p class="text-xs text-amber-700 mt-1 leading-relaxed">This calculator is intended for adults aged 18 years and older. Please enter a valid date of birth.</p>
+                <h3 class="text-sm font-semibold text-amber-900">Mother must be at least 18 years old</h3>
+                <p class="text-xs text-amber-800 mt-1 leading-relaxed" id="conception-age-error-detail">
+                  The traditional Qing Gong Biao chart is intended for mothers aged 18 to 45. Please check the date of birth.
+                </p>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Conception Date -->
-        <div>
-          <label for="conception-date" class="block text-sm font-semibold text-gray-700 mb-2.5">
-            Estimated Conception Date <span class="text-pink-500" aria-hidden="true">*</span>
+        <!-- Estimated Conception Date -->
+        <div class="space-y-2">
+          <label for="conception-date" class="block text-sm font-semibold text-gray-800">
+            Estimated Conception Date <span class="text-pink-600" aria-hidden="true">*</span>
           </label>
           <div class="relative rounded-xl">
             <input
@@ -85,94 +96,349 @@
               class="w-full bg-white border border-gray-200 text-gray-900 text-base rounded-xl px-4 py-3.5 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500/40 focus:border-pink-400 transition-all duration-200 hover:border-gray-300"
             />
           </div>
-          <p id="conception-date-error-msg" aria-live="polite" class="hidden mt-2 text-xs font-medium text-red-500 flex items-center gap-1.5">
-            <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+
+          <!-- Conception Date Inline Error -->
+          <p id="conception-date-error-msg" aria-live="polite" class="hidden text-xs font-medium text-red-600 flex items-center gap-1.5 pt-1">
+            <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
-            <span id="conception-date-error-text">Please enter a valid conception date.</span>
+            <span id="conception-date-error-text">Please enter a valid estimated conception date.</span>
           </p>
         </div>
 
+        <!-- General Error Callout -->
+        <div id="conception-general-error-msg" aria-live="polite" class="hidden rounded-xl bg-red-50 border border-red-200 p-4">
+          <div class="flex items-start gap-3">
+            <div class="p-1.5 rounded-full bg-red-100 text-red-700 shrink-0 mt-0.5">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-sm font-semibold text-red-900">Calculation Notice</h3>
+              <p class="text-xs text-red-800 mt-1 leading-relaxed" id="conception-general-error-text">
+                Unable to generate prediction. Please check your inputs.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
         <button
           type="submit"
           id="conception-submit-btn"
-          class="w-full relative group overflow-hidden rounded-xl font-semibold text-white shadow-lg shadow-pink-500/20 transition-all duration-300 hover:shadow-pink-500/35 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 focus:ring-offset-white btn-primary"
+          class="w-full relative group overflow-hidden rounded-xl font-semibold text-white shadow-lg shadow-pink-500/20 transition-all duration-300 hover:shadow-pink-500/35 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 focus:ring-offset-white btn-primary cursor-pointer"
         >
           <span class="relative z-10 flex items-center justify-center gap-2.5 rounded-[11px] px-6 py-3.5 text-base font-semibold transition-all duration-300">
-            <span id="conception-btn-spinner" class="hidden animate-spin h-5 w-5 text-white">
+            <span id="conception-btn-spinner" class="hidden animate-spin h-5 w-5 text-white" aria-hidden="true">
               <svg class="w-full h-full" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
             </span>
-            <span id="conception-btn-text">Predict Gender</span>
-            <svg id="conception-btn-arrow" class="w-5 h-5 text-white/80 group-hover:translate-x-0.5 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            <span id="conception-btn-text">Predict Baby Gender</span>
+            <svg id="conception-btn-arrow" class="w-5 h-5 text-white/80 group-hover:translate-x-0.5 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
             </svg>
           </span>
         </button>
 
-        <div class="flex items-center justify-center gap-2 pt-2 text-xs text-gray-400 font-medium">
-          <svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <!-- Privacy & Security Notice -->
+        <div class="flex items-center justify-center gap-2 pt-1 text-xs text-gray-500 font-medium">
+          <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
           </svg>
-          <span>No personal data is stored. 100% private.</span>
+          <span>100% private. Calculations run securely in your browser.</span>
         </div>
       </form>
     </div>
 
-    <!-- Result Card -->
+    <!-- Suspense / Loading Reveal Card (Change 1) -->
     <div
-      id="conception-result"
-      class="hidden opacity-0 translate-y-6 transition-all duration-700 ease-out w-full max-w-lg mx-auto"
+      id="conception-suspense"
+      aria-live="polite"
+      aria-atomic="true"
+      class="hidden w-full max-w-xl mx-auto transition-all duration-300"
     >
-      <div class="card-light-elevated rounded-2xl p-6 sm:p-8">
-        <!-- Header -->
-        <div class="flex items-center justify-between mb-6 pb-5 border-b border-gray-100">
-          <div class="flex items-center gap-3.5">
-            <div id="result-gender-icon" class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl bg-blue-100 border border-blue-200">
-              👦
-            </div>
-            <div>
-              <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">Predicted Gender</p>
-              <h3 id="result-gender-label" class="text-2xl font-extrabold text-gray-900 tracking-tight">Boy</h3>
-            </div>
-          </div>
-          <span id="result-confidence" class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-pink-50 text-pink-700 border border-pink-200">
-            Chart Based
-          </span>
-        </div>
-
-        <!-- Details Grid -->
-        <div class="grid grid-cols-2 gap-4 mb-6">
-          <div class="rounded-xl bg-gray-50 border border-gray-200 p-4 space-y-1.5">
-            <p class="text-[10px] text-gray-500 font-semibold uppercase tracking-wider">Lunar Age</p>
-            <p id="result-lunar-age" class="text-lg font-bold text-gray-900">--</p>
-          </div>
-          <div class="rounded-xl bg-gray-50 border border-gray-200 p-4 space-y-1.5">
-            <p class="text-[10px] text-gray-500 font-semibold uppercase tracking-wider">Lunar Month</p>
-            <p id="result-lunar-month" class="text-lg font-bold text-gray-900">--</p>
-          </div>
-          <div class="rounded-xl bg-gray-50 border border-gray-200 p-4 space-y-1.5 col-span-2">
-            <p class="text-[10px] text-gray-500 font-semibold uppercase tracking-wider">Gregorian Conception Date</p>
-            <p id="result-gregorian-date" class="text-lg font-bold text-gray-900">--</p>
+      <div class="card-light-elevated rounded-2xl p-6 sm:p-8 text-center space-y-6 border border-pink-100 bg-gradient-to-b from-white via-pink-50/25 to-white shadow-xl">
+        <!-- Animated Icon Container -->
+        <div class="relative w-18 h-18 mx-auto flex items-center justify-center">
+          <div class="absolute inset-0 rounded-2xl bg-pink-200 animate-ping opacity-25"></div>
+          <div
+            id="suspense-icon"
+            class="relative z-10 w-18 h-18 rounded-2xl bg-gradient-to-br from-pink-50 via-white to-pink-100 border border-pink-200 flex items-center justify-center text-4xl shadow-sm transition-transform duration-300 transform scale-100"
+          >
+            🌙
           </div>
         </div>
 
-        <!-- Explanation -->
-        <div class="rounded-xl bg-gray-50 border border-gray-200 p-4 mb-4">
-          <p id="result-explanation" class="text-xs text-gray-600 leading-relaxed">
-            Based on the mother's lunar age and the lunar month of conception, the traditional chart predicts a Boy.
+        <!-- Sequential Message Display -->
+        <div class="space-y-1.5 min-h-[58px] flex flex-col justify-center items-center">
+          <p
+            id="suspense-message"
+            class="text-base sm:text-lg font-bold text-gray-900 transition-opacity duration-200"
+          >
+            🌙 Reading the lunar calendar...
+          </p>
+          <p class="text-xs text-gray-500 font-medium">
+            Authentic Qing Gong Biao Calculation
           </p>
         </div>
 
-        <!-- Disclaimer -->
-        <div class="rounded-xl bg-amber-50 border border-amber-200 p-3.5 flex items-start gap-2.5">
-          <svg class="w-4 h-4 shrink-0 mt-0.5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        <!-- Animated Progress Bar -->
+        <div class="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden p-0.5 border border-gray-200/50">
+          <div
+            id="suspense-progress-bar"
+            class="h-full bg-gradient-to-r from-pink-500 via-purple-500 to-pink-500 rounded-full transition-all duration-500 ease-out"
+            style="width: 25%;"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game-Style Celebration Result Card (Change 3) -->
+    <div
+      id="conception-result"
+      aria-live="polite"
+      aria-atomic="true"
+      class="hidden opacity-0 translate-y-6 transition-all duration-700 ease-out w-full max-w-xl mx-auto"
+    >
+      <div
+        id="result-card-inner"
+        class="card-light-elevated rounded-2xl p-6 sm:p-8 space-y-6 border transition-all duration-500"
+      >
+        <!-- Game-Style Celebration Header -->
+        <div class="text-center pb-6 border-b border-gray-100/80 relative overflow-hidden space-y-3">
+          <!-- Game Status Badge -->
+          <div class="flex items-center justify-center gap-2">
+            <span class="text-sm select-none" aria-hidden="true">🎉</span>
+            <span
+              id="result-game-badge"
+              class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-extrabold tracking-wide uppercase shadow-xs transition-colors duration-300 bg-pink-100 text-pink-800 border border-pink-200"
+            >
+              🎮 Prediction Game Result
+            </span>
+            <span class="text-sm select-none" aria-hidden="true">✨</span>
+          </div>
+
+          <!-- Top Announcement -->
+          <p class="text-sm sm:text-base font-bold text-gray-700 tracking-wide">
+            🎉 Congratulations!
+          </p>
+
+          <!-- Hero Outcome Box -->
+          <div id="result-hero-box" class="py-2 transition-transform duration-500">
+            <div
+              id="result-hero-icon"
+              class="text-5xl sm:text-6xl mb-1 select-none transition-transform duration-300"
+              aria-hidden="true"
+            >
+              💙
+            </div>
+            <div class="text-xs uppercase font-extrabold tracking-widest text-gray-400 mb-0.5">
+              It's a
+            </div>
+            <h3
+              id="result-hero-title"
+              class="text-4xl sm:text-5xl font-black tracking-tight drop-shadow-xs"
+            >
+              BOY!
+            </h3>
+          </div>
+
+          <!-- Chart Attribution Line -->
+          <p class="text-xs sm:text-sm font-semibold text-gray-500 max-w-sm mx-auto">
+            According to the Traditional Chinese Gender Chart
+          </p>
+
+          <!-- Badges -->
+          <div class="flex flex-wrap items-center justify-center gap-2 pt-1">
+            <span
+              id="result-confidence"
+              class="px-3.5 py-1.5 rounded-full text-xs font-bold tracking-wide border transition-colors duration-300"
+            >
+              Qing Gong Biao Chart
+            </span>
+            <span
+              id="result-leap-badge"
+              class="hidden px-3.5 py-1.5 rounded-full text-xs font-bold bg-purple-50 text-purple-700 border border-purple-200"
+            >
+              🌙 Leap Month
+            </span>
+          </div>
+        </div>
+
+        <!-- Key Metrics 2x2 Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Mother's Lunar Age -->
+          <div class="rounded-xl bg-white/80 border border-gray-200/80 p-4 space-y-1 shadow-xs">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Mother's Lunar Age</span>
+              <span class="text-[10px] font-medium text-gray-400">虚岁 Xūsuì</span>
+            </div>
+            <p id="result-lunar-age" class="text-xl font-black text-gray-900">--</p>
+            <p class="text-[11px] text-gray-500 leading-snug">Calculated from Chinese New Year</p>
+          </div>
+
+          <!-- Lunar Conception Month -->
+          <div class="rounded-xl bg-white/80 border border-gray-200/80 p-4 space-y-1 shadow-xs">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Lunar Conception Month</span>
+              <span id="result-lunar-month-cn" class="text-[10px] font-medium text-gray-400">--</span>
+            </div>
+            <p id="result-lunar-month" class="text-xl font-black text-gray-900">--</p>
+            <p class="text-[11px] text-gray-500 leading-snug">Astronomical Chinese lunar month</p>
+          </div>
+
+          <!-- Mother's Lunar Birth Year & Zodiac -->
+          <div class="rounded-xl bg-white/80 border border-gray-200/80 p-4 space-y-1 shadow-xs">
+            <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Birth Lunar Year & Zodiac</span>
+            <p id="result-birth-year-zodiac" class="text-base font-bold text-gray-900">--</p>
+            <p id="result-lunar-birth-date" class="text-[11px] text-gray-500 truncate">--</p>
+          </div>
+
+          <!-- Conception Lunar Year & Zodiac -->
+          <div class="rounded-xl bg-white/80 border border-gray-200/80 p-4 space-y-1 shadow-xs">
+            <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Conception Lunar Year & Zodiac</span>
+            <p id="result-conception-year-zodiac" class="text-base font-bold text-gray-900">--</p>
+            <p id="result-lunar-conception-date" class="text-[11px] text-gray-500 truncate">--</p>
+          </div>
+        </div>
+
+        <!-- Gregorian Dates Reference -->
+        <div class="rounded-xl bg-slate-50/90 border border-slate-200/70 p-4 space-y-1.5 text-xs">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-gray-600">
+            <span><strong>Mother's Gregorian DOB:</strong> <span id="result-dob-gregorian">--</span></span>
+            <span><strong>Conception Date:</strong> <span id="result-conception-gregorian">--</span></span>
+          </div>
+        </div>
+
+        <!-- Explanation Summary -->
+        <div class="rounded-xl bg-white/70 border border-gray-200/70 p-4">
+          <p id="result-explanation" class="text-xs sm:text-sm text-gray-700 leading-relaxed">
+            Based on the mother's lunar age and the lunar month of conception, the traditional Qing Gong Biao chart indicates this prediction.
+          </p>
+        </div>
+
+        <!-- Dedicated "🎮 Just for Fun" Disclaimer Section (Change 3) -->
+        <div class="rounded-2xl bg-amber-50/95 border border-amber-200 p-5 space-y-2">
+          <div class="flex items-center gap-2 text-amber-900">
+            <span class="text-xl select-none" aria-hidden="true">🎮</span>
+            <h5 class="text-sm font-extrabold tracking-tight">Just for Fun</h5>
+          </div>
+          <p class="text-xs sm:text-sm text-amber-900 leading-relaxed font-normal">
+            This traditional Chinese gender prediction is a fun cultural game based on the Chinese lunar calendar and traditional gender chart. It is not scientifically proven and does not determine or reliably predict a baby's biological sex. Results are for entertainment and cultural interest only and should not be used for medical, pregnancy, or healthcare decisions.
+          </p>
+        </div>
+
+        <!-- Social Sharing & Actions Section (Change 2) -->
+        <div class="pt-4 border-t border-gray-100 space-y-4">
+          <div class="flex items-center justify-between">
+            <h5 class="text-xs font-bold uppercase tracking-wider text-gray-500">
+              Share Your Result
+            </h5>
+            <span class="text-[11px] text-gray-400">100% Private · Zero personal inputs shared</span>
+          </div>
+
+          <!-- Social Platform Actions (WhatsApp, Facebook, Instagram) -->
+          <div class="grid grid-cols-3 gap-2.5">
+            <!-- WhatsApp -->
+            <button
+              type="button"
+              id="conception-share-whatsapp"
+              class="inline-flex items-center justify-center gap-2 rounded-xl py-3 px-3 text-xs sm:text-sm font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 transition-all duration-200 cursor-pointer shadow-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              aria-label="Share predicted gender on WhatsApp"
+            >
+              <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.634.085-1.922-.445-1.288-.53-2.115-1.84-2.179-1.925-.064-.085-.519-.691-.519-1.319 0-.628.327-.938.443-1.066.116-.128.254-.16.339-.16.085 0 .17.001.244.005.078.004.182-.03.285.218.106.255.361.88.393.944.032.064.053.138.01.223-.042.085-.064.138-.128.212-.064.075-.134.167-.191.225-.064.064-.131.134-.056.262.075.128.332.548.712.886.489.435.901.57 1.029.634.128.064.202.053.277-.032.075-.085.319-.372.404-.5.085-.128.17-.106.287-.064.117.043.743.35.887.414.127.064.212.096.244.149.032.053.032.308-.112.713zM12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.434 5.176L2 22l4.981-1.309A9.957 9.957 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.154c-1.637 0-3.155-.494-4.423-1.34l-.317-.213-2.954.775.789-2.879-.233-.371A8.134 8.134 0 013.846 12c0-4.497 3.657-8.154 8.154-8.154s8.154 3.657 8.154 8.154-3.657 8.154-8.154 8.154z"/>
+              </svg>
+              <span>WhatsApp</span>
+            </button>
+
+            <!-- Facebook -->
+            <button
+              type="button"
+              id="conception-share-facebook"
+              class="inline-flex items-center justify-center gap-2 rounded-xl py-3 px-3 text-xs sm:text-sm font-bold text-blue-800 bg-blue-50 hover:bg-blue-100 border border-blue-200/80 transition-all duration-200 cursor-pointer shadow-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+              aria-label="Share Chinese Gender Predictor on Facebook"
+            >
+              <svg class="w-4 h-4 text-blue-600 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+              <span>Facebook</span>
+            </button>
+
+            <!-- Instagram -->
+            <button
+              type="button"
+              id="conception-share-instagram"
+              class="inline-flex items-center justify-center gap-2 rounded-xl py-3 px-3 text-xs sm:text-sm font-bold text-purple-900 bg-purple-50 hover:bg-purple-100 border border-purple-200/80 transition-all duration-200 cursor-pointer shadow-xs focus:outline-none focus:ring-2 focus:ring-purple-500"
+              aria-label="Copy result to share on Instagram"
+            >
+              <svg class="w-4 h-4 text-pink-600 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+              </svg>
+              <span>Instagram</span>
+            </button>
+          </div>
+
+          <!-- Secondary Actions (Copy Result, Share, Try Again) -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <!-- Copy Result -->
+            <button
+              type="button"
+              id="conception-copy-btn"
+              class="inline-flex items-center justify-center gap-2 rounded-xl py-3 px-4 text-xs sm:text-sm font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-200/70 transition-all duration-200 cursor-pointer shadow-xs focus:outline-none focus:ring-2 focus:ring-gray-400"
+            >
+              <svg class="w-4 h-4 text-gray-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+              <span id="conception-copy-btn-text">Copy Result</span>
+            </button>
+
+            <!-- Web Share API Button (Mobile & Desktop) -->
+            <button
+              type="button"
+              id="conception-share-btn"
+              class="inline-flex items-center justify-center gap-2 rounded-xl py-3 px-4 text-xs sm:text-sm font-bold text-white bg-pink-600 hover:bg-pink-700 transition-all duration-200 cursor-pointer shadow-xs focus:outline-none focus:ring-2 focus:ring-pink-500"
+              aria-label="Open native share dialog"
+            >
+              <svg class="w-4 h-4 text-white shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+              </svg>
+              <span id="conception-share-btn-text">Share</span>
+            </button>
+
+            <!-- Reset / Try Again Button -->
+            <button
+              type="button"
+              id="conception-reset-btn"
+              class="inline-flex items-center justify-center gap-2 rounded-xl py-3 px-4 text-xs sm:text-sm font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-200/70 transition-all duration-200 cursor-pointer shadow-xs focus:outline-none focus:ring-2 focus:ring-gray-400"
+            >
+              <svg class="w-4 h-4 text-gray-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              <span>Try Again</span>
+            </button>
+          </div>
+
+          <!-- Share / Action Feedback Alert Banner -->
+          <div
+            id="share-feedback-msg"
+            aria-live="polite"
+            class="hidden rounded-xl bg-pink-50 border border-pink-200 p-3 text-center transition-all duration-200"
+          >
+            <p id="share-feedback-text" class="text-xs font-semibold text-pink-800"></p>
+          </div>
+        </div>
+
+        <!-- Medical Transparency Notice -->
+        <div class="rounded-xl bg-slate-50 border border-slate-200/80 p-4 flex items-start gap-3">
+          <svg class="w-4 h-4 shrink-0 mt-0.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <p class="text-xs text-amber-700 leading-relaxed">
-            This prediction is for entertainment purposes only. Based on the traditional Qing Gong Biao chart with no scientific validation. Always consult a healthcare provider for medical advice.
+          <p class="text-xs text-slate-600 leading-relaxed" id="result-disclaimer">
+            Always consult a qualified healthcare provider for reliable medical sex determination via mid-trimester ultrasound (18–22 weeks) or cell-free DNA testing (NIPT, 10+ weeks).
           </p>
         </div>
       </div>
@@ -181,21 +447,22 @@
 </section>
 
 <script>
-  import { formatLunarMonth } from '../../lib/calendar/utils';
-  import { isEligibleMotherAge } from '../../lib/calendar/validation';
+  import { predictGenderByConception, type ConceptionPredictionSuccess } from '../../lib/conception';
 
-  const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const MONTH_NAMES = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
 
-  let preloaded = false;
-
-  function preloadEngine() {
-    if (preloaded) return;
-    preloaded = true;
-    Promise.all([
-      import('../../lib/calendar/age'),
-      import('../../lib/calendar/lunar'),
-      import('../../lib/predictor/helpers'),
-    ]).catch(() => { preloaded = false; });
+  function formatDisplayDate(dateStr: string): string {
+    if (!dateStr) return '';
+    const parts = dateStr.split('-');
+    if (parts.length !== 3) return dateStr;
+    const year = parseInt(parts[0], 10);
+    const monthIndex = parseInt(parts[1], 10) - 1;
+    const day = parseInt(parts[2], 10);
+    const monthName = MONTH_NAMES[monthIndex] || parts[1];
+    return `${monthName} ${day}, ${year}`;
   }
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -203,36 +470,68 @@
     const dobInput = document.getElementById('conception-mother-dob') as HTMLInputElement | null;
     const conceptionInput = document.getElementById('conception-date') as HTMLInputElement | null;
     const submitBtn = document.getElementById('conception-submit-btn') as HTMLButtonElement | null;
+    const resetBtn = document.getElementById('conception-reset-btn') as HTMLButtonElement | null;
+    const shareBtn = document.getElementById('conception-share-btn') as HTMLButtonElement | null;
+    const shareBtnText = document.getElementById('conception-share-btn-text');
+    const copyBtn = document.getElementById('conception-copy-btn') as HTMLButtonElement | null;
+    const copyBtnText = document.getElementById('conception-copy-btn-text');
+    const whatsappBtn = document.getElementById('conception-share-whatsapp') as HTMLButtonElement | null;
+    const facebookBtn = document.getElementById('conception-share-facebook') as HTMLButtonElement | null;
+    const instagramBtn = document.getElementById('conception-share-instagram') as HTMLButtonElement | null;
+    const feedbackMsg = document.getElementById('share-feedback-msg');
+    const feedbackText = document.getElementById('share-feedback-text');
     const btnSpinner = document.getElementById('conception-btn-spinner');
     const btnArrow = document.getElementById('conception-btn-arrow');
     const btnText = document.getElementById('conception-btn-text');
+
+    // Error elements
     const dobErrorMsg = document.getElementById('conception-dob-error-msg');
     const dobErrorText = document.getElementById('conception-dob-error-text');
     const dateErrorMsg = document.getElementById('conception-date-error-msg');
     const dateErrorText = document.getElementById('conception-date-error-text');
     const ageErrorMsg = document.getElementById('conception-age-error-msg');
+    const ageErrorDetail = document.getElementById('conception-age-error-detail');
+    const generalErrorMsg = document.getElementById('conception-general-error-msg');
+    const generalErrorText = document.getElementById('conception-general-error-text');
+
+    // Suspense elements (Change 1)
+    const suspenseSection = document.getElementById('conception-suspense');
+    const suspenseIcon = document.getElementById('suspense-icon');
+    const suspenseMessage = document.getElementById('suspense-message');
+    const suspenseProgressBar = document.getElementById('suspense-progress-bar');
+
+    // Result elements (Change 3)
     const resultSection = document.getElementById('conception-result');
-    const genderIcon = document.getElementById('result-gender-icon');
-    const genderLabel = document.getElementById('result-gender-label');
+    const resultCardInner = document.getElementById('result-card-inner');
+    const gameBadge = document.getElementById('result-game-badge');
+    const heroBox = document.getElementById('result-hero-box');
+    const heroIcon = document.getElementById('result-hero-icon');
+    const heroTitle = document.getElementById('result-hero-title');
+    const confidenceBadge = document.getElementById('result-confidence');
+    const leapBadge = document.getElementById('result-leap-badge');
     const lunarAgeEl = document.getElementById('result-lunar-age');
     const lunarMonthEl = document.getElementById('result-lunar-month');
-    const gregorianDateEl = document.getElementById('result-gregorian-date');
+    const lunarMonthCnEl = document.getElementById('result-lunar-month-cn');
+    const birthYearZodiacEl = document.getElementById('result-birth-year-zodiac');
+    const conceptionYearZodiacEl = document.getElementById('result-conception-year-zodiac');
+    const lunarBirthDateEl = document.getElementById('result-lunar-birth-date');
+    const lunarConceptionDateEl = document.getElementById('result-lunar-conception-date');
+    const dobGregorianEl = document.getElementById('result-dob-gregorian');
+    const conceptionGregorianEl = document.getElementById('result-conception-gregorian');
     const explanationEl = document.getElementById('result-explanation');
-    const confidenceBadge = document.getElementById('result-confidence');
+
+    let currentPredictedGender = 'Boy';
+    let activeTimeouts: number[] = [];
+    let feedbackTimeout: number | null = null;
+    let isRevealing = false;
 
     if (!form || !dobInput || !conceptionInput || !submitBtn) return;
 
-    const now = new Date();
-    const todayStr = now.toISOString().split('T')[0];
-
-    // Preload during idle time instead of on first interaction
-    if ('requestIdleCallback' in window) {
-      requestIdleCallback(() => preloadEngine(), { timeout: 3000 });
-    } else {
-      setTimeout(() => preloadEngine(), 1500);
+    function clearAllSuspenseTimers() {
+      activeTimeouts.forEach((id) => clearTimeout(id));
+      activeTimeouts = [];
+      isRevealing = false;
     }
-    dobInput.setAttribute('max', todayStr);
-    conceptionInput.setAttribute('max', todayStr);
 
     function clearAllErrors() {
       if (dobErrorMsg && dobInput) {
@@ -248,22 +547,60 @@
       if (ageErrorMsg) {
         ageErrorMsg.classList.add('hidden');
       }
+      if (generalErrorMsg) {
+        generalErrorMsg.classList.add('hidden');
+      }
+      clearFeedback();
     }
 
-    function showError(input: HTMLInputElement, errorMsgEl: HTMLElement | null, textEl: HTMLElement | null, message: string) {
-      if (textEl) textEl.textContent = message;
-      if (errorMsgEl) errorMsgEl.classList.remove('hidden');
-      input.setAttribute('aria-invalid', 'true');
-      input.classList.add('border-red-400', 'focus:ring-red-400/50');
+    function showDobError(message: string) {
+      if (dobErrorText) dobErrorText.textContent = message;
+      if (dobErrorMsg) dobErrorMsg.classList.remove('hidden');
+      if (dobInput) {
+        dobInput.setAttribute('aria-invalid', 'true');
+        dobInput.classList.add('border-red-400', 'focus:ring-red-400/50');
+        dobInput.focus();
+      }
     }
 
-    function validateDate(value: string): Date | null {
-      if (!value) return null;
-      const dateParts = value.split('-');
-      if (dateParts.length !== 3) return null;
-      const date = new Date(value);
-      if (isNaN(date.getTime())) return null;
-      return date;
+    function showConceptionError(message: string) {
+      if (dateErrorText) dateErrorText.textContent = message;
+      if (dateErrorMsg) dateErrorMsg.classList.remove('hidden');
+      if (conceptionInput) {
+        conceptionInput.setAttribute('aria-invalid', 'true');
+        conceptionInput.classList.add('border-red-400', 'focus:ring-red-400/50');
+        conceptionInput.focus();
+      }
+    }
+
+    function showAgeError(message: string) {
+      if (ageErrorDetail) ageErrorDetail.textContent = message;
+      if (ageErrorMsg) ageErrorMsg.classList.remove('hidden');
+      if (dobInput) {
+        dobInput.setAttribute('aria-invalid', 'true');
+        dobInput.classList.add('border-red-400', 'focus:ring-red-400/50');
+        dobInput.focus();
+      }
+    }
+
+    function showGeneralError(message: string) {
+      if (generalErrorText) generalErrorText.textContent = message;
+      if (generalErrorMsg) generalErrorMsg.classList.remove('hidden');
+    }
+
+    function showFeedback(msg: string, duration = 3500) {
+      if (!feedbackMsg || !feedbackText) return;
+      if (feedbackTimeout) clearTimeout(feedbackTimeout);
+      feedbackText.textContent = msg;
+      feedbackMsg.classList.remove('hidden');
+      feedbackTimeout = window.setTimeout(() => {
+        feedbackMsg.classList.add('hidden');
+      }, duration);
+    }
+
+    function clearFeedback() {
+      if (feedbackTimeout) clearTimeout(feedbackTimeout);
+      if (feedbackMsg) feedbackMsg.classList.add('hidden');
     }
 
     function setLoading(isLoading: boolean) {
@@ -274,12 +611,12 @@
       if (isLoading) {
         btnSpinner.classList.remove('hidden');
         btnArrow.classList.add('hidden');
-        btnText.textContent = 'Predicting...';
+        btnText.textContent = 'Calculating Prediction...';
         submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
       } else {
         btnSpinner.classList.add('hidden');
         btnArrow.classList.remove('hidden');
-        btnText.textContent = 'Predict Gender';
+        btnText.textContent = 'Predict Baby Gender';
         submitBtn.classList.remove('opacity-80', 'cursor-not-allowed');
       }
     }
@@ -287,109 +624,360 @@
     dobInput.addEventListener('input', clearAllErrors);
     conceptionInput.addEventListener('input', clearAllErrors);
 
-    form.addEventListener('submit', async (e) => {
+    // Update suspense step UI
+    function setSuspenseStep(icon: string, text: string, progress: number) {
+      if (suspenseIcon) {
+        suspenseIcon.textContent = icon;
+        suspenseIcon.classList.add('scale-110');
+        setTimeout(() => suspenseIcon?.classList.remove('scale-110'), 150);
+      }
+      if (suspenseMessage) {
+        suspenseMessage.textContent = `${icon} ${text}`;
+      }
+      if (suspenseProgressBar) {
+        suspenseProgressBar.style.width = `${progress}%`;
+      }
+    }
+
+    // Populate and smoothly reveal the final prediction result card (Change 3 Game Transformation)
+    function revealPredictionResult(result: ConceptionPredictionSuccess) {
+      const { prediction, lunarAge, lunarConceptionMonth, lunarBirthYear, lunarConceptionYear, details } = result;
+      currentPredictedGender = prediction;
+      const isBoy = prediction === 'Boy';
+      const genderDisplay = isBoy ? 'Boy' : 'Girl';
+      const emoji = isBoy ? '💙' : '💗';
+
+      // Dynamic Card Styling for Boy vs Girl
+      if (resultCardInner) {
+        if (isBoy) {
+          resultCardInner.className = 'card-light-elevated rounded-2xl p-6 sm:p-8 space-y-6 border border-blue-200/90 bg-gradient-to-b from-blue-50/60 via-white to-blue-50/20 shadow-xl shadow-blue-500/5 transition-all duration-500';
+        } else {
+          resultCardInner.className = 'card-light-elevated rounded-2xl p-6 sm:p-8 space-y-6 border border-pink-200/90 bg-gradient-to-b from-pink-50/60 via-white to-pink-50/20 shadow-xl shadow-pink-500/5 transition-all duration-500';
+        }
+      }
+
+      // Game Badge
+      if (gameBadge) {
+        if (isBoy) {
+          gameBadge.className = 'inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-extrabold tracking-wide uppercase shadow-xs transition-colors duration-300 bg-blue-100 text-blue-800 border border-blue-200';
+        } else {
+          gameBadge.className = 'inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-extrabold tracking-wide uppercase shadow-xs transition-colors duration-300 bg-pink-100 text-pink-800 border border-pink-200';
+        }
+      }
+
+      // Hero Emoji & Big Title
+      if (heroIcon) {
+        heroIcon.textContent = emoji;
+      }
+      if (heroTitle) {
+        heroTitle.textContent = isBoy ? 'BOY!' : 'GIRL!';
+        heroTitle.className = `text-4xl sm:text-5xl font-black tracking-tight drop-shadow-xs ${isBoy ? 'text-blue-600' : 'text-pink-600'}`;
+      }
+
+      if (confidenceBadge) {
+        confidenceBadge.textContent = 'Qing Gong Biao Chart';
+        confidenceBadge.className = `px-3.5 py-1.5 rounded-full text-xs font-bold tracking-wide border transition-colors duration-300 ${isBoy ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-pink-50 text-pink-700 border-pink-200'}`;
+      }
+      if (leapBadge) {
+        if (details.isLeapMonth) {
+          leapBadge.classList.remove('hidden');
+          leapBadge.textContent = `🌙 Leap Month (${details.lunarConceptionMonthName})`;
+        } else {
+          leapBadge.classList.add('hidden');
+        }
+      }
+
+      if (lunarAgeEl) {
+        lunarAgeEl.textContent = `${lunarAge} Years`;
+      }
+      if (lunarMonthEl) {
+        lunarMonthEl.textContent = `Month ${lunarConceptionMonth}`;
+      }
+      if (lunarMonthCnEl) {
+        lunarMonthCnEl.textContent = details.lunarConceptionMonthName;
+      }
+      if (birthYearZodiacEl) {
+        birthYearZodiacEl.textContent = `${lunarBirthYear} (${details.lunarBirthYearGanZhi} · ${details.lunarBirthZodiac} / ${details.lunarBirthZodiacChinese})`;
+      }
+      if (conceptionYearZodiacEl) {
+        conceptionYearZodiacEl.textContent = `${lunarConceptionYear} (${details.lunarConceptionYearGanZhi} · ${details.lunarConceptionZodiac} / ${details.lunarConceptionZodiacChinese})`;
+      }
+      if (lunarBirthDateEl) {
+        lunarBirthDateEl.textContent = `Lunar: ${details.lunarBirthDate}`;
+      }
+      if (lunarConceptionDateEl) {
+        lunarConceptionDateEl.textContent = `Lunar: ${details.lunarConceptionDate}`;
+      }
+      if (dobGregorianEl) {
+        dobGregorianEl.textContent = formatDisplayDate(details.birthDate);
+      }
+      if (conceptionGregorianEl) {
+        conceptionGregorianEl.textContent = formatDisplayDate(details.conceptionDate);
+      }
+      if (explanationEl) {
+        explanationEl.innerHTML = `Based on the mother's traditional Chinese lunar age of <strong>${lunarAge}</strong> (born in lunar year ${lunarBirthYear}, year of the ${details.lunarBirthZodiac}) and the lunar conception month <strong>${details.lunarConceptionMonthName}</strong> (lunar year ${lunarConceptionYear}, year of the ${details.lunarConceptionZodiac}), the Qing Gong Biao chart predicts a <strong>${genderDisplay}</strong>.`;
+      }
+
+      // Hide suspense card
+      if (suspenseSection) {
+        suspenseSection.classList.add('hidden');
+      }
+
+      // Restore form button state
+      setLoading(false);
+      isRevealing = false;
+
+      // Reveal result card with subtle animation
+      if (resultSection) {
+        resultSection.classList.remove('hidden');
+        requestAnimationFrame(() => {
+          resultSection.classList.remove('opacity-0', 'translate-y-6');
+          resultSection.classList.add('opacity-100', 'translate-y-0');
+
+          if (heroBox) {
+            heroBox.classList.add('scale-105');
+            setTimeout(() => heroBox?.classList.remove('scale-105'), 350);
+          }
+
+          resultSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+      }
+    }
+
+    form.addEventListener('submit', (e) => {
       e.preventDefault();
       clearAllErrors();
+      clearAllSuspenseTimers();
 
       const dobValue = dobInput.value.trim();
       const conceptionValue = conceptionInput.value.trim();
-      let hasError = false;
 
-      if (!dobValue) {
-        showError(dobInput, dobErrorMsg, dobErrorText, "Please enter Mother's Date of Birth.");
-        dobInput.focus();
-        hasError = true;
-      } else {
-        const dobDate = validateDate(dobValue);
-        if (!dobDate) {
-          showError(dobInput, dobErrorMsg, dobErrorText, "The entered birth date is invalid.");
-          dobInput.focus();
-          hasError = true;
-        }
-      }
-      if (hasError) return;
+      // 1. Immediate Calculation & Validation
+      const result = predictGenderByConception({
+        motherBirthDate: dobValue,
+        conceptionDate: conceptionValue,
+      });
 
-      if (!conceptionValue) {
-        showError(conceptionInput, dateErrorMsg, dateErrorText, "Please enter the estimated conception date.");
-        conceptionInput.focus();
-        return;
-      }
-      const conceptionDate = validateDate(conceptionValue);
-      if (!conceptionDate) {
-        showError(conceptionInput, dateErrorMsg, dateErrorText, "The entered conception date is invalid.");
-        conceptionInput.focus();
-        return;
-      }
-
-      const dobDate = validateDate(dobValue)!;
-      if (conceptionDate <= dobDate) {
-        showError(conceptionInput, dateErrorMsg, dateErrorText, "Conception date must be after the mother's date of birth.");
-        conceptionInput.focus();
-        return;
-      }
-
-      if (!isEligibleMotherAge(dobValue, conceptionValue)) {
-        if (resultSection) resultSection.classList.add('hidden');
-        if (ageErrorMsg) ageErrorMsg.classList.remove('hidden');
-        dobInput.focus();
-        return;
-      }
-
-      setLoading(true);
-
-      try {
-        const { calculateLunarAge } = await import('../../lib/calendar/age');
-        const { getLunarMonth } = await import('../../lib/calendar/lunar');
-        const { lookupGenderChart } = await import('../../lib/predictor/helpers');
-        const lunarAgeResult = calculateLunarAge(dobValue, conceptionValue);
-        const lunarMonth = getLunarMonth(conceptionValue);
-        const predictedGender = lookupGenderChart(lunarAgeResult.lunarAge, lunarMonth);
-
-        setLoading(false);
-
-        const formattedConceptionDate = `${MONTH_NAMES[conceptionDate.getMonth()]} ${conceptionDate.getDate()}, ${conceptionDate.getFullYear()}`;
-
-        const isBoy = predictedGender === 'boy';
-        const genderDisplay = isBoy ? 'Boy' : 'Girl';
-        const emoji = isBoy ? '👦' : '👧';
-        const accentColor = isBoy ? 'blue' : 'pink';
-
-        if (genderIcon) {
-          genderIcon.textContent = emoji;
-          genderIcon.className = `w-14 h-14 rounded-2xl flex items-center justify-center text-3xl bg-${accentColor}-100 border border-${accentColor}-200`;
-        }
-        if (genderLabel) {
-          genderLabel.textContent = genderDisplay;
-        }
-        if (confidenceBadge) {
-          confidenceBadge.textContent = 'Chart Based';
-          confidenceBadge.className = `px-3.5 py-1.5 rounded-full text-xs font-bold bg-${accentColor}-50 text-${accentColor}-700 border border-${accentColor}-200`;
-        }
-        if (lunarAgeEl) {
-          lunarAgeEl.textContent = String(lunarAgeResult.lunarAge);
-        }
-        if (lunarMonthEl) {
-          lunarMonthEl.textContent = formatLunarMonth(lunarMonth);
-        }
-        if (gregorianDateEl) {
-          gregorianDateEl.textContent = formattedConceptionDate;
-        }
-        if (explanationEl) {
-          explanationEl.textContent = `Based on the mother's lunar age (${lunarAgeResult.lunarAge}) and the lunar month of conception (${formatLunarMonth(lunarMonth)}), the traditional chart predicts a ${genderDisplay}.`;
+      if (!result.success) {
+        // Map structured error to UI field immediately (no suspense on error)
+        const { code, message, field } = result.error;
+        if (code === 'UNDERAGE_MOTHER') {
+          showAgeError(message);
+        } else if (field === 'motherBirthDate' || code === 'MISSING_BIRTH_DATE' || code === 'INVALID_BIRTH_DATE') {
+          showDobError(message);
+        } else if (field === 'conceptionDate' || code === 'MISSING_CONCEPTION_DATE' || code === 'INVALID_CONCEPTION_DATE' || code === 'CONCEPTION_BEFORE_BIRTH') {
+          showConceptionError(message);
+        } else {
+          showGeneralError(message);
         }
 
         if (resultSection) {
-          resultSection.classList.remove('hidden');
-          requestAnimationFrame(() => {
-            resultSection.classList.remove('opacity-0', 'translate-y-6');
-            resultSection.classList.add('opacity-100', 'translate-y-0');
-            resultSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          resultSection.classList.add('hidden', 'opacity-0');
+        }
+        if (suspenseSection) {
+          suspenseSection.classList.add('hidden');
+        }
+        return;
+      }
+
+      // 2. Start Suspense Experience for Successful Calculation
+      isRevealing = true;
+      setLoading(true);
+
+      if (resultSection) {
+        resultSection.classList.add('hidden', 'opacity-0', 'translate-y-6');
+        resultSection.classList.remove('opacity-100', 'translate-y-0');
+      }
+
+      if (suspenseSection) {
+        suspenseSection.classList.remove('hidden');
+        suspenseSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      // Check user preference for reduced motion
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // Sequential message schedule (approx 2.7 seconds total)
+      const step1Delay = 0;
+      const step2Delay = prefersReducedMotion ? 250 : 750;
+      const step3Delay = prefersReducedMotion ? 500 : 1500;
+      const step4Delay = prefersReducedMotion ? 750 : 2250;
+      const revealDelay = prefersReducedMotion ? 1000 : 2800;
+
+      // Message 1: Reading lunar calendar
+      setSuspenseStep('🌙', 'Reading the lunar calendar...', 25);
+
+      // Message 2: Calculating lunar age
+      const t2 = window.setTimeout(() => {
+        setSuspenseStep('🧮', 'Calculating traditional lunar age...', 50);
+      }, step2Delay);
+      activeTimeouts.push(t2);
+
+      // Message 3: Consulting chart
+      const t3 = window.setTimeout(() => {
+        setSuspenseStep('🏮', 'Consulting the traditional Chinese gender chart...', 75);
+      }, step3Delay);
+      activeTimeouts.push(t3);
+
+      // Message 4: Prediction ready
+      const t4 = window.setTimeout(() => {
+        setSuspenseStep('✨', 'Your prediction is ready!', 100);
+      }, step4Delay);
+      activeTimeouts.push(t4);
+
+      // Final Reveal
+      const tReveal = window.setTimeout(() => {
+        revealPredictionResult(result);
+      }, revealDelay);
+      activeTimeouts.push(tReveal);
+    });
+
+    // =========================================================================
+    // CHANGE 2: PRIVACY-SAFE SOCIAL SHARING IMPLEMENTATION
+    // Never exposes DOB, conception date, lunar age, or personal input values
+    // =========================================================================
+
+    function getBaseWebsiteUrl(): string {
+      return window.location.origin || 'https://freegenderpredictor.com';
+    }
+
+    function getWhatsAppMessage(): string {
+      const url = getBaseWebsiteUrl();
+      return `I tried a traditional Chinese Gender Predictor. My result was ${currentPredictedGender.toUpperCase()}. Try it for entertainment: ${url}`;
+    }
+
+    function getCopyResultMessage(): string {
+      const url = getBaseWebsiteUrl();
+      return `I tried a traditional Chinese Gender Predictor. My result was ${currentPredictedGender.toUpperCase()}. This is a traditional cultural prediction for entertainment only. Try it: ${url}`;
+    }
+
+    function copyTextToClipboard(text: string, onSuccess: () => void) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          onSuccess();
+        }).catch(() => {
+          fallbackCopy(text, onSuccess);
+        });
+      } else {
+        fallbackCopy(text, onSuccess);
+      }
+    }
+
+    function fallbackCopy(text: string, onSuccess: () => void) {
+      const tempTextArea = document.createElement('textarea');
+      tempTextArea.value = text;
+      tempTextArea.style.position = 'fixed';
+      tempTextArea.style.left = '-9999px';
+      tempTextArea.style.top = '0';
+      document.body.appendChild(tempTextArea);
+      tempTextArea.focus();
+      tempTextArea.select();
+      try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+          onSuccess();
+        } else {
+          showFeedback('Unable to copy automatically. Please copy the URL from your browser.');
+        }
+      } catch (e) {
+        showFeedback('Unable to copy automatically. Please copy the URL from your browser.');
+      } finally {
+        document.body.removeChild(tempTextArea);
+      }
+    }
+
+    // 1. WhatsApp Action
+    if (whatsappBtn) {
+      whatsappBtn.addEventListener('click', () => {
+        const text = getWhatsAppMessage();
+        const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+        window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+      });
+    }
+
+    // 2. Facebook Action
+    if (facebookBtn) {
+      facebookBtn.addEventListener('click', () => {
+        const pageUrl = getBaseWebsiteUrl();
+        const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`;
+        window.open(facebookUrl, '_blank', 'noopener,noreferrer');
+      });
+    }
+
+    // 3. Instagram Action (Copy + Feedback + Open Instagram)
+    if (instagramBtn) {
+      instagramBtn.addEventListener('click', () => {
+        const text = getWhatsAppMessage();
+        copyTextToClipboard(text, () => {
+          showFeedback('✓ Result copied! Open Instagram and paste it into your Story, post, or message.', 5000);
+          window.open('https://www.instagram.com/', '_blank', 'noopener,noreferrer');
+        });
+      });
+    }
+
+    // 4. Copy Result Action
+    if (copyBtn) {
+      copyBtn.addEventListener('click', () => {
+        const text = getCopyResultMessage();
+        copyTextToClipboard(text, () => {
+          showFeedback('Copied to Clipboard! ✓', 3000);
+          if (copyBtnText) {
+            const original = copyBtnText.textContent;
+            copyBtnText.textContent = 'Copied! ✓';
+            setTimeout(() => {
+              copyBtnText.textContent = original || 'Copy Result';
+            }, 2500);
+          }
+        });
+      });
+    }
+
+    // 5. Native Share API Action
+    if (shareBtn) {
+      shareBtn.addEventListener('click', async () => {
+        const url = getBaseWebsiteUrl();
+        const text = getWhatsAppMessage();
+        const shareData = {
+          title: 'Chinese Gender Predictor Result',
+          text,
+          url,
+        };
+
+        if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+          try {
+            await navigator.share(shareData);
+          } catch (err: unknown) {
+            // User cancelled share dialog - no action needed
+          }
+        } else {
+          // Fallback to copying result text
+          copyTextToClipboard(text, () => {
+            showFeedback('Result copied to clipboard! ✓', 3000);
           });
         }
-      } catch (err: any) {
+      });
+    }
+
+    // Reset Form & UI state (Handles cancel during suspense or after reveal)
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        clearAllSuspenseTimers();
+        clearFeedback();
+        form.reset();
+        clearAllErrors();
         setLoading(false);
-        showError(conceptionInput, dateErrorMsg, dateErrorText, err.message || 'Failed to calculate prediction. Please try again.');
-      }
-    });
+
+        if (suspenseSection) {
+          suspenseSection.classList.add('hidden');
+        }
+        if (resultSection) {
+          resultSection.classList.add('hidden', 'opacity-0', 'translate-y-6');
+          resultSection.classList.remove('opacity-100', 'translate-y-0');
+        }
+
+        dobInput.focus();
+        form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
   });
 </script>

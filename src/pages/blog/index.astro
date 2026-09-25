@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FeaturedBlogCard from '../../components/blog/FeaturedBlogCard.astro';
+import BlogCard from '../../components/blog/BlogCard.astro';
+import Breadcrumbs from '../../components/blog/Breadcrumbs.astro';
+import CategoryBadge from '../../components/blog/CategoryBadge.astro';
+import { getAllPosts, getFeaturedPost, getAllCategories } from '../../lib/blog/utils';
+
+const allPosts = await getAllPosts();
+const featuredPost = await getFeaturedPost();
+const categories = await getAllCategories();
+
+// Filter out the featured post from the main grid if featured exists
+const gridPosts = featuredPost
+  ? allPosts.filter((post) => post.id !== featuredPost.id)
+  : allPosts;
+---
+
+<BaseLayout
+  title="Baby Gender Prediction Blog & Guides | Free Gender Predictor"
+  description="Explore educational guides on the Chinese Gender Predictor, Chinese Gender Calendar, Mayan prediction methods, pregnancy folklore, and medical facts."
+>
+  <main class="py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-12">
+    <!-- Breadcrumbs -->
+    <Breadcrumbs items={[{ name: 'Blog', url: '/blog' }]} />
+
+    <!-- Hero Header -->
+    <div class="text-center space-y-4 max-w-3xl mx-auto">
+      <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 tracking-tight">
+        Baby Gender Prediction <span class="text-pink-600">Blog & Guides</span>
+      </h1>
+      <p class="text-lg text-gray-600 leading-relaxed">
+        Deep dives into traditional prediction charts, Chinese lunar calendar mechanics, pregnancy folklore, and evidence-based medical facts.
+      </p>
+    </div>
+
+    <!-- Category Filters -->
+    {categories.length > 0 && (
+      <div class="flex items-center justify-center flex-wrap gap-2 pt-2">
+        <span class="text-xs font-bold uppercase tracking-wider text-gray-400 mr-2">Categories:</span>
+        <a
+          href="/blog"
+          class="px-3.5 py-1.5 text-xs sm:text-sm font-semibold rounded-full bg-pink-600 text-white shadow-xs"
+        >
+          All Posts ({allPosts.length})
+        </a>
+        {categories.map((cat) => (
+          <a
+            href={`/blog/category/${cat.slug}`}
+            class="px-3.5 py-1.5 text-xs sm:text-sm font-medium rounded-full bg-gray-100 text-gray-700 hover:bg-pink-50 hover:text-pink-600 transition-colors"
+          >
+            {cat.name} ({cat.count})
+          </a>
+        ))}
+      </div>
+    )}
+
+    <!-- Featured Post -->
+    {featuredPost && (
+      <section aria-label="Featured Article">
+        <FeaturedBlogCard post={featuredPost} />
+      </section>
+    )}
+
+    <!-- Main Grid of Articles -->
+    <section class="space-y-8" aria-label="All Blog Articles">
+      <div class="flex items-center justify-between border-b border-gray-200 pb-4">
+        <h2 class="text-2xl font-bold text-gray-900">All Educational Articles</h2>
+        <span class="text-xs text-gray-500 font-medium">Sorted by Newest First</span>
+      </div>
+
+      {gridPosts.length > 0 ? (
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {gridPosts.map((post) => (
+            <BlogCard post={post} />
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-12 bg-gray-50 rounded-2xl border border-gray-200">
+          <p class="text-gray-500 text-base">No additional articles found.</p>
+        </div>
+      )}
+    </section>
+  </main>
+</BaseLayout>
